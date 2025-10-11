@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vrooom/core/configs/theme/app_theme.dart';
 import 'package:vrooom/presentation/splash/bloc/splash_cubit.dart';
-import 'package:vrooom/presentation/splash/pages/splash_page.dart';
+
+import 'core/configs/routes/app_router.dart';
+import 'core/configs/routes/app_routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +20,8 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: AppTheme.appTheme,
         debugShowCheckedModeBanner: false,
-        home: const SplashPage(),
+        initialRoute: AppRoutes.splash,
+        onGenerateRoute: AppRouter.onGenerateRoute,
       ),
     );
   }
