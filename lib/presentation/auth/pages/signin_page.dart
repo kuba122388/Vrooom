@@ -8,6 +8,7 @@ import 'package:vrooom/presentation/auth/widgets/social_button.dart';
 
 import '../../../core/common/widgets/divider_with_text.dart';
 import '../../../core/common/widgets/custom_text_field.dart';
+import '../../../core/configs/routes/app_routes.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -108,9 +109,10 @@ class _SigninPageState extends State<SigninPage> {
               "Don't have an account? ",
               style: TextStyle(color: AppColors.text.neutral400),
             ),
-            const PressableText(
+            PressableText(
               text: 'Sign Up',
-              style: TextStyle(color: AppColors.primary),
+              style: const TextStyle(color: AppColors.primary),
+              onTap: () => Navigator.pushNamed(context, AppRoutes.signup),
             ),
           ],
         ),
