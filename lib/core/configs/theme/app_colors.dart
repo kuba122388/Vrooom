@@ -9,6 +9,7 @@ class AppColors {
 
   static const _ContainerColors container = _ContainerColors();
   static const _TextColors text = _TextColors();
+  static const _SvgColors svg = _SvgColors();
 }
 
 // Classes with '_' prefix are only visible within this file
@@ -28,4 +29,10 @@ class _TextColors {
   final neutral200 = const Color(0xFFf3f4f6);
   final neutral400 = const Color(0xFFbdc1ca);
   final red750 = const Color(0xC0E00000);
+}
+
+class _SvgColors {
+  const _SvgColors();
+
+  final neutral400 = const Color(0xFFbdc1ca);
 }

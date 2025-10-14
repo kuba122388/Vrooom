@@ -5,11 +5,15 @@ import '../../configs/theme/app_text_styles.dart';
 class PrimaryButton extends StatefulWidget {
   final String text;
   final VoidCallback? onPressed;
+  final TextStyle? textStyle;
+  final double height;
 
   const PrimaryButton({
     super.key,
     required this.text,
     this.onPressed,
+    this.textStyle = AppTextStyles.button,
+    this.height = 45.0,
   });
 
   @override
@@ -33,17 +37,15 @@ class _PrimaryButtonState extends State<PrimaryButton> {
       },
       child: Container(
         width: double.infinity,
-        height: 45.0,
+        height: widget.height,
         decoration: BoxDecoration(
-          color: _isPressed
-              ? AppColors.primary.withOpacity(0.7)
-              : AppColors.primary,
+          color: _isPressed ? AppColors.primary.withOpacity(0.7) : AppColors.primary,
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: Center(
           child: Text(
             widget.text,
-            style: AppTextStyles.button,
+            style: widget.textStyle,
           ),
         ),
       ),
