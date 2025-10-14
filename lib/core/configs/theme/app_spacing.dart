@@ -1,6 +1,7 @@
 class AppSpacing {
   AppSpacing._();
 
+  static const double xxs = 5.0;
   static const double xs = 10.0;
   static const double sm = 15.0;
   static const double md = 20.0;
