@@ -7,4 +7,5 @@ class AppRoutes {
   static const String verifyEmail = '/verifyEmail';
   static const String verifyEmailSuccess = '/verifyEmailSuccess';
   static const String listings = '/listings';
+  static const String carDetails = '/carDetails';
 }
