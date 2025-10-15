@@ -14,4 +14,11 @@ class AppVectors {
   static const person = '${basePath}person$format';
 
   static const circleCheck = '${basePath}circle-check-big$format';
+
+  static const fuel = '${basePath}fuel$format';
+  static const gauge = '${basePath}gauge$format';
+  static const milestone = '${basePath}milestone$format';
+  static const seats = '${basePath}users$format';
+
+  static const snowflake = '${basePath}snowflake$format';
 }
