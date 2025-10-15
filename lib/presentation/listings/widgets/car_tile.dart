@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_text_styles.dart';
 
 import '../../../core/common/widgets/primary_button.dart';
@@ -90,19 +91,20 @@ class CarTile extends StatelessWidget {
                   ),
                 ],
               ),
-              const Padding(
-                padding: EdgeInsets.all(10.0),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
                 child: Column(
                   children: [
-                    Text(
+                    const Text(
                       "Sample text that i wrote here. Sample text that i wrote here. Sample text that i wrote here.",
                       style: TextStyle(fontSize: 12.0),
                     ),
-                    SizedBox(height: AppSpacing.sm),
+                    const SizedBox(height: AppSpacing.sm),
                     PrimaryButton(
                       text: "View Details",
                       textStyle: AppTextStyles.smallButton,
                       height: 40.0,
+                      onPressed: () => Navigator.pushNamed(context, AppRoutes.carDetails),
                     )
                   ],
                 ),

@@ -20,6 +20,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               icon: const Icon(Icons.chevron_left, size: 36.0),
             )
           : null,
+      automaticallyImplyLeading: showBackButton,
       title: Text(
         title,
         style: const TextStyle(fontWeight: FontWeight.w600),
