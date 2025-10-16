@@ -21,4 +21,6 @@ class AppVectors {
   static const seats = '${basePath}users$format';
 
   static const snowflake = '${basePath}snowflake$format';
+
+  static const creditCard = '${basePath}credit-card$format';
 }
