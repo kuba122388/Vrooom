@@ -4,18 +4,18 @@ import 'package:flutter_svg/svg.dart';
 import '../../configs/assets/app_vectors.dart';
 import '../../configs/theme/app_colors.dart';
 
-class CustomBottomBar extends StatefulWidget {
-  const CustomBottomBar({super.key});
+class CustomBottomBar extends StatelessWidget{
+  final int currentIndex;
+  final ValueChanged<int> onTap;
 
-  @override
-  State<CustomBottomBar> createState() => _CustomBottomBarState();
-}
+  const CustomBottomBar({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
 
-class _CustomBottomBarState extends State<CustomBottomBar> {
-  int _currentIndex = 0;
-
-  final List<String> _labels = ["Listings", "Booking", "Profile"];
-  final List<String> _icons = [
+  final List<String> _labels = const ["Listings", "Booking", "Profile"];
+  final List<String> _icons = const [
     AppVectors.carFront,
     AppVectors.booking,
     AppVectors.person,
@@ -31,7 +31,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
           color: AppColors.container.neutral800,
         ),
         BottomNavigationBar(
-          currentIndex: _currentIndex,
+          currentIndex: currentIndex,
           selectedItemColor: AppColors.primary,
           unselectedItemColor: AppColors.text.neutral400,
           selectedLabelStyle: const TextStyle(
@@ -47,13 +47,9 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
             fontFamily: 'Roboto',
             letterSpacing: -0.3,
           ),
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
+          onTap: onTap,
           items: List.generate(_labels.length, (index) {
-            final isSelected = _currentIndex == index;
+            final isSelected = currentIndex == index;
             return BottomNavigationBarItem(
               icon: Padding(
                 padding: const EdgeInsets.all(2.0),

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/app_svg.dart';
-import 'package:vrooom/core/common/widgets/custom_app_bar.dart';
-import 'package:vrooom/core/common/widgets/custom_bottom_bar.dart';
 import 'package:vrooom/core/configs/assets/app_images.dart';
 import 'package:vrooom/core/configs/assets/app_vectors.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
@@ -18,63 +16,56 @@ class ListingsPage extends StatefulWidget {
 class _ListingsPageState extends State<ListingsPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomAppBar(
-        title: "Stationary Car Rentals",
-        showBackButton: false,
-      ),
-      bottomNavigationBar: const CustomBottomBar(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-          child: Column(
-            children: [
-              _searchModule(),
-              const SizedBox(
-                height: AppSpacing.xl,
-              ),
-              const Row(
-                children: [
-                  CarTile(
-                    imgPath: AppImages.mercedes,
-                    model: "Mercedes-Benz",
-                    brand: "C-Class",
-                    price: 85.00,
-                  ),
-                  SizedBox(
-                    width: AppSpacing.sm,
-                  ),
-                  CarTile(
-                    imgPath: AppImages.mercedes,
-                    model: "Mercedes-Benz",
-                    brand: "C-Class",
-                    price: 85.00,
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              const Row(
-                children: [
-                  CarTile(
-                    imgPath: AppImages.mercedes,
-                    model: "Mercedes-Benz",
-                    brand: "C-Class",
-                    price: 85.00,
-                  ),
-                  SizedBox(
-                    width: AppSpacing.sm,
-                  ),
-                  CarTile(
-                    imgPath: AppImages.mercedes,
-                    model: "Mercedes-Benz",
-                    brand: "C-Class",
-                    price: 85.00,
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-            ],
-          ),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+        child: Column(
+          children: [
+            _searchModule(),
+            const SizedBox(
+              height: AppSpacing.xl,
+            ),
+            const Row(
+              children: [
+                CarTile(
+                  imgPath: AppImages.mercedes,
+                  model: "Mercedes-Benz",
+                  brand: "C-Class",
+                  price: 85.00,
+                ),
+                SizedBox(
+                  width: AppSpacing.sm,
+                ),
+                CarTile(
+                  imgPath: AppImages.mercedes,
+                  model: "Mercedes-Benz",
+                  brand: "C-Class",
+                  price: 85.00,
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+            const Row(
+              children: [
+                CarTile(
+                  imgPath: AppImages.mercedes,
+                  model: "Mercedes-Benz",
+                  brand: "C-Class",
+                  price: 85.00,
+                ),
+                SizedBox(
+                  width: AppSpacing.sm,
+                ),
+                CarTile(
+                  imgPath: AppImages.mercedes,
+                  model: "Mercedes-Benz",
+                  brand: "C-Class",
+                  price: 85.00,
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
         ),
       ),
     );
