@@ -4,10 +4,10 @@ import '../../configs/theme/app_colors.dart';
 import '../../configs/theme/app_spacing.dart';
 
 class InfoSectionCard extends StatelessWidget {
-  final String title;
+  final String? title;
   final Widget child;
 
-  const InfoSectionCard({super.key, required this.title, required this.child});
+  const InfoSectionCard({super.key, this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -24,18 +24,20 @@ class InfoSectionCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.text.neutral200,
+                if (title != null) ...[
+                  Text(
+                    title!,
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.text.neutral200,
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: AppSpacing.sm,
-                ),
+                  const SizedBox(
+                    height: AppSpacing.sm,
+                  ),
+                ],
                 child
               ],
             ),

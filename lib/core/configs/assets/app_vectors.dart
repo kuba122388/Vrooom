@@ -1,4 +1,6 @@
 class AppVectors {
+  const AppVectors._();
+
   static const basePath = 'assets/vectors/';
   static const format = '.svg';
 
@@ -23,4 +25,11 @@ class AppVectors {
   static const snowflake = '${basePath}snowflake$format';
 
   static const creditCard = '${basePath}credit-card$format';
+
+  static const expandIcon = '${basePath}chevron-down$format';
+  static const navigateRightIcon = '${basePath}chevron-right$format';
+
+  static const settings = '${basePath}settings$format';
+  static const privacyPolicy = '${basePath}shield$format';
+  static const contact = '${basePath}message-circle$format';
 }
