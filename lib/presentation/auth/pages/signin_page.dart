@@ -7,7 +7,7 @@ import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 import 'package:vrooom/presentation/auth/widgets/social_button.dart';
 
-import '../../../core/common/widgets/divider_with_text.dart';
+import '../widgets/divider_with_text.dart';
 import '../../../core/common/widgets/custom_text_field.dart';
 import '../../../core/configs/routes/app_routes.dart';
 

@@ -8,6 +8,7 @@ import 'package:vrooom/presentation/listings/pages/car_details_page.dart';
 import 'package:vrooom/presentation/listings/pages/listings_page.dart';
 import 'package:vrooom/presentation/splash/pages/splash_page.dart';
 
+import '../../../presentation/main/pages/main_navigation_page.dart';
 import 'app_routes.dart';
 
 class AppRouter {
@@ -24,6 +25,9 @@ class AppRouter {
 
       case AppRoutes.verifyEmail:
         return MaterialPageRoute(builder: (_) => const EmailVerificationPage());
+
+      case AppRoutes.main:
+        return MaterialPageRoute(builder: (_) => const MainNavigationPage());
 
       case AppRoutes.verifyEmailSuccess:
         return MaterialPageRoute(builder: (_) => const VerificationSuccessPage());
