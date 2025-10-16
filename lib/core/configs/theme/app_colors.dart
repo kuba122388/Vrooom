@@ -35,4 +35,5 @@ class _SvgColors {
   const _SvgColors();
 
   final neutral400 = const Color(0xFFbdc1ca);
+  final neutral200 = const Color(0xFFf3f4f6);
 }

@@ -17,7 +17,7 @@ class AppTextStyles {
   );
 
   static const label = TextStyle(
-    fontSize: 18.0,
+    fontSize: 16.0,
     fontWeight: FontWeight.w600,
   );
 }

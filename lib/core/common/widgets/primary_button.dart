@@ -31,7 +31,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
       onTapCancel: () => setState(() => _isPressed = false),
       onTap: () async {
         setState(() => _isPressed = true);
-        await Future.delayed(const Duration(milliseconds: 50));
+        await Future.delayed(const Duration(milliseconds: 10));
         if (mounted) setState(() => _isPressed = false);
         widget.onPressed?.call();
       },
