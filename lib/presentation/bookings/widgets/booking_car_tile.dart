@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:vrooom/core/common/widgets/app_svg.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 
@@ -9,11 +10,22 @@ import '../../../core/configs/theme/app_spacing.dart';
 
 class BookingCarTile extends StatelessWidget {
   final String title;
+
+  final DateTime startDate;
+  final DateTime finishDate;
+
+  final String startPoint;
+  final String finishPoint;
+
   final String? penalty;
 
   const BookingCarTile({
     super.key,
     required this.title,
+    required this.startDate,
+    required this.finishDate,
+    required this.startPoint,
+    required this.finishPoint,
     this.penalty,
   });
 
@@ -58,7 +70,7 @@ class BookingCarTile extends StatelessWidget {
                         height: 14.0,
                       ),
                       SizedBox(width: AppSpacing.xxs),
-                      Text("12.02.2025"),
+                      Text(DateFormat("dd.MM.yyyy").format(startDate)),
                       Spacer(),
                     ],
                   ),
@@ -70,7 +82,7 @@ class BookingCarTile extends StatelessWidget {
                         height: 14.0,
                       ),
                       SizedBox(width: AppSpacing.xxs),
-                      Text("18.02.2025"),
+                      Text(DateFormat("dd.MM.yyyy").format(finishDate)),
                       Spacer(),
                     ],
                   ),
@@ -84,7 +96,7 @@ class BookingCarTile extends StatelessWidget {
                         height: 14.0,
                       ),
                       SizedBox(width: AppSpacing.xxs),
-                      Text("Warsaw"),
+                      Text(startPoint),
                       Spacer(),
                     ],
                   ),
@@ -96,7 +108,7 @@ class BookingCarTile extends StatelessWidget {
                         height: 14.0,
                       ),
                       const SizedBox(width: AppSpacing.xxs),
-                      Text("Warsaw"),
+                      Text(finishPoint),
                       Spacer(),
                     ],
                   ),
