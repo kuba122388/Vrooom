@@ -32,4 +32,8 @@ class AppVectors {
   static const settings = '${basePath}settings$format';
   static const privacyPolicy = '${basePath}shield$format';
   static const contact = '${basePath}message-circle$format';
+
+  static const mail = '${basePath}mail$format';
+  static const phone = '${basePath}phone$format';
+  static const key = '${basePath}key-round$format';
 }
