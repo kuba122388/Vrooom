@@ -59,7 +59,6 @@ class ProfilePage extends StatelessWidget {
               title: "Rental History",
               child: Column(
                 children: [
-                  SizedBox(height: AppSpacing.xs),
                   CarStatusRow(carName: "Mercedes C-Class", status: RentalStatus.active,),
                   CarStatusRow(carName: "Tesla Model 3", status: RentalStatus.completed,),
                   CarStatusRow(carName: "Ford Mustang", status: RentalStatus.cancelled,),
@@ -67,20 +66,20 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.md),
-            const InfoSectionCard(
+            InfoSectionCard(
               title: "Settings",
               child: Column(
                 children: [
-                  SizedBox(height: AppSpacing.xs),
                   SettingsTile(
-                    icon: AppSvg(asset: AppVectors.settings),
+                    icon: const AppSvg(asset: AppVectors.settings),
                     label: "Account Settings",
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.editProfileDetails),
                   ),
-                  SettingsTile(
+                  const SettingsTile(
                     icon: AppSvg(asset: AppVectors.privacyPolicy),
                     label: "Privacy Policy",
                   ),
-                  SettingsTile(
+                  const SettingsTile(
                     icon: AppSvg(asset: AppVectors.contact),
                     label: "Contact",
                   )

@@ -46,7 +46,7 @@ class CarStatusRow extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          padding: const EdgeInsets.symmetric(vertical: 20.0),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -93,7 +93,7 @@ class CarStatusRow extends StatelessWidget {
             ],
           ),
         ),
-        Divider(color: AppColors.container.neutral700)
+        Divider(color: AppColors.container.neutral700, height: 1,)
       ],
     );
   }
