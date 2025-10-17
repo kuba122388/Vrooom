@@ -29,6 +29,8 @@ class AppVectors {
   static const expandIcon = '${basePath}chevron-down$format';
   static const navigateRightIcon = '${basePath}chevron-right$format';
 
+  static const arrowRight = '${basePath}arrow-right$format';
+
   static const settings = '${basePath}settings$format';
   static const privacyPolicy = '${basePath}shield$format';
   static const contact = '${basePath}message-circle$format';
@@ -36,4 +38,10 @@ class AppVectors {
   static const mail = '${basePath}mail$format';
   static const phone = '${basePath}phone$format';
   static const key = '${basePath}key-round$format';
+
+  static const start = '${basePath}map-pinned$format';
+  static const finish = '${basePath}flag$format';
+
+  static const locationStart = '${basePath}locate$format';
+  static const locationFinish = '${basePath}locate-fixed$format';
 }
