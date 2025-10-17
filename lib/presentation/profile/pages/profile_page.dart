@@ -62,6 +62,7 @@ class ProfilePage extends StatelessWidget {
                   CarStatusRow(carName: "Mercedes C-Class", status: RentalStatus.active,),
                   CarStatusRow(carName: "Tesla Model 3", status: RentalStatus.completed,),
                   CarStatusRow(carName: "Ford Mustang", status: RentalStatus.cancelled,),
+                  CarStatusRow(carName: "Opel Astra", status: RentalStatus.penalty,),
                 ],
               ),
             ),
