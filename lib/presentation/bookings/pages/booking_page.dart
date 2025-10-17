@@ -24,6 +24,10 @@ class BookingsPage extends StatelessWidget {
               BookingCarTile(
                 title: "Penalty Section",
                 penalty: "\$200 Penalty",
+                startDate: DateTime(2025, 7, 10),
+                finishDate: DateTime(2025, 7, 16),
+                startPoint: "Warsaw",
+                finishPoint: "Warsaw",
               ),
               SizedBox(
                 height: AppSpacing.md,
@@ -32,6 +36,10 @@ class BookingsPage extends StatelessWidget {
             if (_active.isNotEmpty) ...[
               BookingCarTile(
                 title: "Active Rentals",
+                startDate: DateTime(2025, 5, 10),
+                finishDate: DateTime(2025, 7, 16),
+                startPoint: "Warsaw",
+                finishPoint: "Warsaw",
               ),
               SizedBox(
                 height: AppSpacing.md,
@@ -40,6 +48,10 @@ class BookingsPage extends StatelessWidget {
             if (_upcoming.isNotEmpty) ...[
               BookingCarTile(
                 title: "Upcoming Rentals",
+                startDate: DateTime(2025, 5, 10),
+                finishDate: DateTime(2025, 7, 16),
+                startPoint: "Warsaw",
+                finishPoint: "Warsaw",
               ),
               SizedBox(
                 height: AppSpacing.md,
@@ -49,6 +61,10 @@ class BookingsPage extends StatelessWidget {
               opacity: 0.5,
               child: BookingCarTile(
                 title: "Rental History",
+                startDate: DateTime(2025, 5, 10),
+                finishDate: DateTime(2025, 7, 16),
+                startPoint: "Warsaw",
+                finishPoint: "Warsaw",
               ),
             ),
             SizedBox(
