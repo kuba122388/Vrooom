@@ -9,6 +9,7 @@ enum RentalStatus {
   active,
   completed,
   cancelled,
+  penalty,
 }
 
 class CarStatusRow extends StatelessWidget {
@@ -25,6 +26,8 @@ class CarStatusRow extends StatelessWidget {
     switch (status) {
       case RentalStatus.active:
         return AppColors.container.claret;
+      case RentalStatus.penalty:
+        return AppColors.primary;
       default:
         return AppColors.container.neutral700;
     }
@@ -38,6 +41,8 @@ class CarStatusRow extends StatelessWidget {
         return "Completed";
       case RentalStatus.cancelled:
         return "Cancelled";
+      case RentalStatus.penalty:
+        return "Penalty";
     }
   }
 
@@ -93,7 +98,10 @@ class CarStatusRow extends StatelessWidget {
             ],
           ),
         ),
-        Divider(color: AppColors.container.neutral700, height: 1,)
+        Divider(
+          color: AppColors.container.neutral700,
+          height: 1,
+        )
       ],
     );
   }
