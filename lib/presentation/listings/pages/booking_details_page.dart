@@ -25,6 +25,11 @@ enum PaymentMethod { creditCard, stripe }
 class _BookingDetailsPageState extends State<BookingDetailsPage> {
   bool isSameLocation = false;
   bool savePaymentInfo = false;
+
+  bool haveRabatCode = false;
+  double discountAmount = 0.0;
+  double totalPrice = 499.0;
+
   DateTime startDate = DateTime(
     DateTime.now().year,
     DateTime.now().month,
@@ -79,14 +84,16 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                         setState(() {
                           endDate = date;
                           if (endDate.isBefore(startDate)) {
-                            startDate = endDate.subtract(const Duration(days: 1));
+                            startDate =
+                                endDate.subtract(const Duration(days: 1));
                           }
                         });
                       },
                     ),
                     InfoRow(
                       label: "Total Duration:",
-                      value: "${endDate.difference(startDate).inDays + 1} day(s)",
+                      value:
+                          "${endDate.difference(startDate).inDays + 1} day(s)",
                     )
                   ],
                 ),
@@ -163,9 +170,10 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                               alignment: Alignment.center,
                               height: 40.0,
                               decoration: BoxDecoration(
-                                color: selectedPayment == PaymentMethod.creditCard
-                                    ? AppColors.primary
-                                    : AppColors.container.neutral700,
+                                color:
+                                    selectedPayment == PaymentMethod.creditCard
+                                        ? AppColors.primary
+                                        : AppColors.container.neutral700,
                                 borderRadius: BorderRadius.circular(5.0),
                               ),
                               child: const Text(
@@ -247,9 +255,67 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     const SizedBox(height: AppSpacing.sm),
                     const Divider(),
                     const SizedBox(height: AppSpacing.sm),
-                    const InfoRow(
+                    CustomCheckbox(
+                        value: haveRabatCode,
+                        onChanged: (newValue) {
+                          setState(() {
+                            haveRabatCode = newValue;
+                            if(newValue == false) discountAmount = 0.0;
+                          });
+                        },
+                        label: "Have a rabat code?"),
+                    SizedBox(
+                      height: AppSpacing.xs,
+                    ),
+                    if (haveRabatCode == true)...[
+                      SizedBox(
+                        height: AppSpacing.sm,
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Flexible(
+                            flex: 2,
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: "Enter promo code",
+                                fillColor: AppColors.container.neutral700,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: AppSpacing.md,
+                          ),
+                          Flexible(
+                            flex: 1,
+                            child: PrimaryButton(
+                              text: "Enter",
+                              onPressed: () {
+                                setState(() {
+                                  discountAmount = 200.0;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                    const SizedBox(height: AppSpacing.md),
+                    if (discountAmount != 0.0)...[
+                      InfoRow(
+                        label: "Initial cost:",
+                        value: "\$${totalPrice.toStringAsFixed(2)}",
+                      ),
+                      SizedBox(height: AppSpacing.xxs),
+                      InfoRow(
+                        label: "Discount:",
+                        value: "-\$${discountAmount.toStringAsFixed(2)}",
+                      ),
+                      SizedBox(height: AppSpacing.sm),
+                    ],
+                    InfoRow(
                       label: "Total Cost:",
-                      value: "\$499.00",
+                      value: "\$${(totalPrice - discountAmount).toStringAsFixed(2)}",
                       fontSize: 22.0,
                     ),
                     const SizedBox(height: AppSpacing.sm),
