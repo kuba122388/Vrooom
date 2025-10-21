@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:vrooom/presentation/user/auth/pages/email_verification_page.dart';
-import 'package:vrooom/presentation/user/auth/pages/signin_page.dart';
-import 'package:vrooom/presentation/user/auth/pages/signup_page.dart';
-import 'package:vrooom/presentation/user/auth/pages/verification_success_page.dart';
-import 'package:vrooom/presentation/user/listings/pages/booking_details_page.dart';
-import 'package:vrooom/presentation/user/listings/pages/car_details_page.dart';
-import 'package:vrooom/presentation/user/listings/pages/listings_page.dart';
-import 'package:vrooom/presentation/user/profile/pages/edit_profile_details.dart';
-import 'package:vrooom/presentation/user/splash/pages/splash_page.dart';
+import 'package:vrooom/presentation/auth/pages/email_verification_page.dart';
+import 'package:vrooom/presentation/auth/pages/signin_page.dart';
+import 'package:vrooom/presentation/auth/pages/signup_page.dart';
+import 'package:vrooom/presentation/auth/pages/verification_success_page.dart';
+import 'package:vrooom/presentation/listings/pages/booking_details_page.dart';
+import 'package:vrooom/presentation/listings/pages/car_details_page.dart';
+import 'package:vrooom/presentation/listings/pages/listings_page.dart';
+import 'package:vrooom/presentation/profile/pages/edit_profile_details.dart';
+import 'package:vrooom/presentation/splash/pages/splash_page.dart';
 
-import '../../../presentation/user/main/pages/main_navigation_page.dart';
+import '../../../presentation/main/pages/main_navigation_page.dart';
 import 'app_routes.dart';
 
 class AppRouter {
@@ -44,6 +44,7 @@ class AppRouter {
 
       case AppRoutes.editProfileDetails:
         return MaterialPageRoute(builder: (_) => const EditProfileDetails());
+
 
       default:
         return MaterialPageRoute(
