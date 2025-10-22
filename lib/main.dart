@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vrooom/core/configs/theme/app_theme.dart';
+import 'package:vrooom/presentation/admin/car_management/pages/add_new_car.dart';
 import 'package:vrooom/presentation/user/splash/bloc/splash_cubit.dart';
 
 import 'core/configs/routes/app_router.dart';
@@ -15,14 +16,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => SplashCubit()..appStarted(),
-      child: MaterialApp(
-        theme: AppTheme.appTheme,
-        debugShowCheckedModeBanner: false,
-        initialRoute: AppRoutes.splash,
-        onGenerateRoute: AppRouter.onGenerateRoute,
-      ),
-    );
+    return AddNewCar();
   }
 }
