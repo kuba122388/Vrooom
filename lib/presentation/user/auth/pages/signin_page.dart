@@ -67,7 +67,11 @@ class _SigninPageState extends State<SigninPage> {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                PrimaryButton(text: "Login", onPressed: () {}),
+                PrimaryButton(
+                    text: "Login",
+                    onPressed: () {
+                      Navigator.pushNamed(context, AppRoutes.carManagement);
+                    }),
                 const SizedBox(height: AppSpacing.lg),
 
                 // Note: Social Login section
