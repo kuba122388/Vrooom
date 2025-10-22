@@ -12,6 +12,7 @@ class CustomTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final AppSvg? leadingIcon;
   final Color? fillColor;
+  final int maxLines;
 
   const CustomTextField({
     super.key,
@@ -22,6 +23,7 @@ class CustomTextField extends StatelessWidget {
     this.keyboardType,
     this.leadingIcon,
     this.fillColor,
+    this.maxLines = 1
   });
 
   @override
@@ -37,6 +39,7 @@ class CustomTextField extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs)
         ],
         TextField(
+          maxLines: maxLines,
           controller: controller,
           obscureText: isPassword,
           keyboardType: keyboardType,

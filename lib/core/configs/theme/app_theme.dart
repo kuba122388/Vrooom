@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 
-class AppTheme{
+class AppTheme {
   static final appTheme = ThemeData(
     primaryColor: AppColors.primary,
     scaffoldBackgroundColor: AppColors.background,
@@ -16,6 +16,17 @@ class AppTheme{
         borderSide: BorderSide.none,
       ),
       hintStyle: TextStyle(color: AppColors.text.neutral400),
+    ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.container.neutral800,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        hintStyle: TextStyle(color: AppColors.text.neutral400),
+      ),
     ),
   );
 }
