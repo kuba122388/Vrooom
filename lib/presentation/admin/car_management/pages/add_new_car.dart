@@ -22,6 +22,7 @@ class _AddNewCarState extends State<AddNewCar> {
   List<String> fuelTypes = ['Petrol', 'Diesel', 'Electric', 'Hybrid', 'Gas', 'LPG'];
   List<String> capacity = ['2', '4', '5', '6', '7', '8', '9', '10', '12', '16'];
   List<String> transmission = ['Automatic', 'Manual', 'Semi-automatic'];
+  bool availableForRent = true;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +31,7 @@ class _AddNewCarState extends State<AddNewCar> {
         body: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Container(
+            width: double.infinity,
             decoration: BoxDecoration(color: AppColors.container.neutral700, borderRadius: BorderRadius.circular(12.0)),
             padding: const EdgeInsets.all(18.0),
             child: SingleChildScrollView(
@@ -70,14 +72,15 @@ class _AddNewCarState extends State<AddNewCar> {
                   const CustomTextField(
                     hintText: 'e.g., Camry SE',
                     label: "Model",
-                    leadingIcon: AppSvg(asset: 'assets/vectors/users-round.svg'),
                   ),
                   const CustomTextField(
                     hintText: 'e.g., 2003',
                     label: "Year",
-                    leadingIcon: AppSvg(asset: 'assets/vectors/fuel.svg'),
                   ),
                   const CustomTextField(hintText: 'e.g., Midnight Black', label: "Color"),
+                  const SizedBox(
+                    height: AppSpacing.lg,
+                  ),
                   const Text(
                     "Detailed Specifications",
                     style: TextStyle(color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.bold),
@@ -119,35 +122,51 @@ class _AddNewCarState extends State<AddNewCar> {
                       fontSize: 18,
                     ),
                   ),
-                DottedBorder(
-                    color: Colors.white,                // border color
-                    strokeWidth: 2,                     // border thickness
-                    dashPattern: const [8, 4],                // pattern: [length, gap]
-                    borderType: BorderType.RRect,       // rounded rectangle
+                  const SizedBox(
+                    height: AppSpacing.md,
+                  ),
+                  DottedBorder(
+                    color: AppColors.container.neutral800,
+                    // border color
+                    strokeWidth: 2,
+                    // border thickness
+                    dashPattern: const [8, 4],
+                    // pattern: [length, gap]
+                    borderType: BorderType.RRect,
+                    // rounded rectangle
                     radius: const Radius.circular(12),
-                    child:
-                    Container(
-                    height: 100,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: AppColors.container.neutral700,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppColors.container.neutral700,
-                        width: 1,
+                    child: Container(
+                      height: 200,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: AppColors.container.neutral800,
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    ),
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           AppSvg(
                             asset: AppVectors.upload,
+                            height: 40,
+                            width: 40,
                           ),
-                          Text("Upload a car image)", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+                          SizedBox(height: AppSpacing.md,),
+                          Text("Upload a car image", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
                         ],
                       ),
+                    ),
                   ),
-                ),
+                  const SizedBox(
+                    height: AppSpacing.lg,
+                  ),
+                  const Text(
+                    "Pricing & Availability",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
                   const CustomTextField(
                     hintText: 'e.g., 75.00',
                     label: "Rental Price Per Day",
@@ -156,14 +175,50 @@ class _AddNewCarState extends State<AddNewCar> {
                   const SizedBox(
                     height: AppSpacing.lg,
                   ),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(border: Border.all(color: Colors.white24,),
+                    borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Available For Rent",style: TextStyle(fontSize: 16.0),),
+                          Switch(
+                              value: availableForRent,
+                              activeThumbColor: AppColors.background,
+                              inactiveThumbColor: AppColors.container.neutral900,
+                              activeTrackColor: AppColors.primary,
+                              inactiveTrackColor: AppColors.container.neutral700,
+                              onChanged: (availableForRent) {
+                                setState(() {
+                                  availableForRent = !availableForRent;
+                                });
+                              })
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
                         onPressed: () {},
-                        child: const Text("Cancel"),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(color: Colors.white,fontSize: 16.0),
+                        ),
                       ),
-                      const PrimaryButton(text: "Save Car"),
+                      SizedBox(
+                        width: AppSpacing.xs,
+                      ),
+                      const SizedBox(
+                          child: PrimaryButton(
+                        text: "Save Car",
+                        fontSize: 16,
+                      )),
                     ],
                   )
                 ])),

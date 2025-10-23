@@ -7,13 +7,18 @@ class PrimaryButton extends StatefulWidget {
   final VoidCallback? onPressed;
   final TextStyle? textStyle;
   final double height;
-
+  final double width;
+  final double fontSize;
+  final double horizontalPadding;
   const PrimaryButton({
     super.key,
     required this.text,
     this.onPressed,
     this.textStyle = AppTextStyles.button,
     this.height = 45.0,
+    this.fontSize = 16,
+    this.width = double.infinity,
+    this.horizontalPadding = 12
   });
 
   @override
@@ -36,7 +41,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
         widget.onPressed?.call();
       },
       child: Container(
-        width: double.infinity,
+        padding: EdgeInsets.only(left: widget.horizontalPadding,right: widget.horizontalPadding),
         height: widget.height,
         decoration: BoxDecoration(
           color: _isPressed ? AppColors.primary.withOpacity(0.7) : AppColors.primary,
