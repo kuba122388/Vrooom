@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/presentation/admin/car_management/pages/car_management_page.dart';
+import 'package:vrooom/presentation/admin/future_reservation/pages/future_reservation_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/email_verification_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/signin_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/signup_page.dart';
@@ -48,6 +49,9 @@ class AppRouter {
 
       case AppRoutes.carManagement:
         return MaterialPageRoute(builder: (_) => const CarManagementPage());
+
+      case AppRoutes.futureReservation:
+        return MaterialPageRoute(builder: (_) => const FutureReservation());
 
       default:
         return MaterialPageRoute(
