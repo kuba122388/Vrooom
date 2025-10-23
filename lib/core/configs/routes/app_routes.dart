@@ -12,4 +12,5 @@ class AppRoutes {
   static const String bookingDetails = '/bookingDetailsPage';
   static const String editProfileDetails = '/editProfileDetails';
   static const String carManagement = '/carManagement';
+  static const String finalizeRental = '/finalizeRental';
 }
