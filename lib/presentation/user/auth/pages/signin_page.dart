@@ -70,7 +70,7 @@ class _SigninPageState extends State<SigninPage> {
                 PrimaryButton(
                     text: "Login",
                     onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.carManagement);
+                      Navigator.pushNamed(context, AppRoutes.finalizeRental);
                     }),
                 const SizedBox(height: AppSpacing.lg),
 
