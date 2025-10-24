@@ -13,6 +13,7 @@ import 'package:vrooom/presentation/user/listings/pages/listings_page.dart';
 import 'package:vrooom/presentation/user/profile/pages/edit_profile_details.dart';
 import 'package:vrooom/presentation/user/splash/pages/splash_page.dart';
 
+import '../../../presentation/admin/admin_settings/pages/admin_settings.dart';
 import '../../../presentation/user/main/pages/main_navigation_page.dart';
 import 'app_routes.dart';
 
@@ -57,6 +58,8 @@ class AppRouter {
 
       case AppRoutes.manageUsers:
         return MaterialPageRoute(builder: (_) => const ManageUsersPage());
+      case AppRoutes.adminSettings:
+        return MaterialPageRoute(builder: (_) => const AdminSettingsPage());
 
       case AppRoutes.discountCodes:
         return MaterialPageRoute(builder: (_) => const DiscountCodesPage());
