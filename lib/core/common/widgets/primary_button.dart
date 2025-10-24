@@ -44,7 +44,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
         padding: EdgeInsets.only(left: widget.horizontalPadding,right: widget.horizontalPadding),
         height: widget.height,
         decoration: BoxDecoration(
-          color: _isPressed ? AppColors.primary.withOpacity(0.7) : AppColors.primary,
+          color: _isPressed ? AppColors.primary.withValues(alpha: 0.7) : AppColors.primary,
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: Center(

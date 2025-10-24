@@ -20,6 +20,10 @@ class _ContainerColors {
   final neutral750 = const Color(0xFF262a33);
   final neutral800 = const Color(0xFF1e2128);
   final neutral900 = const Color(0xFF171a1f);
+  final danger500 = const Color(0x80CE5056);
+  final warning500 = const Color(0x80FAAD14);
+  final complete200 = const Color(0xA422C55E);
+  final progress200 = const Color(0x740F74C7);
   final claret = const Color(0xFF3D0000);
 }
 

@@ -43,6 +43,7 @@ class CustomTextField extends StatelessWidget {
           controller: controller,
           obscureText: isPassword,
           keyboardType: keyboardType,
+          maxLines: maxLines,
           decoration: InputDecoration(
             hintText: hintText,
             prefixIconConstraints: const BoxConstraints(
