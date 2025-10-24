@@ -44,4 +44,10 @@ class AppVectors {
 
   static const locationStart = '${basePath}locate$format';
   static const locationFinish = '${basePath}locate-fixed$format';
+
+  static const usersRound = '${basePath}users-round$format';
+  static const gitFork = '${basePath}git-fork$format';
+  static const dollarSign = '${basePath}dollar-sign$format';
+  static const upload = '${basePath}upload$format';
+
 }

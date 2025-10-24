@@ -5,6 +5,7 @@ import 'package:vrooom/core/common/widgets/primary_button.dart';
 import 'package:vrooom/core/common/widgets/splash_hero.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
+import 'package:vrooom/presentation/admin/car_management/pages/add_new_car.dart';
 
 import '../widgets/divider_with_text.dart';
 import '../../../../core/common/widgets/custom_text_field.dart';
@@ -52,11 +53,7 @@ class _SigninPageState extends State<SigninPage> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                 ),
-                CustomTextField(
-                    label: "Password",
-                    hintText: 'Your password',
-                    isPassword: true,
-                    controller: _passwordController),
+                CustomTextField(label: "Password", hintText: 'Your password', isPassword: true, controller: _passwordController),
                 const Align(
                   alignment: Alignment.centerRight,
                   child: PressableText(
@@ -68,10 +65,14 @@ class _SigninPageState extends State<SigninPage> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 PrimaryButton(
-                    text: "Login",
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.finalizeRental);
-                    }),
+                  text: "Login",
+                  onPressed: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => AddNewCar()),
+                      (route) => false,
+                    );
+                  },
+                ),
                 const SizedBox(height: AppSpacing.lg),
 
                 // Note: Social Login section
