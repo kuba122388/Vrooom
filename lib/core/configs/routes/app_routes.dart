@@ -16,4 +16,6 @@ class AppRoutes {
   static const String futureReservation = '/futureReservation';
   static const String manageUsers = '/manageUsers';
   static const String finalizeRental = '/finalizeRental';
+  static const String adminSettings = '/adminSettings';
+  static const String discountCodes = '/discountCodes';
 }

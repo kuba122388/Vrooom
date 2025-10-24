@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/presentation/admin/car_management/pages/car_management_page.dart';
+import 'package:vrooom/presentation/admin/discount_codes/pages/discount_codes_page.dart';
 import 'package:vrooom/presentation/admin/future_reservation/pages/future_reservation_page.dart';
 import 'package:vrooom/presentation/admin/manage_users/pages/manage_users_page.dart';
 import 'package:vrooom/presentation/admin/car_management/pages/finalize_rental.dart';
@@ -14,6 +15,7 @@ import 'package:vrooom/presentation/user/listings/pages/listings_page.dart';
 import 'package:vrooom/presentation/user/profile/pages/edit_profile_details.dart';
 import 'package:vrooom/presentation/user/splash/pages/splash_page.dart';
 
+import '../../../presentation/admin/admin_settings/pages/admin_settings.dart';
 import '../../../presentation/user/main/pages/main_navigation_page.dart';
 import 'app_routes.dart';
 
@@ -62,6 +64,12 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const ManageUsersPage());
       case AppRoutes.finalizeRental:
         return MaterialPageRoute(builder: (_) => const FinalizeRentalPage());
+      case AppRoutes.adminSettings:
+        return MaterialPageRoute(builder: (_) => const AdminSettingsPage());
+
+      case AppRoutes.discountCodes:
+        return MaterialPageRoute(builder: (_) => const DiscountCodesPage());
+
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
