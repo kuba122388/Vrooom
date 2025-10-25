@@ -261,11 +261,11 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                           });
                         },
                         label: "Have a rabat code?"),
-                    SizedBox(
+                    const SizedBox(
                       height: AppSpacing.xs,
                     ),
                     if (haveRabatCode == true) ...[
-                      SizedBox(
+                      const SizedBox(
                         height: AppSpacing.sm,
                       ),
                       Row(
@@ -303,12 +303,12 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                         label: "Initial cost:",
                         value: "\$${totalPrice.toStringAsFixed(2)}",
                       ),
-                      SizedBox(height: AppSpacing.xxs),
+                      const SizedBox(height: AppSpacing.xxs),
                       InfoRow(
                         label: "Discount:",
                         value: "-\$${discountAmount.toStringAsFixed(2)}",
                       ),
-                      SizedBox(height: AppSpacing.sm),
+                      const SizedBox(height: AppSpacing.sm),
                     ],
                     InfoRow(
                       label: "Total Cost:",

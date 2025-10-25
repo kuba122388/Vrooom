@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 
 import '../../../../core/common/widgets/app_svg.dart';
-import '../../../../core/configs/theme/app_colors.dart';
 
 class SettingsTile extends StatelessWidget {
   final AppSvg? leadingIcon;
@@ -22,27 +21,30 @@ class SettingsTile extends StatelessWidget {
             child: leadingIcon,
           ),
           Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(
-                title,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 16,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: AppSpacing.xs,
-              ),
-              Text(
-                description,
-                textAlign: TextAlign.left,
-                softWrap: true,
-                style: const TextStyle(
-                  fontSize: 14,
+                const SizedBox(
+                  height: AppSpacing.xs,
                 ),
-              )
-            ]),
-          )
+                Text(
+                  description,
+                  textAlign: TextAlign.left,
+                  softWrap: true,
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );

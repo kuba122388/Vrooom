@@ -49,8 +49,8 @@ class CarTile extends StatelessWidget {
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                         colors: [
-                          Colors.black.withOpacity(0.5),
-                          Colors.black.withOpacity(0.0),
+                          Colors.black.withValues(alpha: 0.5),
+                          Colors.black.withValues(alpha: 0.5),
                         ],
                       ),
                     ),
@@ -105,10 +105,10 @@ class CarTile extends StatelessWidget {
                       textStyle: AppTextStyles.smallButton,
                       height: 40.0,
                       onPressed: () => Navigator.pushNamed(context, AppRoutes.carDetails),
-                    )
+                    ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

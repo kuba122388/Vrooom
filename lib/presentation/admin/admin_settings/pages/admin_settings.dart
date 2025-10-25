@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:vrooom/core/common/widgets/custom_app_bar.dart';
-import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 import 'package:vrooom/presentation/admin/admin_settings/widgets/settings_section.dart';
 import 'package:vrooom/presentation/admin/admin_settings/widgets/settings_tile.dart';
+import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
+import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
 
 import '../../../../../../core/common/widgets/app_svg.dart';
 import '../../../../../../core/configs/assets/app_vectors.dart';
@@ -46,27 +46,35 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: const CustomAppBar(title: "Admin Settings"),
-        body: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(18.0),
-            child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                controller: _scrollController,
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  SettingsSection(
-                      sectionTitle: "Account Information",
-                      sectionDescription: "Manage your administrator profile details.",
-                      settings: accountInformation),
-                  const SizedBox(height: AppSpacing.md,),
-                  SettingsSection(
-                      sectionTitle: "General preferences",
-                      sectionDescription: "Adjust basic application settings and display option",
-                      settings: generalPreferences)
-                ])),
+      appBar: const AdminAppBar(title: "Admin Settings"),
+      drawer: const AdminDrawer(),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(18.0),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            controller: _scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SettingsSection(
+                    sectionTitle: "Account Information",
+                    sectionDescription: "Manage your administrator profile details.",
+                    settings: accountInformation),
+                const SizedBox(
+                  height: AppSpacing.md,
+                ),
+                SettingsSection(
+                    sectionTitle: "General preferences",
+                    sectionDescription: "Adjust basic application settings and display option",
+                    settings: generalPreferences)
+              ],
+            ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:vrooom/core/common/widgets/custom_app_bar.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
+import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
+import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
 import 'package:vrooom/presentation/admin/widgets/discount_code_entry.dart';
 
 class DiscountCodesPage extends StatefulWidget {
@@ -103,9 +104,8 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
     ];
 
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: "Discount Codes"
-      ),
+      appBar: const AdminAppBar(title: "Discount Codes"),
+      drawer: const AdminDrawer(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: SizedBox(
         width: 220,
@@ -118,14 +118,13 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(Icons.add_circle_outline,),
+              Icon(
+                Icons.add_circle_outline,
+              ),
               SizedBox(width: AppSpacing.xs),
               Text(
                 "Add New Promo Code",
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.5
-                ),
+                style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.5),
               )
             ],
           ),
@@ -139,111 +138,66 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _activeCode = true;
-                        });
-                      },
-                      style: _activeCode
-                          ? ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primary,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0)
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)
-                      )
-                          : ElevatedButton.styleFrom(
-                          foregroundColor: AppColors.text.neutral400,
-                          backgroundColor: AppColors.container.neutral900,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0)
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)
-                      ),
-                      child: const Text(
-                        "Active Codes",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: -0.5
-                        ),
-                      )
+                    onPressed: () {
+                      setState(() {
+                        _activeCode = true;
+                      });
+                    },
+                    style: _activeCode
+                        ? ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0))
+                        : ElevatedButton.styleFrom(
+                            foregroundColor: AppColors.text.neutral400,
+                            backgroundColor: AppColors.container.neutral900,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)),
+                    child: const Text(
+                      "Active Codes",
+                      style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.5),
+                    ),
                   ),
                 ),
-
                 const SizedBox(width: AppSpacing.sm),
-
                 Expanded(
                   child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _activeCode = false;
-                        });
-                      },
-                      style: !_activeCode
-                          ? ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primary,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0)
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)
-                      )
-                          : ElevatedButton.styleFrom(
-                          foregroundColor: AppColors.text.neutral400,
-                          backgroundColor: AppColors.container.neutral900,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0)
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)
-                      ),
-                      child: const Text(
-                        "Expired Codes",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: -0.5
-                        ),
-                      )
+                    onPressed: () {
+                      setState(() {
+                        _activeCode = false;
+                      });
+                    },
+                    style: !_activeCode
+                        ? ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0))
+                        : ElevatedButton.styleFrom(
+                            foregroundColor: AppColors.text.neutral400,
+                            backgroundColor: AppColors.container.neutral900,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)),
+                    child: const Text(
+                      "Expired Codes",
+                      style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.5),
+                    ),
                   ),
-                )
+                ),
               ],
             ),
-
             const SizedBox(height: AppSpacing.sm),
-
-            if (_activeCode)
+            if (_activeCode) ...[
               Expanded(
                 child: ListView.builder(
-                  itemCount: activeCodes.length * 2 - 1,
-                  itemBuilder: (context, index) {
-                    if (index.isOdd) {
-                      return const SizedBox(height: AppSpacing.sm);
-                    }
-
-                    final entry = activeCodes[index ~/ 2];
-
-                    return DiscountCodeEntry(
-                      code: entry.code,
-                      discount: entry.discount,
-                      type: entry.type,
-                      startDate: entry.startDate,
-                      endDate: entry.endDate,
-                      codeStatus: entry.codeStatus,
-                    );
-                  }
-                ),
-              ),
-
-            if (!_activeCode)
-              Expanded(
-                child: ListView.builder(
-                    itemCount: expiredCodes.length * 2 - 1,
+                    itemCount: activeCodes.length * 2 - 1,
                     itemBuilder: (context, index) {
                       if (index.isOdd) {
                         return const SizedBox(height: AppSpacing.sm);
                       }
 
-                      final entry = expiredCodes[index ~/ 2];
+                      final entry = activeCodes[index ~/ 2];
 
                       return DiscountCodeEntry(
                         code: entry.code,
@@ -253,9 +207,31 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                         endDate: entry.endDate,
                         codeStatus: entry.codeStatus,
                       );
+                    }),
+              ),
+            ] else ...[
+              Expanded(
+                child: ListView.builder(
+                  itemCount: expiredCodes.length * 2 - 1,
+                  itemBuilder: (context, index) {
+                    if (index.isOdd) {
+                      return const SizedBox(height: AppSpacing.sm);
                     }
+
+                    final entry = expiredCodes[index ~/ 2];
+
+                    return DiscountCodeEntry(
+                      code: entry.code,
+                      discount: entry.discount,
+                      type: entry.type,
+                      startDate: entry.startDate,
+                      endDate: entry.endDate,
+                      codeStatus: entry.codeStatus,
+                    );
+                  },
                 ),
-              )
+              ),
+            ],
           ],
         ),
       ),

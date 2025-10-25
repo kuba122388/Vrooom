@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:vrooom/core/common/widgets/custom_app_bar.dart';
 import 'package:vrooom/core/common/widgets/search_filter_module.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
+import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
+import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
 import 'package:vrooom/presentation/admin/widgets/car_inventory_entry.dart';
 
 import '../../../../core/configs/assets/app_images.dart';
@@ -60,9 +61,10 @@ class CarManagementPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: const AdminAppBar(
         title: "Manage cars",
       ),
+      drawer: const AdminDrawer(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
@@ -92,7 +94,7 @@ class CarManagementPage extends StatelessWidget {
                     price: entry.price);
               }).expand(
                 (widget) => [widget, const SizedBox(height: AppSpacing.sm)],
-              )
+              ),
             ],
           ),
         ),

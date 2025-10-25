@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:vrooom/core/common/widgets/custom_app_bar.dart';
 import 'package:vrooom/core/common/widgets/search_filter_module.dart';
+import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
+import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
 import 'package:vrooom/presentation/admin/widgets/rental_information_entry.dart';
 
 import '../../../../core/configs/assets/app_images.dart';
@@ -16,7 +17,6 @@ class FutureReservation extends StatelessWidget {
         profileImage: AppImages.person,
         firstName: "Marek",
         surname: "Mostowiak",
-        email: "marek.mostowiak@example.com",
         reservationID: "RENT001",
         pickupDate: DateTime.now(),
         returnDate: DateTime.now().add(const Duration(days: 5)),
@@ -25,12 +25,10 @@ class FutureReservation extends StatelessWidget {
         model: "Mercedes-Benz",
         productionYear: 2022,
       ),
-
       RentalInformationEntry(
         profileImage: AppImages.person,
         firstName: "Kacper",
         surname: "Klimkiewicz",
-        email: "k.klimkiewicz@test.com",
         reservationID: "RENT002",
         pickupDate: DateTime.now(),
         returnDate: DateTime.now().add(const Duration(days: 5)),
@@ -39,12 +37,10 @@ class FutureReservation extends StatelessWidget {
         model: "Mercedes-Benz",
         productionYear: 2021,
       ),
-
       RentalInformationEntry(
         profileImage: AppImages.person,
         firstName: "Henryk",
         surname: "Sienkiewicz",
-        email: "hs@example.com",
         reservationID: "RENT003",
         pickupDate: DateTime.now(),
         returnDate: DateTime.now().add(const Duration(days: 5)),
@@ -56,9 +52,8 @@ class FutureReservation extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: "Future Reservations"
-      ),
+      appBar: const AdminAppBar(title: "Future Reservations"),
+      drawer: const AdminDrawer(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
@@ -81,7 +76,6 @@ class FutureReservation extends StatelessWidget {
                   profileImage: entry.profileImage,
                   firstName: entry.firstName,
                   surname: entry.surname,
-                  email: entry.email,
                   reservationID: entry.reservationID,
                   pickupDate: entry.pickupDate,
                   returnDate: entry.returnDate,
@@ -90,9 +84,7 @@ class FutureReservation extends StatelessWidget {
                   model: entry.model,
                   productionYear: entry.productionYear,
                 );
-              }).expand(
-                  (widget) => [widget, const SizedBox(height: AppSpacing.sm)]
-              )
+              }).expand((widget) => [widget, const SizedBox(height: AppSpacing.sm)])
             ],
           ),
         ),

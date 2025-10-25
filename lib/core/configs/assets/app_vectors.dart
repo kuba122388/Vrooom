@@ -50,4 +50,9 @@ class AppVectors {
   static const dollarSign = '${basePath}dollar-sign$format';
   static const upload = '${basePath}upload$format';
 
+  static const discount = '${basePath}badge-percent$format';
+  static const activeRental = '${basePath}calendar-check$format';
+  static const historyRental = '${basePath}history$format';
+  static const futureRental = '${basePath}calendar-arrow-up$format';
+  static const logout = '${basePath}log-out$format';
 }

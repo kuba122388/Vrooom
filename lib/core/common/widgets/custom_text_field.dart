@@ -14,17 +14,16 @@ class CustomTextField extends StatelessWidget {
   final Color? fillColor;
   final int maxLines;
 
-  const CustomTextField({
-    super.key,
-    this.label,
-    required this.hintText,
-    this.isPassword = false,
-    this.controller,
-    this.keyboardType,
-    this.leadingIcon,
-    this.fillColor,
-    this.maxLines = 1
-  });
+  const CustomTextField(
+      {super.key,
+      this.label,
+      required this.hintText,
+      this.isPassword = false,
+      this.controller,
+      this.keyboardType,
+      this.leadingIcon,
+      this.fillColor,
+      this.maxLines = 1});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +38,6 @@ class CustomTextField extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs)
         ],
         TextField(
-          maxLines: maxLines,
           controller: controller,
           obscureText: isPassword,
           keyboardType: keyboardType,

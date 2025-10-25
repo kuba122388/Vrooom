@@ -99,12 +99,15 @@ class _PinputFieldsState extends State<PinputFields> {
             ),
             const SizedBox(height: AppSpacing.lg),
             RichText(
-              text: TextSpan(children: [
-                const TextSpan(text: "Didn't get a code?  "),
-                TextSpan(
+              text: TextSpan(
+                children: [
+                  const TextSpan(text: "Didn't get a code?  "),
+                  TextSpan(
                     text: 'Resend: 59 s',
-                    style: TextStyle(color: AppColors.primary.withOpacity(0.5))),
-              ]),
+                    style: TextStyle(color: AppColors.primary.withValues(alpha: 0.5)),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
             PrimaryButton(

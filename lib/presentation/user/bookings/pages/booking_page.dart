@@ -8,19 +8,19 @@ class BookingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> _penalties = ["1"];
-    List<String> _active = ["1"];
-    List<String> _upcoming = ["1"];
+    List<String> penalties = ["1"];
+    List<String> active = ["1"];
+    List<String> upcoming = ["1"];
 
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: 30.0,
           vertical: 20.0,
         ),
         child: Column(
           children: [
-            if (_penalties.isNotEmpty) ...[
+            if (penalties.isNotEmpty) ...[
               BookingCarTile(
                 title: "Penalty Section",
                 penalty: "\$200 Penalty",
@@ -29,11 +29,11 @@ class BookingsPage extends StatelessWidget {
                 startPoint: "Warsaw",
                 finishPoint: "Warsaw",
               ),
-              SizedBox(
+              const SizedBox(
                 height: AppSpacing.md,
               ),
             ],
-            if (_active.isNotEmpty) ...[
+            if (active.isNotEmpty) ...[
               BookingCarTile(
                 title: "Active Rentals",
                 startDate: DateTime(2025, 5, 10),
@@ -41,11 +41,11 @@ class BookingsPage extends StatelessWidget {
                 startPoint: "Warsaw",
                 finishPoint: "Warsaw",
               ),
-              SizedBox(
+              const SizedBox(
                 height: AppSpacing.md,
               ),
             ],
-            if (_upcoming.isNotEmpty) ...[
+            if (upcoming.isNotEmpty) ...[
               BookingCarTile(
                 title: "Upcoming Rentals",
                 startDate: DateTime(2025, 5, 10),
@@ -53,7 +53,7 @@ class BookingsPage extends StatelessWidget {
                 startPoint: "Warsaw",
                 finishPoint: "Warsaw",
               ),
-              SizedBox(
+              const SizedBox(
                 height: AppSpacing.md,
               ),
             ],
@@ -67,7 +67,7 @@ class BookingsPage extends StatelessWidget {
                 finishPoint: "Warsaw",
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: AppSpacing.md,
             ),
           ],

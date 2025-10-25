@@ -9,7 +9,11 @@ class SettingsSection extends StatefulWidget {
   final String sectionDescription;
   final List<SettingsTile> settings;
 
-  const SettingsSection({super.key, required this.sectionTitle, required this.sectionDescription, required this.settings});
+  const SettingsSection(
+      {super.key,
+      required this.sectionTitle,
+      required this.sectionDescription,
+      required this.settings});
 
   @override
   State<StatefulWidget> createState() => _SettingsSectionState();
@@ -30,9 +34,12 @@ class _SettingsSectionState extends State<SettingsSection> {
             Text(
               widget.sectionTitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.bold),
+              style:
+                  const TextStyle(color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: AppSpacing.xxs,),
+            const SizedBox(
+              height: AppSpacing.xxs,
+            ),
             Row(
               children: [
                 Expanded(
@@ -44,10 +51,12 @@ class _SettingsSectionState extends State<SettingsSection> {
                 ),
               ],
             ),
-            ...widget.settings.map((tile) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: tile,
-                )),
+            ...widget.settings.map(
+              (tile) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: tile,
+              ),
+            ),
           ],
         ),
       ),
