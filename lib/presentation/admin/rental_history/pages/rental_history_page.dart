@@ -3,10 +3,9 @@ import 'package:vrooom/presentation/admin/rental_history/widgets/rental_history_
 
 import '../../../../core/common/widgets/search_filter_module.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
+import '../../../../core/enums/rental_status.dart';
 import '../../widgets/admin_app_bar.dart';
 import '../../widgets/admin_drawer.dart';
-
-enum RentalHistoryStatus { completed, cancelled }
 
 class RentalHistoryPage extends StatelessWidget {
   const RentalHistoryPage({super.key});
@@ -18,19 +17,19 @@ class RentalHistoryPage extends StatelessWidget {
         rentalID: "RENT001",
         startDate: DateTime(2025, 6, 30),
         endDate: DateTime(2025, 7, 30),
-        rentalHistoryStatus: RentalHistoryStatus.completed,
+        rentalStatus: RentalStatus.completed,
       ),
       RentalHistoryCarEntry(
         rentalID: "RENT002",
         startDate: DateTime(2025, 6, 30),
         endDate: DateTime(2025, 7, 30),
-        rentalHistoryStatus: RentalHistoryStatus.cancelled,
+        rentalStatus: RentalStatus.cancelled,
       ),
       RentalHistoryCarEntry(
         rentalID: "RENT003",
         startDate: DateTime(2025, 6, 30),
         endDate: DateTime(2025, 7, 30),
-        rentalHistoryStatus: RentalHistoryStatus.cancelled,
+        rentalStatus: RentalStatus.cancelled,
       )
     ];
 

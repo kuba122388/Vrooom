@@ -4,13 +4,7 @@ import 'package:vrooom/core/configs/assets/app_vectors.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 
 import '../../../../core/configs/theme/app_spacing.dart';
-
-enum RentalStatus {
-  active,
-  completed,
-  cancelled,
-  penalty,
-}
+import '../../../../core/enums/rental_status.dart';
 
 class CarStatusRow extends StatelessWidget {
   final String carName;
@@ -21,30 +15,6 @@ class CarStatusRow extends StatelessWidget {
     required this.carName,
     required this.status,
   });
-
-  Color _getStatusColor() {
-    switch (status) {
-      case RentalStatus.active:
-        return AppColors.container.claret;
-      case RentalStatus.penalty:
-        return AppColors.primary;
-      default:
-        return AppColors.container.neutral700;
-    }
-  }
-
-  String _getStatusText() {
-    switch (status) {
-      case RentalStatus.active:
-        return "Active";
-      case RentalStatus.completed:
-        return "Completed";
-      case RentalStatus.cancelled:
-        return "Cancelled";
-      case RentalStatus.penalty:
-        return "Penalty";
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,15 +42,15 @@ class CarStatusRow extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                decoration: BoxDecoration(
-                    color: _getStatusColor(), borderRadius: BorderRadius.circular(10.0)),
+                decoration:
+                    BoxDecoration(color: status.color, borderRadius: BorderRadius.circular(10.0)),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10.0,
                     vertical: 3.0,
                   ),
                   child: Text(
-                    _getStatusText(),
+                    status.displayText,
                     style: const TextStyle(
                       fontSize: 12.0,
                       letterSpacing: -0.5,
