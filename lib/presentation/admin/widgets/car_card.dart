@@ -6,8 +6,8 @@ import '../../../core/configs/theme/app_spacing.dart';
 class CarCard extends StatelessWidget {
   final String carImage;
   final String carName;
-  final Column rightSide;
-  final Row bottom;
+  final Widget rightSide;
+  final Widget bottom;
 
   const CarCard({
     super.key,
@@ -27,7 +27,7 @@ class CarCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Row(children: [
               ClipRRect(
@@ -36,7 +36,7 @@ class CarCard extends StatelessWidget {
                   children: [
                     Image.asset(
                       carImage,
-                      width: 140,
+                      width: 120,
                       height: 120,
                       fit: BoxFit.cover,
                     ),
