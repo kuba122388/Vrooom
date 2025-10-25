@@ -32,6 +32,7 @@ class _TextColors {
 
   final neutral200 = const Color(0xFFf3f4f6);
   final neutral400 = const Color(0xFFbdc1ca);
+  final neutral500 = const Color(0xFF9095a1);
   final red750 = const Color(0xC0E00000);
 }
 
