@@ -18,4 +18,5 @@ class AppRoutes {
   static const String adminSettings = '/adminSettings';
   static const String discountCodes = '/discountCodes';
   static const String rentalHistory = '/rentalHistory';
+  static const String activeRentals = '/activeRentals';
 }
