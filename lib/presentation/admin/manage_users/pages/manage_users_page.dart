@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:vrooom/core/common/widgets/custom_app_bar.dart';
 import 'package:vrooom/core/common/widgets/search_user_module.dart';
 import 'package:vrooom/core/configs/assets/app_images.dart';
+import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
+import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
 import 'package:vrooom/presentation/admin/widgets/user_information_entity.dart';
 
 import '../../../../core/configs/theme/app_spacing.dart';
@@ -20,7 +21,6 @@ class ManageUsersPage extends StatelessWidget {
         phone: "622-012-775",
         userStatus: UserStatus.active,
       ),
-
       const UserInformationEntity(
         profileImage: AppImages.person,
         firstName: "Cezary",
@@ -29,7 +29,6 @@ class ManageUsersPage extends StatelessWidget {
         phone: "623-123-991",
         userStatus: UserStatus.offline,
       ),
-
       const UserInformationEntity(
         profileImage: AppImages.person,
         firstName: "Robert",
@@ -38,7 +37,6 @@ class ManageUsersPage extends StatelessWidget {
         phone: "091-881-321",
         userStatus: UserStatus.active,
       ),
-
       const UserInformationEntity(
         profileImage: AppImages.person,
         firstName: "Cezary",
@@ -50,9 +48,8 @@ class ManageUsersPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: "Manage Users"
-      ),
+      appBar: const AdminAppBar(title: "Manage Users"),
+      drawer: const AdminDrawer(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
@@ -81,7 +78,7 @@ class ManageUsersPage extends StatelessWidget {
                 );
               }).expand(
                 (widget) => [widget, const SizedBox(height: AppSpacing.sm)],
-              )
+              ),
             ],
           ),
         ),

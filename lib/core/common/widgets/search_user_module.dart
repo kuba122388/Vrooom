@@ -13,9 +13,7 @@ class SearchUserModule extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.container.neutral900,
-        borderRadius: BorderRadius.circular(10.0)
-      ),
+          color: AppColors.container.neutral900, borderRadius: BorderRadius.circular(10.0)),
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
@@ -49,8 +47,8 @@ class SearchUserModule extends StatelessWidget {
             const Center(
               child: SizedBox(
                 width: 150,
-                child: FilterTile(text: "More Filters", svgPicture: AppVectors.filter)
-              )
+                child: FilterTile(text: "More Filters", svgPicture: AppVectors.filter),
+              ),
             )
           ],
         ),

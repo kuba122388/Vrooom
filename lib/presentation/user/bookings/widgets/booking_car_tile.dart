@@ -52,7 +52,7 @@ class BookingCarTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     "Mercedes-Benz C-Class",
                     style: TextStyle(
                       letterSpacing: -0.5,
@@ -60,80 +60,80 @@ class BookingCarTile extends StatelessWidget {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: AppSpacing.xxs),
+                  const SizedBox(height: AppSpacing.xxs),
 
                   // DATE
                   Row(
                     children: [
-                      AppSvg(
+                      const AppSvg(
                         asset: AppVectors.start,
                         height: 14.0,
                       ),
-                      SizedBox(width: AppSpacing.xxs),
+                      const SizedBox(width: AppSpacing.xxs),
                       Text(DateFormat("dd.MM.yyyy").format(startDate)),
-                      Spacer(),
+                      const Spacer(),
                     ],
                   ),
-                  SizedBox(height: AppSpacing.xxs / 2),
+                  const SizedBox(height: AppSpacing.xxs / 2),
                   Row(
                     children: [
-                      AppSvg(
+                      const AppSvg(
                         asset: AppVectors.finish,
                         height: 14.0,
                       ),
-                      SizedBox(width: AppSpacing.xxs),
+                      const SizedBox(width: AppSpacing.xxs),
                       Text(DateFormat("dd.MM.yyyy").format(finishDate)),
-                      Spacer(),
+                      const Spacer(),
                     ],
                   ),
-                  SizedBox(height: AppSpacing.xs),
+                  const SizedBox(height: AppSpacing.xs),
 
                   // PLACE
                   Row(
                     children: [
-                      AppSvg(
+                      const AppSvg(
                         asset: AppVectors.locationStart,
                         height: 14.0,
                       ),
-                      SizedBox(width: AppSpacing.xxs),
+                      const SizedBox(width: AppSpacing.xxs),
                       Text(startPoint),
-                      Spacer(),
+                      const Spacer(),
                     ],
                   ),
-                  SizedBox(height: AppSpacing.xxs / 2),
+                  const SizedBox(height: AppSpacing.xxs / 2),
                   Row(
                     children: [
-                      AppSvg(
+                      const AppSvg(
                         asset: AppVectors.locationFinish,
                         height: 14.0,
                       ),
                       const SizedBox(width: AppSpacing.xxs),
                       Text(finishPoint),
-                      Spacer(),
+                      const Spacer(),
                     ],
                   ),
 
                   // PENALTY,
-                  Spacer(),
+                  const Spacer(),
                   Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       if (penalty != null)
                         Text(
                           penalty!,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.primary,
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                      Spacer(),
-                      AppSvg(
+                      const Spacer(),
+                      const AppSvg(
                         asset: AppVectors.arrowRight,
                         height: 20.0,
-                      )
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),

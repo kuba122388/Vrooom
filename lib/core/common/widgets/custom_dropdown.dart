@@ -13,19 +13,15 @@ class CustomDropdownMenu extends StatefulWidget {
   final String? hintText;
   final AppSvg? leadingIcon;
 
-
-
-
-  const CustomDropdownMenu({
-    super.key,
-    required this.items,
-    required this.label,
-    this.onSelected,
-    this.initialValue,
-    this.controller,
-    this.hintText,
-    this.leadingIcon
-  });
+  const CustomDropdownMenu(
+      {super.key,
+      required this.items,
+      required this.label,
+      this.onSelected,
+      this.initialValue,
+      this.controller,
+      this.hintText,
+      this.leadingIcon});
 
   @override
   State<CustomDropdownMenu> createState() => _CustomDropdownMenuState();
@@ -45,13 +41,11 @@ class _CustomDropdownMenuState extends State<CustomDropdownMenu> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (widget.label != null) ...[
-          Text(
-            widget.label!,
-            style: AppTextStyles.label,
-          ),
-          const SizedBox(height: AppSpacing.xs)
-        ],
+        Text(
+          widget.label,
+          style: AppTextStyles.label,
+        ),
+        const SizedBox(height: AppSpacing.xs),
         DropdownMenu<String>(
           width: double.infinity,
           leadingIcon: Padding(
@@ -64,9 +58,9 @@ class _CustomDropdownMenuState extends State<CustomDropdownMenu> {
           menuStyle: MenuStyle(
             shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0)
-              )
-            )
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+            ),
           ),
           initialSelection: selectedValue,
           onSelected: (value) {
@@ -77,10 +71,11 @@ class _CustomDropdownMenuState extends State<CustomDropdownMenu> {
               widget.onSelected!(value);
             }
           },
-          dropdownMenuEntries: widget.items.map((item) => DropdownMenuEntry<String>(
-            value: item,
-            label: item,
-          ))
+          dropdownMenuEntries: widget.items
+              .map((item) => DropdownMenuEntry<String>(
+                    value: item,
+                    label: item,
+                  ))
               .toList(),
         ),
         const SizedBox(height: AppSpacing.sm),

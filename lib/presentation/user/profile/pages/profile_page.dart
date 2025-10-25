@@ -53,7 +53,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
@@ -98,7 +98,7 @@ class ProfilePage extends StatelessWidget {
                   const SettingsTile(
                     icon: AppSvg(asset: AppVectors.contact),
                     label: "Contact",
-                  )
+                  ),
                 ],
               ),
             ),

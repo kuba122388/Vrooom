@@ -12,15 +12,14 @@ class FilterTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      child: Container(
-        decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(10.0),
-            border: Border.all(color: AppColors.container.neutral700)),
-        height: 40,
-        child: Center(
-            child: Row(
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(10.0),
+          border: Border.all(color: AppColors.container.neutral700)),
+      height: 40,
+      child: Center(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AppSvg(
@@ -34,7 +33,7 @@ class FilterTile extends StatelessWidget {
               style: const TextStyle(fontFamily: 'Roboto', letterSpacing: -0.5),
             ),
           ],
-        )),
+        ),
       ),
     );
   }

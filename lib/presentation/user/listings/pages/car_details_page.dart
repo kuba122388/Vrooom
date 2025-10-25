@@ -47,12 +47,13 @@ class CarDetailsPage extends StatelessWidget {
                   child: Text(
                     "Mercedes-Benz C-Class",
                     style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 28.0,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.5),
+                      fontFamily: 'Roboto',
+                      fontSize: 28.0,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.5,
+                    ),
                   ),
-                )
+                ),
               ],
             ),
             Padding(

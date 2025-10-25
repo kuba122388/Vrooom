@@ -48,17 +48,17 @@ class SearchFilterModule extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
             const Row(
               children: [
-                FilterTile(text: "Location", svgPicture: AppVectors.mapPin),
+                Expanded(child: FilterTile(text: "Location", svgPicture: AppVectors.mapPin)),
                 SizedBox(width: AppSpacing.xs),
-                FilterTile(text: "Dates", svgPicture: AppVectors.calendar),
+                Expanded(child: FilterTile(text: "Dates", svgPicture: AppVectors.calendar)),
               ],
             ),
             const SizedBox(height: AppSpacing.xs),
             const Row(
               children: [
-                FilterTile(text: "Car Type", svgPicture: AppVectors.car),
+                Expanded(child: FilterTile(text: "Car Type", svgPicture: AppVectors.car)),
                 SizedBox(width: AppSpacing.xs),
-                FilterTile(text: "Filters", svgPicture: AppVectors.filter),
+                Expanded(child: FilterTile(text: "Filters", svgPicture: AppVectors.filter)),
               ],
             ),
           ],
