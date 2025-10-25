@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
+import 'package:vrooom/presentation/admin/widgets/car_card.dart';
 
 import '../../../core/common/widgets/app_svg.dart';
 import '../../../core/configs/assets/app_vectors.dart';
@@ -61,125 +62,86 @@ class CarInventoryEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.container.neutral700,
-        borderRadius: BorderRadius.circular(10.0),
+    return CarCard(
+      carName: carName,
+      carImage: carImage,
+      rightSide: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const AppSvg(
+                asset: AppVectors.fuel,
+                color: AppColors.primary,
+                height: 18.0,
+              ),
+              const SizedBox(width: AppSpacing.xxs),
+              Text(fuel),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xxs),
+          Row(
+            children: [
+              const AppSvg(
+                asset: AppVectors.carFront,
+                color: AppColors.primary,
+                height: 18.0,
+              ),
+              const SizedBox(width: AppSpacing.xxs),
+              Text("$mileage km"),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xxs),
+          Row(
+            children: [
+              const AppSvg(
+                asset: AppVectors.gauge,
+                color: AppColors.primary,
+                height: 18.0,
+              ),
+              const SizedBox(width: AppSpacing.xxs),
+              Text(transmission),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xxs),
+          Row(
+            children: [
+              const AppSvg(
+                asset: AppVectors.seats,
+                color: AppColors.primary,
+                height: 18.0,
+              ),
+              const SizedBox(width: AppSpacing.xxs),
+              Text("$seats seats"),
+            ],
+          ),
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: Image.asset(
-                  carImage,
-                  width: 140,
-                  height: 120,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(width: 10.0),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      carName,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xxs),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const AppSvg(
-                              asset: AppVectors.fuel,
-                              color: AppColors.primary,
-                              height: 18.0,
-                            ),
-                            const SizedBox(width: AppSpacing.xxs),
-                            Text(fuel),
-                          ],
-                        ),
-                        const SizedBox(height: AppSpacing.xxs),
-                        Row(
-                          children: [
-                            const AppSvg(
-                              asset: AppVectors.carFront,
-                              color: AppColors.primary,
-                              height: 18.0,
-                            ),
-                            const SizedBox(width: AppSpacing.xxs),
-                            Text("$mileage km"),
-                          ],
-                        ),
-                        const SizedBox(height: AppSpacing.xxs),
-                        Row(
-                          children: [
-                            const AppSvg(
-                              asset: AppVectors.gauge,
-                              color: AppColors.primary,
-                              height: 18.0,
-                            ),
-                            const SizedBox(width: AppSpacing.xxs),
-                            Text(transmission),
-                          ],
-                        ),
-                        const SizedBox(height: AppSpacing.xxs),
-                        Row(
-                          children: [
-                            const AppSvg(
-                              asset: AppVectors.seats,
-                              color: AppColors.primary,
-                              height: 18.0,
-                            ),
-                            const SizedBox(width: AppSpacing.xxs),
-                            Text("$seats seats"),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ]),
-            const SizedBox(height: AppSpacing.sm),
-            Row(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(carStatus),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                    child: Text(_getStatusText(carStatus)),
-                  ),
-                ),
-                const Spacer(),
-                RichText(
-                  text: TextSpan(
-                    text: "\$${price.toStringAsFixed(2)}",
-                    children: const [
-                      TextSpan(
-                        text: " per day",
-                        style: TextStyle(fontSize: 10.0),
-                      ),
-                    ],
-                  ),
+      bottom: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: _getStatusColor(carStatus),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+              child: Text(_getStatusText(carStatus)),
+            ),
+          ),
+          const Spacer(),
+          RichText(
+            text: TextSpan(
+              text: "\$${price.toStringAsFixed(2)}",
+              children: const [
+                TextSpan(
+                  text: " per day",
+                  style: TextStyle(fontSize: 10.0),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
