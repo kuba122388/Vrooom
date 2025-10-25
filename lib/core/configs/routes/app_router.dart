@@ -4,6 +4,7 @@ import 'package:vrooom/presentation/admin/discount_codes/pages/discount_codes_pa
 import 'package:vrooom/presentation/admin/future_reservation/pages/future_reservation_page.dart';
 import 'package:vrooom/presentation/admin/manage_users/pages/manage_users_page.dart';
 import 'package:vrooom/presentation/admin/car_management/pages/finalize_rental.dart';
+import 'package:vrooom/presentation/admin/rental_history/pages/rental_history_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/email_verification_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/signin_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/signup_page.dart';
@@ -68,6 +69,9 @@ class AppRouter {
 
       case AppRoutes.discountCodes:
         return MaterialPageRoute(builder: (_) => const DiscountCodesPage());
+
+      case AppRoutes.rentalHistory:
+        return MaterialPageRoute(builder: (_) => const RentalHistoryPage());
 
       default:
         return MaterialPageRoute(
