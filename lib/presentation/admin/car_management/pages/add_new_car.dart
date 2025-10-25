@@ -238,7 +238,6 @@ class _AddNewCarState extends State<AddNewCar> {
                     const SizedBox(
                       child: PrimaryButton(
                         text: "Save Car",
-                        fontSize: 16,
                       ),
                     ),
                   ],

@@ -28,7 +28,7 @@ class AdminMenuConfig {
     const AdminMenuItem(
       title: "Active Rental Agreements",
       svgVector: AppVectors.activeRental,
-      route: "",
+      route: AppRoutes.activeRentals,
     ),
     const AdminMenuItem(
       title: "Future Rentals",

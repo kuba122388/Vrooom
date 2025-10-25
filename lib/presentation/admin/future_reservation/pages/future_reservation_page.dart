@@ -6,6 +6,7 @@ import 'package:vrooom/presentation/admin/widgets/rental_information_entry.dart'
 
 import '../../../../core/configs/assets/app_images.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
+import '../../../../core/enums/rental_status.dart';
 
 class FutureReservation extends StatelessWidget {
   const FutureReservation({super.key});

@@ -4,40 +4,22 @@ import 'package:intl/intl.dart';
 import '../../../../core/configs/assets/app_images.dart';
 import '../../../../core/configs/theme/app_colors.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
+import '../../../../core/enums/rental_status.dart';
 import '../../widgets/car_card.dart';
-import '../pages/rental_history_page.dart';
 
 class RentalHistoryCarEntry extends StatelessWidget {
   final String rentalID;
   final DateTime startDate;
   final DateTime endDate;
-  final RentalHistoryStatus rentalHistoryStatus;
+  final RentalStatus rentalStatus;
 
   const RentalHistoryCarEntry({
     super.key,
     required this.rentalID,
     required this.startDate,
     required this.endDate,
-    required this.rentalHistoryStatus,
+    required this.rentalStatus,
   });
-
-  Color _getStatusColor() {
-    switch (rentalHistoryStatus) {
-      case RentalHistoryStatus.completed:
-        return AppColors.container.neutral800;
-      case RentalHistoryStatus.cancelled:
-        return AppColors.primary;
-    }
-  }
-
-  String _getStatusText() {
-    switch (rentalHistoryStatus) {
-      case RentalHistoryStatus.completed:
-        return "Completed";
-      case RentalHistoryStatus.cancelled:
-        return "Cancelled";
-    }
-  }
 
   TableRow _buildRow(String label, String value) {
     return TableRow(
@@ -96,12 +78,12 @@ class RentalHistoryCarEntry extends StatelessWidget {
             const Spacer(),
             Container(
               decoration: BoxDecoration(
-                color: _getStatusColor(),
+                color: rentalStatus.color,
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                child: Text(_getStatusText()),
+                child: Text(rentalStatus.displayText),
               ),
             )
           ],

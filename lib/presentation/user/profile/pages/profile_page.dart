@@ -10,6 +10,7 @@ import '../../../../core/common/widgets/app_svg.dart';
 import '../../../../core/common/widgets/primary_button.dart';
 import '../../../../core/configs/assets/app_vectors.dart';
 import '../../../../core/configs/theme/app_colors.dart';
+import '../../../../core/enums/rental_status.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

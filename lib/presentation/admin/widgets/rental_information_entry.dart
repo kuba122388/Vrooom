@@ -4,8 +4,7 @@ import 'package:vrooom/core/configs/theme/app_colors.dart';
 
 import '../../../core/configs/assets/app_vectors.dart';
 import '../../../core/configs/theme/app_spacing.dart';
-
-enum RentalStatus { pending, confirmed, cancelled }
+import '../../../core/enums/rental_status.dart';
 
 class RentalInformationEntry extends StatelessWidget {
   final String profileImage;
@@ -31,28 +30,6 @@ class RentalInformationEntry extends StatelessWidget {
       required this.carImage,
       required this.model,
       required this.productionYear});
-
-  Color _getStatusColor(RentalStatus status) {
-    switch (status) {
-      case RentalStatus.pending:
-        return AppColors.container.progress200;
-      case RentalStatus.confirmed:
-        return AppColors.container.complete200;
-      case RentalStatus.cancelled:
-        return AppColors.container.danger500;
-    }
-  }
-
-  String _getStatusText(RentalStatus status) {
-    switch (status) {
-      case RentalStatus.confirmed:
-        return "Confirmed";
-      case RentalStatus.cancelled:
-        return "Cancelled";
-      case RentalStatus.pending:
-        return "Pending";
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -195,12 +172,11 @@ class RentalInformationEntry extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      color: _getStatusColor(rentalStatus),
-                      borderRadius: BorderRadius.circular(64.0)),
+                      color: rentalStatus.color, borderRadius: BorderRadius.circular(64.0)),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
                     child: Text(
-                      _getStatusText(rentalStatus),
+                      rentalStatus.displayText,
                       style: const TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.5),
                     ),
                   ),
