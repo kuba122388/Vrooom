@@ -13,6 +13,7 @@ import 'package:vrooom/presentation/user/auth/pages/verification_success_page.da
 import 'package:vrooom/presentation/user/listings/pages/booking_details_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/car_details_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/listings_page.dart';
+import 'package:vrooom/presentation/user/profile/pages/contact_page.dart';
 import 'package:vrooom/presentation/user/profile/pages/edit_profile_details.dart';
 import 'package:vrooom/presentation/user/splash/pages/splash_page.dart';
 
@@ -76,6 +77,9 @@ class AppRouter {
 
       case AppRoutes.activeRentals:
         return MaterialPageRoute(builder: (_) => const ActiveRentalsPage());
+
+      case AppRoutes.contact:
+        return MaterialPageRoute(builder: (_) => const ContactPage());
 
       default:
         return MaterialPageRoute(
