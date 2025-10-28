@@ -54,5 +54,8 @@ class AppVectors {
   static const activeRental = '${basePath}calendar-check$format';
   static const historyRental = '${basePath}history$format';
   static const futureRental = '${basePath}calendar-arrow-up$format';
+
+  static const clock = '${basePath}clock$format';
+
   static const logout = '${basePath}log-out$format';
 }

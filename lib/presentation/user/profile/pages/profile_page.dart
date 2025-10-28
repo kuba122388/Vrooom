@@ -96,9 +96,10 @@ class ProfilePage extends StatelessWidget {
                     icon: AppSvg(asset: AppVectors.privacyPolicy),
                     label: "Privacy Policy",
                   ),
-                  const SettingsTile(
-                    icon: AppSvg(asset: AppVectors.contact),
+                  SettingsTile(
+                    icon: const AppSvg(asset: AppVectors.contact),
                     label: "Contact",
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.contact),
                   ),
                 ],
               ),
