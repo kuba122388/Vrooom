@@ -6,21 +6,52 @@ import 'package:vrooom/core/common/widgets/splash_hero.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 
+import '../../../../core/configs/di/service_locator.dart';
+import '../../../../domain/usecases/auth/login_usecase.dart';
 import '../widgets/divider_with_text.dart';
 import '../../../../core/common/widgets/custom_text_field.dart';
 import '../../../../core/configs/routes/app_routes.dart';
 import '../widgets/social_button.dart';
 
-class SigninPage extends StatefulWidget {
-  const SigninPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<SigninPage> createState() => _SigninPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _SigninPageState extends State<SigninPage> {
+class _LoginPageState extends State<LoginPage> {
+  final LoginUseCase _loginUseCase = sl();
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> _handleLogin() async {
+    setState(() => _isLoading = true);
+
+    final result = await _loginUseCase(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+
+    setState(() => _isLoading = false);
+
+    result.fold(
+      (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error)),
+        );
+      },
+      (user) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.main,
+          (newPage) => false,
+        );
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -68,14 +99,8 @@ class _SigninPageState extends State<SigninPage> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 PrimaryButton(
-                  text: "Login",
-                  onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.carManagement,
-                      (newPage) => false,
-                    );
-                  },
+                  text: _isLoading == false ? "Login" : "Logging in...",
+                  onPressed: () => _handleLogin(),
                 ),
                 const SizedBox(height: AppSpacing.lg),
 

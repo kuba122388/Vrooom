@@ -23,7 +23,7 @@ class _MapWidgetState extends State<MapWidget> {
   LatLng officeLocation = LatLng(51.7592, 19.4560);
 
   void centerToOffice() {
-    mapController.move(officeLocation, 12.0);
+    mapController.move(officeLocation, 14.0);
     mapController.rotate(0.0);
   }
 
@@ -62,13 +62,13 @@ class _MapWidgetState extends State<MapWidget> {
         FlutterMap(
           mapController: mapController,
           options: const MapOptions(
-            initialZoom: 12,
+            initialZoom: 14,
             initialCenter: LatLng(51.7592, 19.4560),
           ),
           children: [
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              userAgentPackageName: 'com.example.app',
+              userAgentPackageName: 'com.mycompany.vrooom',
             ),
             MarkerLayer(
               markers: [

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vrooom/core/common/widgets/splash_hero.dart';
-import 'package:vrooom/presentation/user/auth/pages/signin_page.dart';
+import 'package:vrooom/presentation/user/auth/pages/login_page.dart';
 import 'package:vrooom/presentation/user/splash/bloc/splash_cubit.dart';
 import 'package:vrooom/presentation/user/splash/bloc/splash_state.dart';
 
@@ -18,7 +18,7 @@ class SplashPage extends StatelessWidget {
           Navigator.pushReplacement(
             context,
             PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => const SigninPage(),
+              pageBuilder: (context, animation, secondaryAnimation) => const LoginPage(),
               transitionDuration: const Duration(milliseconds: 1000),
             ),
           );

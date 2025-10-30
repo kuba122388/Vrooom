@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vrooom/core/configs/theme/app_theme.dart';
 import 'package:vrooom/presentation/user/splash/bloc/splash_cubit.dart';
 
+import 'core/configs/di/service_locator.dart';
 import 'core/configs/routes/app_router.dart';
 import 'core/configs/routes/app_routes.dart';
 
-void main() {
+void main() async {
+  await initializeDependencies();
   runApp(const MyApp());
 }
 
