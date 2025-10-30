@@ -57,5 +57,7 @@ class AppVectors {
 
   static const clock = '${basePath}clock$format';
 
+  static const close = '${basePath}x$format';
+
   static const logout = '${basePath}log-out$format';
 }

@@ -3,17 +3,88 @@ import 'package:vrooom/core/common/widgets/info_section_card.dart';
 import 'package:vrooom/core/configs/assets/app_images.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
+import 'package:vrooom/domain/usecases/auth/logout_usecase.dart';
 import 'package:vrooom/presentation/user/profile/widgets/car_status_row.dart';
 import 'package:vrooom/presentation/user/profile/widgets/settings_tile.dart';
 
 import '../../../../core/common/widgets/app_svg.dart';
 import '../../../../core/common/widgets/primary_button.dart';
 import '../../../../core/configs/assets/app_vectors.dart';
+import '../../../../core/configs/di/service_locator.dart';
 import '../../../../core/configs/theme/app_colors.dart';
 import '../../../../core/enums/rental_status.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final LogoutUseCase _logoutUseCase = sl();
+
+  Future<void> _handleLogout() async {
+    final result = await _logoutUseCase();
+
+    if (!mounted) return;
+
+    result.fold(
+      (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.replaceAll('Exception: ', '')),
+            backgroundColor: Colors.red,
+          ),
+        );
+      },
+      (_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Successfully logged out!"),
+          ),
+        );
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.signin,
+          (route) => false,
+        );
+      },
+    );
+  }
+
+  Future<void> _showLogoutConfirmation() async {
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Text('Log Out'),
+            Spacer(),
+            AppSvg(
+              asset: AppVectors.close,
+              color: Colors.white,
+            )
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Are you sure you want to log out?'),
+            const SizedBox(height: AppSpacing.md),
+            PrimaryButton(
+              onPressed: () => Navigator.pop(context, true),
+              text: 'Log Out',
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (shouldLogout == true) {
+      await _handleLogout();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,8 +178,7 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             PrimaryButton(
               text: "Log Out",
-              onPressed: () =>
-                  Navigator.pushNamedAndRemoveUntil(context, AppRoutes.signin, (route) => false),
+              onPressed: () => _showLogoutConfirmation(),
             ),
           ],
         ),
