@@ -7,7 +7,7 @@ import 'package:vrooom/presentation/admin/manage_users/pages/manage_users_page.d
 import 'package:vrooom/presentation/admin/car_management/pages/finalize_rental.dart';
 import 'package:vrooom/presentation/admin/rental_history/pages/rental_history_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/email_verification_page.dart';
-import 'package:vrooom/presentation/user/auth/pages/signin_page.dart';
+import 'package:vrooom/presentation/user/auth/pages/login_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/signup_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/verification_success_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/booking_details_page.dart';
@@ -28,7 +28,7 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const SplashPage());
 
       case AppRoutes.signin:
-        return MaterialPageRoute(builder: (_) => const SigninPage());
+        return MaterialPageRoute(builder: (_) => const LoginPage());
 
       case AppRoutes.signup:
         return MaterialPageRoute(builder: (_) => const SignupPage());
