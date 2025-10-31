@@ -1,3 +1,5 @@
+import 'package:vrooom/domain/entities/role.dart';
+
 class User {
   final int customerID;
   final String name;
@@ -8,7 +10,7 @@ class User {
   final String city;
   final String postalCode;
   final String country;
-  final String role;
+  final Role role;
 
   User({
     required this.customerID,

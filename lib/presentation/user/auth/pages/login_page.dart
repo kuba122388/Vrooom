@@ -7,6 +7,7 @@ import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 
 import '../../../../core/configs/di/service_locator.dart';
+import '../../../../domain/entities/role.dart';
 import '../../../../domain/usecases/auth/login_usecase.dart';
 import '../widgets/divider_with_text.dart';
 import '../../../../core/common/widgets/custom_text_field.dart';
@@ -44,11 +45,19 @@ class _LoginPageState extends State<LoginPage> {
         );
       },
       (user) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          AppRoutes.main,
-          (newPage) => false,
-        );
+        if (user.role == Role.admin) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            AppRoutes.carManagement,
+            (route) => false,
+          );
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            AppRoutes.main,
+            (route) => false,
+          );
+        }
       },
     );
   }
@@ -63,7 +72,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: "Stationary Car Rentals", showBackButton: false),
+      appBar: const CustomAppBar(
+          title: "Stationary Car Rentals", showBackButton: false),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: SingleChildScrollView(
