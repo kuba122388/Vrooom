@@ -1,3 +1,5 @@
+import 'package:vrooom/domain/entities/role.dart';
+
 import '../../domain/entities/user.dart';
 
 class UserModel extends User {
@@ -15,16 +17,16 @@ class UserModel extends User {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      customerID: json["customerID"] ?? "",
-      name: json["name"] ?? "",
-      surname: json["surname"] ?? "",
-      email: json["email"] ?? "",
-      phoneNumber: json["phoneNumber"] ?? "",
-      streetAddress: json["streetAddress"] ?? "",
-      city: json["city"] ?? "",
-      postalCode: json["postalCode"] ?? "",
-      country: json["country"] ?? "",
-      role: json["role"] ?? "",
+      customerID: json["customerID"] as int,
+      name: json["name"] as String,
+      surname: json["surname"] as String,
+      email: json["email"] as String,
+      phoneNumber: json["phoneNumber"] as String,
+      streetAddress: json["streetAddress"] as String,
+      city: json["city"] as String,
+      postalCode: json["postalCode"] as String,
+      country: json["country"] as String,
+      role: RoleExtension.fromJson(json["role"] as String),
     );
   }
 
@@ -39,7 +41,7 @@ class UserModel extends User {
       "city": city,
       "postalCode": postalCode,
       "country": country,
-      "role": role,
+      "role": role.toJson(),
     };
   }
 }
