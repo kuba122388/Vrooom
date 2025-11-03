@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/search_filter_module.dart';
 import 'package:vrooom/core/configs/assets/app_images.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
+import 'package:vrooom/domain/entities/vehicle_summary.dart';
+import 'package:vrooom/domain/usecases/vehicle/get_all_vehicles_usecase.dart';
 
+import '../../../../core/configs/di/service_locator.dart';
+import '../../../../core/configs/routes/app_routes.dart';
 import '../widgets/car_tile.dart';
 
 class ListingsPage extends StatefulWidget {
@@ -13,57 +17,115 @@ class ListingsPage extends StatefulWidget {
 }
 
 class _ListingsPageState extends State<ListingsPage> {
+  final GetAllVehiclesUseCase _getAllVehiclesUseCase = sl();
+  bool _isLoading = true;
+  List<VehicleSummary> _vehicles = [];
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVehicles();
+  }
+
+  Future<void> _loadVehicles() async {
+    final result = await _getAllVehiclesUseCase();
+    result.fold(
+      (error) {
+        print("=== ERROR OCCURED === $error");
+        setState(() {
+          _errorMessage = error;
+          _isLoading = false;
+        });
+      },
+      (vehicleList) {
+        print("=== VEHICLES LOADED ===");
+        setState(() {
+          _vehicles = vehicleList;
+          _isLoading = false;
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
+    return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
         child: Column(
           children: [
-            SearchFilterModule(),
-            SizedBox(
+            const SearchFilterModule(),
+            const SizedBox(
               height: AppSpacing.xl,
             ),
-            Row(
+
+            Column(
               children: [
-                CarTile(
-                  imgPath: AppImages.mercedes,
-                  model: "Mercedes-Benz",
-                  brand: "C-Class",
-                  price: 85.00,
-                ),
-                SizedBox(
-                  width: AppSpacing.sm,
-                ),
-                CarTile(
-                  imgPath: AppImages.mercedes,
-                  model: "Mercedes-Benz",
-                  brand: "C-Class",
-                  price: 85.00,
-                ),
+                for (int i = 0; i < (_vehicles.length).ceil(); i++) ...[
+                  CarTile(
+                    imgPath: AppImages.mercedes,
+                    make: _vehicles[i].make,
+                    model: _vehicles[i].model,
+                    price: _vehicles[i].pricePerDay,
+                    description: _vehicles[i].description,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.carDetails,
+                        arguments: {
+                          "vehicleId": _vehicles[i].vehicleID,
+                        },
+                      );
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                ],
               ],
             ),
-            SizedBox(height: AppSpacing.md),
-            Row(
-              children: [
-                CarTile(
-                  imgPath: AppImages.mercedes,
-                  model: "Mercedes-Benz",
-                  brand: "C-Class",
-                  price: 85.00,
-                ),
-                SizedBox(
-                  width: AppSpacing.sm,
-                ),
-                CarTile(
-                  imgPath: AppImages.mercedes,
-                  model: "Mercedes-Benz",
-                  brand: "C-Class",
-                  price: 85.00,
-                ),
-              ],
-            ),
-            SizedBox(height: AppSpacing.md),
+
+            const SizedBox(width: AppSpacing.sm)
+
+            // Row(
+            //   children: [
+            //     CarTile(
+            //       imgPath: AppImages.mercedes,
+            //       model: "Mercedes-Benz",
+            //       brand: "C-Class",
+            //       price: 85.00,
+            //     ),
+            //     SizedBox(
+            //       width: AppSpacing.sm,
+            //     ),
+            //     CarTile(
+            //       imgPath: AppImages.mercedes,
+            //       model: "Mercedes-Benz",
+            //       brand: "C-Class",
+            //       price: 85.00,
+            //     ),
+            //   ],
+            // ),
+            // SizedBox(height: AppSpacing.md),
+            // Row(
+            //   children: [
+            //     CarTile(
+            //       imgPath: AppImages.mercedes,
+            //       model: "Mercedes-Benz",
+            //       brand: "C-Class",
+            //       price: 85.00,
+            //     ),
+            //     SizedBox(
+            //       width: AppSpacing.sm,
+            //     ),
+            //     CarTile(
+            //       imgPath: AppImages.mercedes,
+            //       model: "Mercedes-Benz",
+            //       brand: "C-Class",
+            //       price: 85.00,
+            //     ),
+            //   ],
+            // ),
+            // SizedBox(height: AppSpacing.md),
           ],
         ),
       ),
