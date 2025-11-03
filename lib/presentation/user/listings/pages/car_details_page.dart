@@ -9,26 +9,88 @@ import 'package:vrooom/core/configs/assets/app_vectors.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
+import 'package:vrooom/domain/usecases/vehicle/get_vehicle_details_usecase.dart';
 import 'package:vrooom/presentation/user/listings/widgets/car_feature_container.dart';
 import 'package:vrooom/presentation/user/listings/widgets/car_specification_row.dart';
 
-class CarDetailsPage extends StatelessWidget {
-  const CarDetailsPage({super.key});
+import '../../../../core/configs/di/service_locator.dart';
+import '../../../../domain/entities/vehicle.dart';
+
+class CarDetailsPage extends StatefulWidget {
+  final int vehicleId;
+
+  const CarDetailsPage({super.key, required this.vehicleId});
+
+  @override
+  State<CarDetailsPage> createState() => _CarDetailsPageState();
+}
+
+class _CarDetailsPageState extends State<CarDetailsPage> {
+  final GetVehicleDetailsUseCase _getVehicleDetailsUseCase = sl();
+  bool _isLoading = true;
+  Vehicle? _vehicle;
+  String? _errorMessage;
+
+  Future<void> _loadVehicle() async {
+    final result = await _getVehicleDetailsUseCase(widget.vehicleId);
+
+    result.fold((error) {
+      print("=== ERROR OCCURED === $error");
+      setState(() {
+        _errorMessage = error;
+        _isLoading = false;
+      });
+    }, (vehicle) {
+      print("=== VEHICLE LOADED ===");
+      print(vehicle);
+      setState(() {
+        _vehicle = vehicle;
+        _isLoading = false;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVehicle();
+  }
 
   @override
   Widget build(BuildContext context) {
     final List<CarSpecification> specifications = [
-      CarSpecification(iconPath: AppVectors.car, label: "Model Year", value: "2023"),
-      CarSpecification(iconPath: AppVectors.fuel, label: "Fuel Type", value: "Petrol"),
-      CarSpecification(iconPath: AppVectors.gauge, label: "Transmission", value: "Automatic"),
+      CarSpecification(
+          iconPath: AppVectors.car, label: "Car Type", value: "2023"),
+      CarSpecification(
+          iconPath: AppVectors.fuel, label: "Fuel Type", value: "Petrol"),
+      CarSpecification(
+          iconPath: AppVectors.gauge,
+          label: "Transmission",
+          value: "Automatic"),
       CarSpecification(iconPath: AppVectors.seats, label: "Seats", value: "5"),
-      CarSpecification(iconPath: AppVectors.milestone, label: "Mileage", value: "15,000 km"),
+      CarSpecification(
+          iconPath: AppVectors.milestone, label: "Mileage", value: "15,000 km"),
     ];
     return Scaffold(
       appBar: const CustomAppBar(
         title: "Car Details",
       ),
-      body: SingleChildScrollView(
+      body: _isLoading
+          ? const Center(
+        child: CircularProgressIndicator(),
+      )
+          : _errorMessage != null
+          ? Center(
+        child: Text(
+          _errorMessage!,
+          style: const TextStyle(color: Colors.red),
+        ),
+      )
+          : _vehicle == null
+          ? const Center(
+        child: Text("No vehicle data found."),
+      )
+          :  SingleChildScrollView(
         child: Column(
           children: [
             Stack(
@@ -57,7 +119,8 @@ class CarDetailsPage extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
               child: Column(
                 children: [
                   InfoSectionCard(
@@ -145,7 +208,8 @@ class CarDetailsPage extends StatelessWidget {
                   const SizedBox(height: AppSpacing.md),
                   PrimaryButton(
                     text: "Rent Now",
-                    onPressed: () => Navigator.pushNamed(context, AppRoutes.bookingDetails),
+                    onPressed: () =>
+                        Navigator.pushNamed(context, AppRoutes.bookingDetails),
                   ),
                 ],
               ),
