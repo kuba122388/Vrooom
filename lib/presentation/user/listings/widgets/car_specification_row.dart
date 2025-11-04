@@ -18,20 +18,28 @@ class CarSpecRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          AppSvg(
-            asset: iconPath,
-            color: AppColors.primary,
-            height: 18.0,
-          ),
-          const SizedBox(width: AppSpacing.xs),
-          Text(label),
-          const Spacer(),
-          Text(value),
-        ],
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            AppSvg(
+              asset: iconPath,
+              color: AppColors.primary,
+              height: 18.0,
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            Text(label),
+            const SizedBox(width: AppSpacing.xs),
+            Expanded(
+              child: Text(
+                value,
+                textAlign: TextAlign.right,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
