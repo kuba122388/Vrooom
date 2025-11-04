@@ -37,7 +37,7 @@ class CarTile extends StatelessWidget {
           children: [
             Stack(
               children: [
-                Image.asset(
+                Image.network(
                   imgPath,
                   width: double.infinity,
                   height: 150,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/common/widgets/loading_widget.dart';
 import 'package:vrooom/core/common/widgets/search_filter_module.dart';
-import 'package:vrooom/core/configs/assets/app_images.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 import 'package:vrooom/domain/entities/vehicle_summary.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_all_vehicles_usecase.dart';
@@ -59,76 +59,43 @@ class _ListingsPageState extends State<ListingsPage> {
             const SizedBox(
               height: AppSpacing.xl,
             ),
-
-            Column(
-              children: [
-                for (int i = 0; i < (_vehicles.length).ceil(); i++) ...[
-                  CarTile(
-                    imgPath: AppImages.mercedes,
-                    make: _vehicles[i].make,
-                    model: _vehicles[i].model,
-                    price: _vehicles[i].pricePerDay,
-                    description: _vehicles[i].description,
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.carDetails,
-                        arguments: {
-                          "vehicleId": _vehicles[i].vehicleID,
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                ],
-              ],
+            LoadingWidget(
+              isLoading: _isLoading,
+              errorMessage: _errorMessage,
+              futureResultObj: _vehicles,
+              emptyResultMsg: "No vehicles data found.",
+              futureBuilder: _buildVehicles,
             ),
-
             const SizedBox(width: AppSpacing.sm)
-
-            // Row(
-            //   children: [
-            //     CarTile(
-            //       imgPath: AppImages.mercedes,
-            //       model: "Mercedes-Benz",
-            //       brand: "C-Class",
-            //       price: 85.00,
-            //     ),
-            //     SizedBox(
-            //       width: AppSpacing.sm,
-            //     ),
-            //     CarTile(
-            //       imgPath: AppImages.mercedes,
-            //       model: "Mercedes-Benz",
-            //       brand: "C-Class",
-            //       price: 85.00,
-            //     ),
-            //   ],
-            // ),
-            // SizedBox(height: AppSpacing.md),
-            // Row(
-            //   children: [
-            //     CarTile(
-            //       imgPath: AppImages.mercedes,
-            //       model: "Mercedes-Benz",
-            //       brand: "C-Class",
-            //       price: 85.00,
-            //     ),
-            //     SizedBox(
-            //       width: AppSpacing.sm,
-            //     ),
-            //     CarTile(
-            //       imgPath: AppImages.mercedes,
-            //       model: "Mercedes-Benz",
-            //       brand: "C-Class",
-            //       price: 85.00,
-            //     ),
-            //   ],
-            // ),
-            // SizedBox(height: AppSpacing.md),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildVehicles() {
+    return Column(
+      children: [
+        for (int i = 0; i < (_vehicles.length).ceil(); i++) ...[
+          CarTile(
+            imgPath: _vehicles[i].vehicleImage,
+            make: _vehicles[i].make,
+            model: _vehicles[i].model,
+            price: _vehicles[i].pricePerDay,
+            description: _vehicles[i].description,
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                AppRoutes.carDetails,
+                arguments: {
+                  "vehicleId": _vehicles[i].vehicleID,
+                },
+              );
+            },
+          ),
+          const SizedBox(height: AppSpacing.md),
+        ],
+      ],
     );
   }
 }

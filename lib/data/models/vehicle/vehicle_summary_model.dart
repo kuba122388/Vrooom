@@ -11,14 +11,14 @@ class VehicleSummaryModel extends VehicleSummary {
     required super.description,
   });
 
-  factory VehicleSummaryModel.fromJson(Map<String, dynamic> json){
+  factory VehicleSummaryModel.fromJson(Map<String, dynamic> json) {
     return VehicleSummaryModel(
       vehicleID: json["vehicleID"] as int,
       make: json["make"] as String,
       model: json["model"] as String,
       type: json["type"] as String,
       pricePerDay: json["pricePerDay"] as double,
-      vehicleImage: json["vehicleImage"] as String,
+      vehicleImage: "http://192.168.1.106:8080/images/${json["vehicleImage"] as String}",
       description: json["description"] as String,
     );
   }
