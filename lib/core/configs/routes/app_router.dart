@@ -46,7 +46,18 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const ListingsPage());
 
       case AppRoutes.carDetails:
-        return MaterialPageRoute(builder: (_) => const CarDetailsPage());
+        final args = settings.arguments as Map<String, dynamic>?;
+        final vehicleId = args?["vehicleId"] as int?;
+
+        if(vehicleId == null || vehicleId <=0){
+          return MaterialPageRoute(
+            builder: (_) => const Scaffold(
+              body: Center(child: Text('Invalid car ID')),
+            ),
+          );
+        }
+
+        return MaterialPageRoute(builder: (_) => CarDetailsPage(vehicleId: vehicleId));
 
       case AppRoutes.bookingDetails:
         return MaterialPageRoute(builder: (_) => const BookingDetailsPage());
