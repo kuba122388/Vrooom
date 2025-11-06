@@ -54,7 +54,6 @@ class _CustomDropdownMenuState extends State<CustomDropdownMenu> {
           ),
           hintText: widget.hintText,
           controller: widget.controller,
-          label: Text(widget.label),
           menuStyle: MenuStyle(
             shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(
