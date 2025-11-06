@@ -10,8 +10,11 @@ import 'package:vrooom/core/configs/assets/app_vectors.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 import 'package:vrooom/core/configs/theme/app_text_styles.dart';
+import 'package:vrooom/domain/usecases/booking/get_all_insurances_usecase.dart';
 
 import '../../../../core/common/widgets/custom_checkbox.dart';
+import '../../../../core/configs/di/service_locator.dart';
+import '../../../../domain/entities/insurance.dart';
 
 class BookingDetailsPage extends StatefulWidget {
   const BookingDetailsPage({super.key});
@@ -29,6 +32,50 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   bool haveRabatCode = false;
   double discountAmount = 0.0;
   double totalPrice = 499.0;
+  bool _isLoading = false;
+  String? _errorMessage;
+  final GetAllInsurancesUseCase _getAllInsurancesUseCase = sl();
+
+  Insurance? _selectedInsurance;
+  List<Insurance> _insuranceOptions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final result = await _getAllInsurancesUseCase();
+
+      result.fold(
+            (error) {
+          setState(() {
+            _errorMessage = "An error occurred: $error";
+            _isLoading = false;
+          });
+        },
+            (insuranceList) {
+          setState(() {
+            _insuranceOptions = insuranceList;
+            _isLoading = false;
+          });
+        },
+      );
+    } catch (e) {
+      setState(() {
+        _errorMessage = "An unknown error occurred: ${e.toString()}";
+        _isLoading = false;
+      });
+    }
+  }
 
   DateTime startDate = DateTime(
     DateTime.now().year,
@@ -149,6 +196,59 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 ),
               ),
 
+              // Insurance
+              const SizedBox(height: AppSpacing.md),
+              InfoSectionCard(
+                title: "Insurance",
+                child: Column(children: [
+                  DropdownButtonFormField<Insurance>(
+                    isExpanded: true,
+                    initialValue: _selectedInsurance,
+                    hint: const Text("Select insurance type"),
+                    items: _insuranceOptions.map((Insurance option) {
+                      return DropdownMenuItem<Insurance>(
+                        value: option,
+                        child: Flexible(
+                          child: Text(
+                            "${option.insuranceType} (+${option.insuranceCost} PLN)",
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            softWrap: false,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+
+                    onChanged: (Insurance? newValue) {
+                      setState(() {
+                        _selectedInsurance = newValue;
+                      });
+                    },
+
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Please select an insurance option.';
+                      }
+                      return null;
+                    },
+
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      fillColor: AppColors.container.neutral700,
+                      prefixIcon: const Icon(
+                        Icons.shield_outlined,
+                        color: AppColors.primary,
+                      ),
+                      filled: true,
+                    ),
+                  ),
+
+                ]),
+              ),
+
               // PAYMENT INFORMATION - CREDIT CARD - STRIPE
               const SizedBox(height: AppSpacing.md),
               InfoSectionCard(
@@ -168,9 +268,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                               alignment: Alignment.center,
                               height: 40.0,
                               decoration: BoxDecoration(
-                                color: selectedPayment == PaymentMethod.creditCard
-                                    ? AppColors.primary
-                                    : AppColors.container.neutral700,
+                                color: selectedPayment == PaymentMethod.creditCard ? AppColors.primary : AppColors.container.neutral700,
                                 borderRadius: BorderRadius.circular(5.0),
                               ),
                               child: const Text(
@@ -192,9 +290,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                               alignment: Alignment.center,
                               height: 40.0,
                               decoration: BoxDecoration(
-                                color: selectedPayment == PaymentMethod.stripe
-                                    ? AppColors.primary
-                                    : AppColors.container.neutral700,
+                                color: selectedPayment == PaymentMethod.stripe ? AppColors.primary : AppColors.container.neutral700,
                                 borderRadius: BorderRadius.circular(5.0),
                               ),
                               child: const Text(
