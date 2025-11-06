@@ -6,7 +6,7 @@ class Vehicle {
   final String model;
   final String type;
   final double pricePerDay;
-  final double deposit;
+  final int deposit;
   final String gearShift;
   final String driveType;
   final String fuelType;
@@ -18,6 +18,7 @@ class Vehicle {
   final String description;
   final String vehicleImage;
   final String availabilityStatus;
+  final int wheelSize;
   final List<Equipment> equipmentList;
 
   Vehicle(this.vehicleID, {
@@ -38,5 +39,6 @@ class Vehicle {
     required this.vehicleImage,
     required this.availabilityStatus,
     required this.equipmentList,
+    required this.wheelSize,
   });
 }

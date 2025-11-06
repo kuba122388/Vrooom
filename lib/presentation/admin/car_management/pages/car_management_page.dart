@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/common/widgets/primary_button.dart';
 import 'package:vrooom/core/common/widgets/search_filter_module.dart';
+import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
@@ -94,6 +96,12 @@ class CarManagementPage extends StatelessWidget {
                     price: entry.price);
               }).expand(
                 (widget) => [widget, const SizedBox(height: AppSpacing.sm)],
+              ),
+              PrimaryButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AppRoutes.addNewCar);
+                },
+                text: "Add New Car",
               ),
             ],
           ),

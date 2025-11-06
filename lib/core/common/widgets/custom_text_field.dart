@@ -13,6 +13,7 @@ class CustomTextField extends StatelessWidget {
   final AppSvg? leadingIcon;
   final Color? fillColor;
   final int maxLines;
+  final String? Function(String?)? validator;
 
   const CustomTextField(
       {super.key,
@@ -23,7 +24,8 @@ class CustomTextField extends StatelessWidget {
       this.keyboardType,
       this.leadingIcon,
       this.fillColor,
-      this.maxLines = 1});
+      this.maxLines = 1,
+      this.validator});
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +39,12 @@ class CustomTextField extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs)
         ],
-        TextField(
+        TextFormField(
           controller: controller,
           obscureText: isPassword,
           keyboardType: keyboardType,
           maxLines: maxLines,
+          validator: validator,
           decoration: InputDecoration(
             hintText: hintText,
             prefixIconConstraints: const BoxConstraints(
