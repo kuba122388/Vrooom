@@ -24,9 +24,13 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
   final GetCurrentUserInformationUseCase _getCurrentUserInformationUseCase = sl();
   final EditCurrentUserUseCase _editCurrentUserUseCase = sl();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _streetAddressController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _postalCodeController = TextEditingController();
+  final TextEditingController _countryCodeController = TextEditingController();
   final TextEditingController _currentPasswordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _repeatPasswordController = TextEditingController();
@@ -52,6 +56,97 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
     );
   }
 
+  Future<void> _validateAndSave() async {
+    final changed = _nameController.text.isNotEmpty ||
+        _surnameController.text.isNotEmpty ||
+        _emailController.text.isNotEmpty ||
+        _phoneNumberController.text.isNotEmpty ||
+        _streetAddressController.text.isNotEmpty ||
+        _cityController.text.isNotEmpty ||
+        _postalCodeController.text.isNotEmpty ||
+        _countryCodeController.text.isNotEmpty ||
+        _currentPasswordController.text.isNotEmpty ||
+        _newPasswordController.text.isNotEmpty ||
+        _repeatPasswordController.text.isNotEmpty;
+
+    if (!changed) {
+      _showError("Nie wprowadzono żadnych zmian.");
+      return;
+    }
+
+    if (_emailController.text.isNotEmpty &&
+        !RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$').hasMatch(_emailController.text.trim())) {
+      _showError("Podaj poprawny adres e-mail.");
+      return;
+    }
+
+    if (_phoneNumberController.text.isNotEmpty &&
+        !RegExp(r'^[0-9+\s\-()]{7,20}$').hasMatch(_phoneNumberController.text.trim())) {
+      _showError("Podaj poprawny numer telefonu.");
+      return;
+    }
+
+    if (_postalCodeController.text.isNotEmpty &&
+        !RegExp(r'^\d{2}-\d{3}$').hasMatch(_postalCodeController.text.trim())) {
+      _showError("Podaj poprawny kod pocztowy (np. 00-123).");
+      return;
+    }
+
+    final wantsChangePassword = _currentPasswordController.text.isNotEmpty ||
+        _newPasswordController.text.isNotEmpty ||
+        _repeatPasswordController.text.isNotEmpty;
+
+    if (wantsChangePassword) {
+      if (_currentPasswordController.text.isEmpty) {
+        _showError("Podaj obecne hasło, aby je zmienić.");
+        return;
+      }
+      if (_newPasswordController.text.length < 6) {
+        _showError("Nowe hasło musi mieć co najmniej 6 znaków.");
+        return;
+      }
+      if (_newPasswordController.text != _repeatPasswordController.text) {
+        _showError("Nowe hasła muszą być identyczne.");
+        return;
+      }
+    }
+
+    final userToUpdate = UserModel(
+      customerID: _user!.customerID,
+      name: _nameController.text.isNotEmpty ? _nameController.text.trim() : _user!.name,
+      surname: _surnameController.text.isNotEmpty ? _surnameController.text.trim() : _user!.surname,
+      email: _emailController.text.isNotEmpty ? _emailController.text.trim() : _user!.email,
+      phoneNumber: _phoneNumberController.text.isNotEmpty ? _phoneNumberController.text.trim() : _user!.phoneNumber,
+      streetAddress: _streetAddressController.text.isNotEmpty ? _streetAddressController.text.trim() : _user!.streetAddress,
+      city: _cityController.text.isNotEmpty ? _cityController.text.trim() : _user!.city,
+      postalCode: _postalCodeController.text.isNotEmpty ? _postalCodeController.text.trim() : _user!.postalCode,
+      country: _countryCodeController.text.isNotEmpty ? _countryCodeController.text.trim() : _user!.country,
+      role: _user!.role,
+    );
+
+    try {
+      setState(() => _isLoading = true);
+
+      await _editCurrentUserUseCase(request: userToUpdate);
+
+      if (!context.mounted) return;
+      Navigator.pop(context);
+    } catch (e) {
+      _showError("Aktualizacja nie powiodła się: ${e.toString()}");
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  void _showError(String message) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,10 +160,16 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomTextField(
-                hintText: "${_user?.name} ${_user?.surname}",
-                label: "Full Name",
+                hintText: _user!.name,
+                label: "Name",
                 leadingIcon: const AppSvg(asset: AppVectors.person),
                 controller: _nameController,
+              ),
+              CustomTextField(
+                hintText: _user!.surname,
+                label: "Surname",
+                leadingIcon: const AppSvg(asset: AppVectors.person),
+                controller: _surnameController,
               ),
               CustomTextField(
                 hintText: _user!.email,
@@ -83,10 +184,28 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                 controller: _phoneNumberController,
               ),
               CustomTextField(
-                hintText: "${_user?.streetAddress}, ${_user?.postalCode} ${_user?.city}",
-                label: "Address",
+                hintText: _user!.streetAddress,
+                label: "Street Address",
                 leadingIcon: const AppSvg(asset: AppVectors.mapPin),
-                controller: _addressController,
+                controller: _streetAddressController,
+              ),
+              CustomTextField(
+                hintText: _user!.city,
+                label: "City",
+                leadingIcon: const AppSvg(asset: AppVectors.mapPin),
+                controller: _cityController,
+              ),
+              CustomTextField(
+                hintText: _user!.postalCode,
+                label: "Postal Code",
+                leadingIcon: const AppSvg(asset: AppVectors.mapPin),
+                controller: _postalCodeController,
+              ),
+              CustomTextField(
+                hintText: _user!.country,
+                label: "Country",
+                leadingIcon: const AppSvg(asset: AppVectors.mapPin),
+                controller: _countryCodeController,
               ),
               const SizedBox(height: AppSpacing.md),
               const Text(
@@ -120,42 +239,12 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
               ),
               PrimaryButton(
                 text: "Save",
-                onPressed: () async {
-                  final user = UserModel(
-                      customerID: _user!.customerID,
-                      name: _nameController.text.isNotEmpty ? _nameController.text.split(' ').first : _user!.name,
-                      surname: _nameController.text.isNotEmpty ? _nameController.text.split(' ').last : _user!.surname,
-                      email: _emailController.text.isNotEmpty ? _emailController.text.trim() : _user!.email,
-                      phoneNumber: _phoneNumberController.text.isNotEmpty ? _phoneNumberController.text.trim() : _user!.phoneNumber,
-                      streetAddress: _addressController.text.isNotEmpty ? _addressController.text.split(',').first : _user!.streetAddress,
-                      city: _addressController.text.isNotEmpty ? extractCity(_addressController.text.trim()) : _user!.city,
-                      postalCode: _addressController.text.isNotEmpty ? extractPostalCode(_addressController.text.trim()) : _user!.postalCode,
-                      country: _user!.country,
-                      role: _user!.role
-                  );
-
-                  await _editCurrentUserUseCase(request: user);
-
-                  if (!context.mounted) return;
-                  Navigator.pop(context);
-                },
+                onPressed: _validateAndSave
               ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  String extractPostalCode(String address) {
-    final regex = RegExp(r'\b\d{2}-\d{3}\b');
-    final match = regex.firstMatch(address);
-    return match?.group(0) ?? '';
-  }
-
-  String extractCity(String address) {
-    final regex = RegExp(r'\d{2}-\d{3}\s+([A-Za-zÀ-Żà-ż\s\-]+)$');
-    final match = regex.firstMatch(address);
-    return match?.group(1)?.trim() ?? '';
   }
 }
