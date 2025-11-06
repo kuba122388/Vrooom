@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/configs/theme/app_colors.dart';
 
 class LoadingWidget extends StatelessWidget {
   final bool isLoading;
@@ -18,7 +19,11 @@ class LoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(
+          color: AppColors.primary,
+        ),
+      );
     }
 
     if (errorMessage != null) {
