@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/presentation/admin/active_rental/active_rentals_page.dart';
+import 'package:vrooom/presentation/admin/car_management/pages/add_new_car.dart';
 import 'package:vrooom/presentation/admin/car_management/pages/car_management_page.dart';
 import 'package:vrooom/presentation/admin/discount_codes/pages/discount_codes_page.dart';
 import 'package:vrooom/presentation/admin/future_reservation/pages/future_reservation_page.dart';
@@ -91,6 +92,8 @@ class AppRouter {
 
       case AppRoutes.contact:
         return MaterialPageRoute(builder: (_) => const ContactPage());
+      case AppRoutes.addNewCar:
+        return MaterialPageRoute(builder: (_) => const AddNewCar());
 
       default:
         return MaterialPageRoute(

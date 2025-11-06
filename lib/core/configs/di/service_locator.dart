@@ -8,6 +8,7 @@ import 'package:vrooom/domain/repositories/auth_repository.dart';
 import 'package:vrooom/domain/usecases/auth/login_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/logout_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/register_usecase.dart';
+import 'package:vrooom/domain/usecases/vehicle/add_new_vehicle_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_all_vehicles_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_vehicle_details_usecase.dart';
 
@@ -31,4 +32,5 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<LogoutUseCase>(LogoutUseCase(sl()));
   sl.registerSingleton<GetAllVehiclesUseCase>(GetAllVehiclesUseCase(sl()));
   sl.registerSingleton<GetVehicleDetailsUseCase>(GetVehicleDetailsUseCase(sl()));
+  sl.registerSingleton<AddNewVehiclesUseCase>(AddNewVehiclesUseCase(sl()));
 }
