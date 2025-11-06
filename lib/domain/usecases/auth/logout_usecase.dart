@@ -7,10 +7,6 @@ class LogoutUseCase {
   LogoutUseCase(this.repository);
 
   Future<Either<String, void>> call() async {
-    try {
-      return await repository.logout();
-    } catch (e) {
-      return Left("Error: $e");
-    }
+    return await repository.logout();
   }
 }

@@ -2,13 +2,18 @@ import 'package:dartz/dartz.dart';
 import 'package:vrooom/data/models/auth/login_request_model.dart';
 import 'package:vrooom/data/models/auth/register_request_model.dart';
 import 'package:vrooom/data/sources/auth/auth_api_service.dart';
+import 'package:vrooom/data/sources/auth/token_storage.dart';
 import 'package:vrooom/domain/entities/user.dart';
 import 'package:vrooom/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthApiService authApiService;
+  final TokenStorage tokenStorage;
 
-  AuthRepositoryImpl(this.authApiService);
+  AuthRepositoryImpl(
+    this.authApiService,
+    this.tokenStorage,
+  );
 
   @override
   Future<Either<String, User>> login({required String email, required String password}) async {
@@ -16,7 +21,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final request = LoginRequestModel(email: email, password: password);
       final response = await authApiService.login(request);
 
-      // NOTE: Przechować token w SharedPreferences!
+      tokenStorage.saveToken(response.jwt);
       return Right(response.user);
     } catch (e) {
       return Left(e.toString());
@@ -27,7 +32,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<String, void>> logout() async {
     try {
       await authApiService.logout();
-      // NOTE: TUTAJ USUNĄĆ TOKEN Z SHARED PREFERENCES
+      tokenStorage.deleteToken();
       return const Right(null);
     } catch (e) {
       return Left(e.toString());
