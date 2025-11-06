@@ -1,52 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/common/widgets/loading_widget.dart';
 import 'package:vrooom/core/common/widgets/search_user_module.dart';
-import 'package:vrooom/core/configs/assets/app_images.dart';
+import 'package:vrooom/domain/entities/user.dart';
+import 'package:vrooom/domain/usecases/user/get_all_users_usecase.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
 import 'package:vrooom/presentation/admin/widgets/user_information_entity.dart';
 
+import '../../../../core/configs/di/service_locator.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
 
-class ManageUsersPage extends StatelessWidget {
+class ManageUsersPage extends StatefulWidget {
   const ManageUsersPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    List<UserInformationEntity> userInformation = [
-      const UserInformationEntity(
-        profileImage: AppImages.person,
-        firstName: "Andrzej",
-        surname: "Musiał",
-        email: "maciej.musial@example.com",
-        phone: "622-012-775",
-        userStatus: UserStatus.active,
-      ),
-      const UserInformationEntity(
-        profileImage: AppImages.person,
-        firstName: "Cezary",
-        surname: "Pazura",
-        email: "cezary@example.com",
-        phone: "623-123-991",
-        userStatus: UserStatus.offline,
-      ),
-      const UserInformationEntity(
-        profileImage: AppImages.person,
-        firstName: "Robert",
-        surname: "Burnejka",
-        email: "robur@test.com",
-        phone: "091-881-321",
-        userStatus: UserStatus.active,
-      ),
-      const UserInformationEntity(
-        profileImage: AppImages.person,
-        firstName: "Cezary",
-        surname: "Pazura",
-        email: "cezary@example.com",
-        phone: "623-123-991",
-        userStatus: UserStatus.offline,
-      )
-    ];
+  State<ManageUsersPage> createState() => _ManageUsersPageState();
+}
 
+class _ManageUsersPageState extends State<ManageUsersPage> {
+  final GetAllUsersUsecase _getAllUsersUsecase = sl();
+  bool _isLoading = true;
+  List<User> _usersList = [];
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsers();
+  }
+
+  Future<void> _loadUsers() async {
+    final result = await _getAllUsersUsecase();
+
+    result.fold((error) {
+      print("=== ERROR OCCURED === $error");
+      setState(() {
+        _errorMessage = error;
+        _isLoading = false;
+      });
+    }, (usersList) {
+      print("=== USERS LOADED ===");
+      setState(() {
+        _usersList = usersList;
+        _isLoading = false;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: const AdminAppBar(title: "Manage Users"),
       drawer: const AdminDrawer(),
@@ -67,22 +69,31 @@ class ManageUsersPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
-              ...userInformation.map((entry) {
-                return UserInformationEntity(
-                  profileImage: entry.profileImage,
-                  firstName: entry.firstName,
-                  surname: entry.surname,
-                  email: entry.email,
-                  phone: entry.phone,
-                  userStatus: entry.userStatus,
-                );
-              }).expand(
-                (widget) => [widget, const SizedBox(height: AppSpacing.sm)],
-              ),
+              LoadingWidget(
+                isLoading: _isLoading,
+                errorMessage: _errorMessage,
+                futureResultObj: _usersList,
+                emptyResultMsg: "No Users data found.",
+                futureBuilder: _buildUsersDetails,
+              )
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildUsersDetails() {
+    return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: _usersList.length,
+      separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
+      itemBuilder: (context, index) {
+        return UserInformationEntity(
+          user: _usersList[index],
+        );
+      },
     );
   }
 }

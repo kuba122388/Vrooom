@@ -46,8 +46,10 @@ dependencies:
   dartz: ^0.10.1
   dio: ^5.9.0
   get_it: ^8.2.0
+  flutter_secure_storage: ^9.2.4
+  url_launcher: ^6.3.2
+  shared_preferences: ^2.3.3
   image_picker: ^1.0.7
-  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_text_styles.dart';
 
 import '../../../../core/common/widgets/primary_button.dart';

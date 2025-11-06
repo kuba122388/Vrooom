@@ -1,35 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/common/utils/email_launcher.dart';
+import 'package:vrooom/core/common/widgets/app_svg.dart';
+import 'package:vrooom/core/configs/assets/app_images.dart';
+import 'package:vrooom/core/configs/assets/app_vectors.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
+import 'package:vrooom/domain/entities/user.dart';
 
+import '../../../core/configs/di/service_locator.dart';
 import '../../../core/configs/theme/app_spacing.dart';
-
-enum UserStatus { active, offline }
+import '../../../domain/usecases/user/delete_user_by_id_usecase.dart';
 
 class UserInformationEntity extends StatelessWidget {
-  final String profileImage;
-  final String firstName;
-  final String surname;
-  final String email;
-  final String phone;
-  final UserStatus userStatus;
+  final DeleteUserByIdUseCase _deleteUserByIdUseCase = sl();
+  final User user;
 
-  const UserInformationEntity(
-      {super.key,
-      required this.profileImage,
-      required this.firstName,
-      required this.surname,
-      required this.email,
-      required this.phone,
-      required this.userStatus});
-
-  String _getStatus(UserStatus status) {
-    switch (status) {
-      case UserStatus.active:
-        return "Active";
-      case UserStatus.offline:
-        return "Offline";
-    }
-  }
+  UserInformationEntity({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +31,7 @@ class UserInformationEntity extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(128.0),
                   child: Image.asset(
-                    profileImage,
+                    AppImages.person,
                     width: 40,
                     height: 40,
                     fit: BoxFit.cover,
@@ -55,7 +40,7 @@ class UserInformationEntity extends StatelessWidget {
                 const SizedBox(width: 10.0),
                 Expanded(
                   child: Text(
-                    "$firstName $surname",
+                    "${user.name} ${user.surname}",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -68,7 +53,7 @@ class UserInformationEntity extends StatelessWidget {
                   width: 40,
                   height: 40,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => EmailLauncher.open(user.email),
                     style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor: AppColors.container.neutral750,
@@ -85,7 +70,75 @@ class UserInformationEntity extends StatelessWidget {
                   width: 40,
                   height: 40,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  "Confirmation",
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                GestureDetector(
+                                  onTap: () => Navigator.of(context).pop(),
+                                  child: const AppSvg(
+                                    asset: AppVectors.close,
+                                    color: AppColors.primary,
+                                  ),
+                                )
+                              ],
+                            ),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Do you really want to delete:",
+                                  style: TextStyle(fontSize: 16.0),
+                                ),
+                                const SizedBox(height: AppSpacing.xs),
+                                Text(
+                                  "${user.name} ${user.surname}",
+                                  style:
+                                      const TextStyle(fontWeight: FontWeight.w700, fontSize: 16.0),
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              ElevatedButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text(
+                                  "Cancel",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  _deleteUserByIdUseCase(user.customerID);
+                                  Navigator.of(context).pop();
+                                },
+                                style: ButtonStyle(
+                                  backgroundColor: WidgetStateProperty.all(AppColors.primary),
+                                ),
+                                child: const Text(
+                                  "Delete",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              )
+                            ],
+                          );
+                        },
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor: AppColors.primary,
@@ -114,7 +167,7 @@ class UserInformationEntity extends StatelessWidget {
                             style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
                           ),
                           Text(
-                            email,
+                            user.email,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style:
@@ -122,39 +175,10 @@ class UserInformationEntity extends StatelessWidget {
                           ),
                         ],
                       ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
-                            child: Text(
-                              "Phone:",
-                              style:
-                                  TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
-                            child: Text(
-                              phone,
-                              style:
-                                  const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
-                            ),
-                          )
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Text(
-                            "Status:",
-                            style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
-                          ),
-                          Text(
-                            _getStatus(userStatus),
-                            style:
-                                const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
+                      _singleRow("Phone: ", user.phoneNumber),
+                      _singleRow("Street: ", user.streetAddress),
+                      _singleRow("Postal: ", user.postalCode),
+                      _singleRow("City: ", user.city),
                     ],
                   ),
                 ),
@@ -176,6 +200,27 @@ class UserInformationEntity extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  _singleRow(String label, String value) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: AppSpacing.xxs),
+          child: Text(
+            label,
+            style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: AppSpacing.xxs),
+          child: Text(
+            value,
+            style: const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
+          ),
+        )
+      ],
     );
   }
 }

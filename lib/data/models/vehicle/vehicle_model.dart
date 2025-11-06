@@ -73,7 +73,7 @@ class VehicleModel extends Vehicle {
       numberOfSeats: json["numberOfSeats"] as int,
       numberOfDoors: json["numberOfDoors"] as int,
       description: json["description"] as String,
-      vehicleImage: "http://192.168.1.12:8080/images/${json["vehicleImage"] as String}",
+      vehicleImage: "http://192.168.0.168:8080/images/${json["vehicleImage"] as String}",
       availabilityStatus: json["availabilityStatus"] as String,
       equipmentList:
           (json["equipmentList"] as List<dynamic>).map((e) => EquipmentModel.fromJson(e)).toList(),
