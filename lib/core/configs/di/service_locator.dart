@@ -5,7 +5,7 @@ import 'package:vrooom/data/repositories/auth_repository_impl.dart';
 import 'package:vrooom/data/repositories/user_repository_impl.dart';
 import 'package:vrooom/data/repositories/vehicle_repository_impl.dart';
 import 'package:vrooom/data/sources/auth/auth_api_service.dart';
-import 'package:vrooom/data/sources/auth/token_storage.dart';
+import 'package:vrooom/data/sources/auth/auth_storage.dart';
 import 'package:vrooom/data/sources/user/user_api_service.dart';
 import 'package:vrooom/data/sources/vehicle/vehicle_api_service.dart';
 import 'package:vrooom/domain/repositories/auth_repository.dart';
@@ -31,7 +31,7 @@ Future<void> initializeDependencies() async {
       ),
     ),
   );
-  sl.registerSingleton<TokenStorage>(TokenStorage(sl()));
+  sl.registerSingleton<AuthStorage>(AuthStorage(sl()));
   sl.registerSingleton<Dio>(DioClient.createDio(sl()));
   sl.registerSingleton<AuthApiService>(AuthApiService(sl()));
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));

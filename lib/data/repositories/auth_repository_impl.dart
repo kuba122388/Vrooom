@@ -2,13 +2,13 @@ import 'package:dartz/dartz.dart';
 import 'package:vrooom/data/models/auth/login_request_model.dart';
 import 'package:vrooom/data/models/auth/register_request_model.dart';
 import 'package:vrooom/data/sources/auth/auth_api_service.dart';
-import 'package:vrooom/data/sources/auth/token_storage.dart';
+import 'package:vrooom/data/sources/auth/auth_storage.dart';
 import 'package:vrooom/domain/entities/user.dart';
 import 'package:vrooom/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthApiService authApiService;
-  final TokenStorage tokenStorage;
+  final AuthStorage tokenStorage;
 
   AuthRepositoryImpl(
     this.authApiService,
@@ -21,7 +21,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final request = LoginRequestModel(email: email, password: password);
       final response = await authApiService.login(request);
 
-      tokenStorage.saveToken(response.jwt);
+      tokenStorage.saveLoginData(response.jwt, response.user.customerID);
       return Right(response.user);
     } catch (e) {
       return Left(e.toString());
@@ -32,7 +32,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<String, void>> logout() async {
     try {
       await authApiService.logout();
-      tokenStorage.deleteToken();
+      tokenStorage.clear();
       return const Right(null);
     } catch (e) {
       return Left(e.toString());
