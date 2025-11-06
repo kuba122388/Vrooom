@@ -3,7 +3,9 @@ import 'package:vrooom/core/common/widgets/info_section_card.dart';
 import 'package:vrooom/core/configs/assets/app_images.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
+import 'package:vrooom/domain/entities/user.dart';
 import 'package:vrooom/domain/usecases/auth/logout_usecase.dart';
+import 'package:vrooom/domain/usecases/user/get_current_user_information_usecase.dart';
 import 'package:vrooom/presentation/user/profile/widgets/car_status_row.dart';
 import 'package:vrooom/presentation/user/profile/widgets/settings_tile.dart';
 
@@ -23,6 +25,28 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final LogoutUseCase _logoutUseCase = sl();
+  final GetCurrentUserInformationUseCase _getCurrentUserInformationUseCase = sl();
+  User? _user;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final result = await _getCurrentUserInformationUseCase();
+    result.fold(
+          (error) {},
+          (user) {
+        setState(() {
+          _user = user;
+          _isLoading = false;
+        });
+      },
+    );
+  }
 
   Future<void> _handleLogout() async {
     final result = await _logoutUseCase();
@@ -88,7 +112,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return _isLoading
+      ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+      : SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -111,15 +137,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "John Doe",
-                        style: TextStyle(
+                      Text(
+                        "${_user?.name} ${_user?.surname}",
+                        style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 20.0,
                         ),
                       ),
                       Text(
-                        "john.doe@exmaple.com",
+                        _user!.email,
                         style: TextStyle(
                           color: AppColors.text.neutral400,
                         ),
@@ -160,7 +186,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   SettingsTile(
                     icon: const AppSvg(asset: AppVectors.settings),
-                    label: "Account Settings",
+                    label: "Edit profile details",
                     onTap: () => Navigator.pushNamed(context, AppRoutes.editProfileDetails),
                   ),
                   const SettingsTile(

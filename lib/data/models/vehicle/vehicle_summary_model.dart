@@ -18,7 +18,7 @@ class VehicleSummaryModel extends VehicleSummary {
       model: json["model"] as String,
       type: json["type"] as String,
       pricePerDay: json["pricePerDay"] as double,
-      vehicleImage: "http://192.168.1.106:8080/images/${json["vehicleImage"] as String}",
+      vehicleImage: "http://192.168.0.168:8080/images/${json["vehicleImage"] as String}",
       description: json["description"] as String,
     );
   }

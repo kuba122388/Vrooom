@@ -20,7 +20,7 @@ class AuthStorage {
     return await _secureStorage.read(key: _tokenKey);
   }
 
-  Future<int?> getUserId() async {
+  static Future<int?> getUserId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(_userIdKey);
   }
