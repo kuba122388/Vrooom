@@ -8,6 +8,7 @@ import 'core/configs/routes/app_router.dart';
 import 'core/configs/routes/app_routes.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await initializeDependencies();
   runApp(const MyApp());
 }
