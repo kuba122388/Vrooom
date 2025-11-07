@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:vrooom/domain/entities/booking.dart';
 
 import 'package:vrooom/domain/entities/insurance.dart';
 
@@ -11,10 +12,20 @@ class BookingRepositoryImpl implements BookingRepository {
   BookingRepositoryImpl(this.bookingApiService);
 
   @override
-  Future<Either<String, List<Insurance>>> getAllInsurances()async {
+  Future<Either<String, List<Insurance>>> getAllInsurances() async {
     try {
       final response = await bookingApiService.getAllInsurances();
 
+      return Right(response);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, List<Booking>>> getRecentRentalsForUser() async {
+    try {
+      final response = await bookingApiService.getRecentRentalsForUser();
       return Right(response);
     } catch (e) {
       return Left(e.toString());

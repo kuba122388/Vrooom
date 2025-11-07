@@ -21,4 +21,9 @@ abstract class AuthRepository {
     required String postalCode,
     required String country,
   });
+
+  Future<Either<String, void>> changePassword({
+    required String oldPassword,
+    required String newPassword
+  });
 }

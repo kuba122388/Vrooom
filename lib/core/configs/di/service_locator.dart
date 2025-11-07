@@ -10,10 +10,12 @@ import 'package:vrooom/data/sources/user/user_api_service.dart';
 import 'package:vrooom/data/sources/vehicle/vehicle_api_service.dart';
 import 'package:vrooom/domain/repositories/auth_repository.dart';
 import 'package:vrooom/domain/repositories/user_repository.dart';
+import 'package:vrooom/domain/usecases/auth/change_password_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/login_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/logout_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/register_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/get_all_insurances_usecase.dart';
+import 'package:vrooom/domain/usecases/booking/get_recent_rentals_for_user_usecase.dart';
 import 'package:vrooom/domain/usecases/user/delete_user_by_id_usecase.dart';
 import 'package:vrooom/domain/usecases/user/edit_current_user_usecase.dart';
 import 'package:vrooom/domain/usecases/user/get_all_users_usecase.dart';
@@ -48,6 +50,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<LoginUseCase>(LoginUseCase(sl()));
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase(sl()));
   sl.registerSingleton<LogoutUseCase>(LogoutUseCase(sl()));
+  sl.registerSingleton<ChangePasswordUseCase>(ChangePasswordUseCase(sl()));
 
   sl.registerSingleton<VehicleApiService>(VehicleApiService(sl()));
   sl.registerSingleton<VehicleRepository>(VehicleRepositoryImpl(sl()));
@@ -62,4 +65,6 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<DeleteUserByIdUseCase>(DeleteUserByIdUseCase(sl()));
   sl.registerSingleton<AddNewVehiclesUseCase>(AddNewVehiclesUseCase(sl()));
   sl.registerSingleton<GetAllInsurancesUseCase>(GetAllInsurancesUseCase(sl()));
+
+  sl.registerSingleton<GetRecentRentalsForUserUseCase>(GetRecentRentalsForUserUseCase(sl()));
 }
