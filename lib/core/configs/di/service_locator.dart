@@ -40,16 +40,11 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<AuthStorage>(AuthStorage(sl()));
   sl.registerSingleton<Dio>(DioClient.createDio(sl()));
   sl.registerSingleton<AuthApiService>(AuthApiService(sl()));
-  sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl()));
-
-  sl.registerSingleton<VehicleApiService>(VehicleApiService(sl()));
-  sl.registerSingleton<VehicleRepository>(VehicleRepositoryImpl(sl()));
+  sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(),sl()));
 
   sl.registerSingleton<BookingApiService>(BookingApiService(sl()));
   sl.registerSingleton<BookingRepository>(BookingRepositoryImpl(sl()));
 
-
-  sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
   sl.registerSingleton<LoginUseCase>(LoginUseCase(sl()));
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase(sl()));
   sl.registerSingleton<LogoutUseCase>(LogoutUseCase(sl()));
