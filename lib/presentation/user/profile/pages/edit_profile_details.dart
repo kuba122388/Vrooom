@@ -5,6 +5,7 @@ import 'package:vrooom/core/common/widgets/custom_text_field.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
 import 'package:vrooom/core/configs/assets/app_vectors.dart';
 import 'package:vrooom/data/models/user_model.dart';
+import 'package:vrooom/domain/usecases/auth/change_password_usecase.dart';
 import 'package:vrooom/domain/usecases/user/edit_current_user_usecase.dart';
 
 import '../../../../core/configs/di/service_locator.dart';
@@ -23,6 +24,8 @@ class EditProfileDetails extends StatefulWidget {
 class _EditProfileDetailsState extends State<EditProfileDetails> {
   final GetCurrentUserInformationUseCase _getCurrentUserInformationUseCase = sl();
   final EditCurrentUserUseCase _editCurrentUserUseCase = sl();
+  final ChangePasswordUseCase _changePasswordUseCase = sl();
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -34,6 +37,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
   final TextEditingController _currentPasswordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _repeatPasswordController = TextEditingController();
+
   User? _user;
   bool _isLoading = true;
 
@@ -46,8 +50,10 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
   Future<void> _loadUser() async {
     final result = await _getCurrentUserInformationUseCase();
     result.fold(
-          (error) {},
-          (user) {
+      (error) {
+        _showError(error);
+      },
+      (user) {
         setState(() {
           _user = user;
           _isLoading = false;
@@ -70,25 +76,25 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
         _repeatPasswordController.text.isNotEmpty;
 
     if (!changed) {
-      _showError("Nie wprowadzono żadnych zmian.");
+      _showError("No changes were made.");
       return;
     }
 
     if (_emailController.text.isNotEmpty &&
         !RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$').hasMatch(_emailController.text.trim())) {
-      _showError("Podaj poprawny adres e-mail.");
+      _showError("Please provide a valid email address.");
       return;
     }
 
     if (_phoneNumberController.text.isNotEmpty &&
         !RegExp(r'^[0-9+\s\-()]{7,20}$').hasMatch(_phoneNumberController.text.trim())) {
-      _showError("Podaj poprawny numer telefonu.");
+      _showError("Please provide a valid phone number.");
       return;
     }
 
     if (_postalCodeController.text.isNotEmpty &&
         !RegExp(r'^\d{2}-\d{3}$').hasMatch(_postalCodeController.text.trim())) {
-      _showError("Podaj poprawny kod pocztowy (np. 00-123).");
+      _showError("Please enter a valid postal code (e.g. 00-123).");
       return;
     }
 
@@ -98,16 +104,48 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
 
     if (wantsChangePassword) {
       if (_currentPasswordController.text.isEmpty) {
-        _showError("Podaj obecne hasło, aby je zmienić.");
+        _showError("Enter your current password to change it.");
         return;
       }
       if (_newPasswordController.text.length < 6) {
-        _showError("Nowe hasło musi mieć co najmniej 6 znaków.");
+        _showError("The new password must be at least 6 characters long.");
         return;
       }
       if (_newPasswordController.text != _repeatPasswordController.text) {
-        _showError("Nowe hasła muszą być identyczne.");
+        _showError("New passwords must be identical.");
         return;
+      }
+
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+
+        final result = await _changePasswordUseCase(oldPassword: _currentPasswordController.text.trim(), newPassword: _newPasswordController.text.trim());
+        bool iserror = false;
+
+        result.fold(
+          (error) {
+            _showError(error.substring(11));
+            setState(() {
+              _isLoading = false;
+            });
+            iserror = true;
+          },
+          (success) {
+            _showError("The password has been successfully changed");
+          },
+        );
+
+        if (iserror) {
+          return;
+        }
+      } catch (e) {
+        _showError("Update failed: ${e.toString()}");
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
 
@@ -132,7 +170,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
       if (!context.mounted) return;
       Navigator.pop(context);
     } catch (e) {
-      _showError("Aktualizacja nie powiodła się: ${e.toString()}");
+      _showError("Update failed: ${e.toString()}");
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -143,7 +181,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
   void _showError(String message) {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
+      SnackBar(content: Text(message)),
     );
   }
 

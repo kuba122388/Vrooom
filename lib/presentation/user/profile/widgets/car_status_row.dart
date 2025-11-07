@@ -59,11 +59,6 @@ class CarStatusRow extends StatelessWidget {
                   ),
                 ),
               ),
-              const Spacer(),
-              const AppSvg(
-                asset: AppVectors.expandIcon,
-                width: 18.0,
-              ),
             ],
           ),
         ),

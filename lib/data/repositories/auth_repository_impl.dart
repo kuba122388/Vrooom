@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:vrooom/data/models/auth/login_request_model.dart';
+import 'package:vrooom/data/models/auth/password_request_model.dart';
 import 'package:vrooom/data/models/auth/register_request_model.dart';
 import 'package:vrooom/data/sources/auth/auth_api_service.dart';
 import 'package:vrooom/data/sources/auth/auth_storage.dart';
@@ -23,6 +24,21 @@ class AuthRepositoryImpl implements AuthRepository {
 
       tokenStorage.saveLoginData(response.jwt, response.user.customerID);
       return Right(response.user);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, void>> changePassword({
+    required String oldPassword,
+    required String newPassword
+  }) async {
+    try {
+      final request = PasswordRequestModel(oldPassword: oldPassword, newPassword: newPassword);
+      await authApiService.changePassword(request);
+
+      return const Right(null);
     } catch (e) {
       return Left(e.toString());
     }

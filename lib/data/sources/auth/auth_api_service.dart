@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:vrooom/data/models/auth/login_response_model.dart';
+import 'package:vrooom/data/models/auth/password_request_model.dart';
 import 'package:vrooom/data/models/auth/register_request_model.dart';
 import 'package:vrooom/data/models/auth/register_response_model.dart';
 
@@ -59,6 +60,26 @@ class AuthApiService {
       await _dio.post('/api/auth/logout');
     } catch (e) {
       throw "Logout failed: $e";
+    }
+  }
+
+  Future<void> changePassword(PasswordRequestModel request) async {
+    try {
+      final response = await _dio.post(
+        '/api/auth/change-password',
+        data: request.toJson(),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception("Login failed");
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 400) {
+        throw Exception("Old password is incorrect");
+      }
+      throw Exception("Network error ${e.message}");
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
     }
   }
 }

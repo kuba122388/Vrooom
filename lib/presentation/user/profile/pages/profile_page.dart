@@ -3,8 +3,10 @@ import 'package:vrooom/core/common/widgets/info_section_card.dart';
 import 'package:vrooom/core/configs/assets/app_images.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
+import 'package:vrooom/domain/entities/booking.dart';
 import 'package:vrooom/domain/entities/user.dart';
 import 'package:vrooom/domain/usecases/auth/logout_usecase.dart';
+import 'package:vrooom/domain/usecases/booking/get_recent_rentals_for_user_usecase.dart';
 import 'package:vrooom/domain/usecases/user/get_current_user_information_usecase.dart';
 import 'package:vrooom/presentation/user/profile/widgets/car_status_row.dart';
 import 'package:vrooom/presentation/user/profile/widgets/settings_tile.dart';
@@ -26,26 +28,49 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final LogoutUseCase _logoutUseCase = sl();
   final GetCurrentUserInformationUseCase _getCurrentUserInformationUseCase = sl();
+  final GetRecentRentalsForUserUseCase _getRecentRentalsForUserUseCase = sl();
   User? _user;
+  List<Booking> _bookings = [];
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadUser();
+    _load();
   }
 
-  Future<void> _loadUser() async {
-    final result = await _getCurrentUserInformationUseCase();
-    result.fold(
-          (error) {},
-          (user) {
+  Future<void> _load() async {
+    final userResult = await _getCurrentUserInformationUseCase();
+    userResult.fold(
+      (error) {},
+      (user) {
         setState(() {
           _user = user;
+        });
+      },
+    );
+
+    final bookingResult = await _getRecentRentalsForUserUseCase();
+    bookingResult.fold(
+      (error) {},
+      (bookingList) {
+        setState(() {
+          _bookings = bookingList;
           _isLoading = false;
         });
       },
     );
+  }
+
+  RentalStatus _getRentalStatus(Booking booking) {
+    switch (booking.bookingStatus) {
+      case "Pending":
+        return RentalStatus.pending;
+      case "Cancelled":
+        return RentalStatus.cancelled;
+      default:
+        return RentalStatus.completed;
+    }
   }
 
   Future<void> _handleLogout() async {
@@ -156,28 +181,23 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             const SizedBox(height: AppSpacing.md),
-            const InfoSectionCard(
+            InfoSectionCard(
               title: "Rental History",
-              child: Column(
-                children: [
-                  CarStatusRow(
-                    carName: "Mercedes C-Class",
-                    status: RentalStatus.active,
-                  ),
-                  CarStatusRow(
-                    carName: "Tesla Model 3",
-                    status: RentalStatus.completed,
-                  ),
-                  CarStatusRow(
-                    carName: "Ford Mustang",
-                    status: RentalStatus.cancelled,
-                  ),
-                  CarStatusRow(
-                    carName: "Opel Astra",
-                    status: RentalStatus.penalty,
-                  ),
-                ],
-              ),
+              child: _bookings.isNotEmpty
+                ? Column(
+                  children: _bookings
+                      .map((booking) => CarStatusRow(carName: "${booking.vehicleMake} ${booking.vehicleModel}", status: _getRentalStatus(booking)))
+                      .toList(),
+                )
+                : const Center(
+                  child: Text(
+                    "You don't have rental history",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14.0,
+                    ),
+                  )
+                ),
             ),
             const SizedBox(height: AppSpacing.md),
             InfoSectionCard(
