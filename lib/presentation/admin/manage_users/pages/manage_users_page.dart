@@ -30,6 +30,9 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
   }
 
   Future<void> _loadUsers() async {
+    setState(() {
+      _isLoading = true;
+    });
     final result = await _getAllUsersUsecase();
 
     result.fold((error) {
@@ -92,6 +95,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
       itemBuilder: (context, index) {
         return UserInformationEntity(
           user: _usersList[index],
+          callback: _loadUsers,
         );
       },
     );

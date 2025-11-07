@@ -13,8 +13,9 @@ import '../../../domain/usecases/user/delete_user_by_id_usecase.dart';
 class UserInformationEntity extends StatelessWidget {
   final DeleteUserByIdUseCase _deleteUserByIdUseCase = sl();
   final User user;
+  final Future<void> Function() callback;
 
-  UserInformationEntity({super.key, required this.user});
+  UserInformationEntity({super.key, required this.user, required this.callback});
 
   @override
   Widget build(BuildContext context) {
@@ -119,8 +120,9 @@ class UserInformationEntity extends StatelessWidget {
                                 ),
                               ),
                               ElevatedButton(
-                                onPressed: () {
-                                  _deleteUserByIdUseCase(user.customerID);
+                                onPressed: () async {
+                                  await _deleteUserByIdUseCase(user.customerID);
+                                  callback();
                                   Navigator.of(context).pop();
                                 },
                                 style: ButtonStyle(
