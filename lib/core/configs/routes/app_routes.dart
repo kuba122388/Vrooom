@@ -21,4 +21,5 @@ class AppRoutes {
   static const String activeRentals = '/activeRentals';
   static const String contact = '/contact';
   static const String addNewCar = '/addNewCar';
+  static const String privacyPolicy = '/privacyPolicy';
 }

@@ -16,6 +16,7 @@ import 'package:vrooom/presentation/user/listings/pages/car_details_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/listings_page.dart';
 import 'package:vrooom/presentation/user/profile/pages/contact_page.dart';
 import 'package:vrooom/presentation/user/profile/pages/edit_profile_details.dart';
+import 'package:vrooom/presentation/user/profile/pages/privacy_policy_page.dart';
 import 'package:vrooom/presentation/user/splash/pages/splash_page.dart';
 
 import '../../../presentation/admin/admin_settings/pages/admin_settings.dart';
@@ -94,6 +95,9 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const ContactPage());
       case AppRoutes.addNewCar:
         return MaterialPageRoute(builder: (_) => const AddNewCar());
+
+      case AppRoutes.privacyPolicy:
+        return MaterialPageRoute(builder: (_) => const PrivacyPolicyPage());
 
       default:
         return MaterialPageRoute(
