@@ -214,9 +214,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       }
                     },
                   ),
-                  const SettingsTile(
-                    icon: AppSvg(asset: AppVectors.privacyPolicy),
+                  SettingsTile(
+                    icon: const AppSvg(asset: AppVectors.privacyPolicy),
                     label: "Privacy Policy",
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.privacyPolicy),
                   ),
                   SettingsTile(
                     icon: const AppSvg(asset: AppVectors.contact),
