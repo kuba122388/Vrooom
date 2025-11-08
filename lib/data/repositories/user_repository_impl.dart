@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:dartz/dartz.dart';
 import 'package:vrooom/data/models/user_model.dart';
 import 'package:vrooom/data/sources/user/user_api_service.dart';
@@ -40,6 +43,26 @@ class UserRepositoryImpl extends UserRepository {
   Future<Either<String, void>> editCurrentUser(UserModel request) async {
     try {
       return Right(await userApiService.editCurrentUser(request));
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, void>> uploadUserProfilePicture(int userId, File imageFile) async {
+    try {
+      await userApiService.uploadUserProfilePicture(userId, imageFile);
+
+      return const Right(null);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, Uint8List>> downloadUserProfilePicture(int userId) async {
+    try {
+      return Right(await userApiService.downloadUserProfilePicture(userId));
     } catch (e) {
       return Left(e.toString());
     }
