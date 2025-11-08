@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:vrooom/data/models/user_model.dart';
 import 'package:vrooom/data/sources/auth/auth_storage.dart';
@@ -79,6 +82,40 @@ class UserApiService {
       throw Exception("Network error ${e.message}");
     } catch (e) {
       throw Exception('Unexpected error: $e');
+    }
+  }
+
+  Future<void> uploadUserProfilePicture(int userId, File imageFile) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(
+            imageFile.path, filename: 'avatar.jpg')
+      });
+
+      await _dio.post(
+        "$_userApi/$userId/avatar",
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+    } on DioException catch (e) {
+      throw ("Network Error: ${e.message}");
+    } catch (e) {
+      throw ("Unexpected Error: $e");
+    }
+  }
+
+  Future<Uint8List> downloadUserProfilePicture(int userId) async {
+    try {
+      final response = await _dio.get(
+        "$_userApi/$userId/avatar",
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      return Uint8List.fromList(response.data);
+    } on DioException catch (e) {
+      throw Exception("Network Error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected Error: $e");
     }
   }
 }

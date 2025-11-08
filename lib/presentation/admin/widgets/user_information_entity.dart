@@ -5,17 +5,60 @@ import 'package:vrooom/core/configs/assets/app_images.dart';
 import 'package:vrooom/core/configs/assets/app_vectors.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/domain/entities/user.dart';
+import 'package:vrooom/domain/usecases/user/download_user_profile_picture_usecase.dart';
+import 'dart:typed_data';
 
 import '../../../core/configs/di/service_locator.dart';
 import '../../../core/configs/theme/app_spacing.dart';
 import '../../../domain/usecases/user/delete_user_by_id_usecase.dart';
 
-class UserInformationEntity extends StatelessWidget {
-  final DeleteUserByIdUseCase _deleteUserByIdUseCase = sl();
+class UserInformationEntity extends StatefulWidget {
   final User user;
   final Future<void> Function() callback;
 
-  UserInformationEntity({super.key, required this.user, required this.callback});
+  const UserInformationEntity({super.key, required this.user, required this.callback});
+
+  @override
+  State<UserInformationEntity> createState() => _UserInformationEntityState();
+}
+
+class _UserInformationEntityState extends State<UserInformationEntity> {
+  final DeleteUserByIdUseCase _deleteUserByIdUseCase = sl();
+  final DownloadUserProfilePictureUseCase _downloadUserProfilePictureUseCase = sl();
+
+  bool _isLoading = false;
+  Uint8List? _profilePic;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await _downloadUserProfilePictureUseCase(userId: widget.user.customerID);
+
+      result.fold(
+        (error) {},
+        (profilePic) {
+          setState(() {
+            _profilePic = profilePic;
+          });
+        },
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,24 +67,33 @@ class UserInformationEntity extends StatelessWidget {
           color: AppColors.container.neutral700, borderRadius: BorderRadius.circular(10.0)),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Column(
+        child: _isLoading
+        ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+        : Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Row(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(128.0),
-                  child: Image.asset(
-                    AppImages.person,
-                    width: 40,
-                    height: 40,
-                    fit: BoxFit.cover,
-                  ),
+                  borderRadius: BorderRadius.circular(30.0),
+                  child: _profilePic == null
+                    ? Image.asset(
+                        AppImages.person,
+                        fit: BoxFit.cover,
+                        width: 60,
+                        height: 60,
+                      )
+                    : Image.memory(
+                        _profilePic!,
+                        fit: BoxFit.cover,
+                        width: 60,
+                        height: 60,
+                      )
                 ),
                 const SizedBox(width: 10.0),
                 Expanded(
                   child: Text(
-                    "${user.name} ${user.surname}",
+                    "${widget.user.name} ${widget.user.surname}",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -54,7 +106,7 @@ class UserInformationEntity extends StatelessWidget {
                   width: 40,
                   height: 40,
                   child: ElevatedButton(
-                    onPressed: () => EmailLauncher.open(user.email),
+                    onPressed: () => EmailLauncher.open(widget.user.email),
                     style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor: AppColors.container.neutral750,
@@ -102,7 +154,7 @@ class UserInformationEntity extends StatelessWidget {
                                 ),
                                 const SizedBox(height: AppSpacing.xs),
                                 Text(
-                                  "${user.name} ${user.surname}",
+                                  "${widget.user.name} ${widget.user.surname}",
                                   style:
                                       const TextStyle(fontWeight: FontWeight.w700, fontSize: 16.0),
                                 ),
@@ -121,8 +173,8 @@ class UserInformationEntity extends StatelessWidget {
                               ),
                               ElevatedButton(
                                 onPressed: () async {
-                                  await _deleteUserByIdUseCase(user.customerID);
-                                  callback();
+                                  await _deleteUserByIdUseCase(widget.user.customerID);
+                                  widget.callback();
                                   Navigator.of(context).pop();
                                 },
                                 style: ButtonStyle(
@@ -169,7 +221,7 @@ class UserInformationEntity extends StatelessWidget {
                             style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
                           ),
                           Text(
-                            user.email,
+                            widget.user.email,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style:
@@ -177,10 +229,10 @@ class UserInformationEntity extends StatelessWidget {
                           ),
                         ],
                       ),
-                      _singleRow("Phone: ", user.phoneNumber),
-                      _singleRow("Street: ", user.streetAddress),
-                      _singleRow("Postal: ", user.postalCode),
-                      _singleRow("City: ", user.city),
+                      _singleRow("Phone: ", widget.user.phoneNumber),
+                      _singleRow("Street: ", widget.user.streetAddress),
+                      _singleRow("Postal: ", widget.user.postalCode),
+                      _singleRow("City: ", widget.user.city),
                     ],
                   ),
                 ),

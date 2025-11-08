@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/common/widgets/image_picker_widget.dart';
 import 'package:vrooom/core/common/widgets/info_section_card.dart';
 import 'package:vrooom/core/configs/assets/app_images.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
@@ -7,7 +11,9 @@ import 'package:vrooom/domain/entities/booking.dart';
 import 'package:vrooom/domain/entities/user.dart';
 import 'package:vrooom/domain/usecases/auth/logout_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/get_recent_rentals_for_user_usecase.dart';
+import 'package:vrooom/domain/usecases/user/download_user_profile_picture_usecase.dart';
 import 'package:vrooom/domain/usecases/user/get_current_user_information_usecase.dart';
+import 'package:vrooom/domain/usecases/user/upload_user_profile_picture_usecase.dart';
 import 'package:vrooom/presentation/user/profile/widgets/car_status_row.dart';
 import 'package:vrooom/presentation/user/profile/widgets/settings_tile.dart';
 
@@ -29,9 +35,13 @@ class _ProfilePageState extends State<ProfilePage> {
   final LogoutUseCase _logoutUseCase = sl();
   final GetCurrentUserInformationUseCase _getCurrentUserInformationUseCase = sl();
   final GetRecentRentalsForUserUseCase _getRecentRentalsForUserUseCase = sl();
+  final UploadUserProfilePictureUseCase _uploadUserProfilePictureUseCase = sl();
+  final DownloadUserProfilePictureUseCase _downloadUserProfilePictureUseCase = sl();
+
   User? _user;
   List<Booking> _bookings = [];
   bool _isLoading = true;
+  Uint8List? _profilePic;
 
   @override
   void initState() {
@@ -46,6 +56,16 @@ class _ProfilePageState extends State<ProfilePage> {
       (user) {
         setState(() {
           _user = user;
+        });
+      },
+    );
+
+    final profileResult = await _downloadUserProfilePictureUseCase(userId: _user!.customerID);
+    profileResult.fold(
+      (error) {},
+      (profilePic) {
+        setState(() {
+          _profilePic = profilePic;
         });
       },
     );
@@ -70,6 +90,58 @@ class _ProfilePageState extends State<ProfilePage> {
         return RentalStatus.cancelled;
       default:
         return RentalStatus.completed;
+    }
+  }
+
+  void _showError(String message) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  Future<void> _updateProfilePicture() async {
+    try {
+      final File? image = await ImagePickerWidget.pickImage();
+
+      if (image == null) return;
+
+      setState(() => _isLoading = true);
+
+      final uploadResult = await _uploadUserProfilePictureUseCase(
+        userId: _user!.customerID,
+        imageFile: image,
+      );
+
+      final uploadError = uploadResult.fold((error) => error, (_) => null);
+      if (uploadError != null) {
+        _showError("Upload failed: $uploadError");
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      final downloadResult = await _downloadUserProfilePictureUseCase(
+        userId: _user!.customerID,
+      );
+
+      downloadResult.fold(
+        (error) {
+          _showError("Failed to load profile picture: $error");
+        },
+        (imageFile) {
+          setState(() {
+            _profilePic = imageFile;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Profile picture updated successfully")),
+          );
+        },
+      );
+    } catch (e) {
+      _showError("Unexpected error: $e");
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -150,12 +222,44 @@ class _ProfilePageState extends State<ProfilePage> {
                   SizedBox(
                     height: 60.0,
                     width: 60.0,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(30.0),
-                      child: Image.asset(
-                        AppImages.person,
-                        fit: BoxFit.cover,
-                      ),
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(30.0),
+                          child: _profilePic == null
+                            ? Image.asset(
+                                AppImages.person,
+                                fit: BoxFit.cover,
+                                width: 60,
+                                height: 60,
+                              )
+                            : Image.memory(
+                                _profilePic!,
+                                fit: BoxFit.cover,
+                                width: 60,
+                                height: 60,
+                              )
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: InkWell(
+                            onTap: _updateProfilePicture,
+                            child: Container(
+                              padding: const EdgeInsets.all(4.0),
+                              decoration: const BoxDecoration(
+                                color: AppColors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),

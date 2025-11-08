@@ -3,5 +3,5 @@ class AppImages {
   static const format = '.jpg';
 
   static const mercedes = '${basePath}mercedes$format';
-  static const person = '${basePath}personImg$format';
+  static const person = '${basePath}default_avatar$format';
 }

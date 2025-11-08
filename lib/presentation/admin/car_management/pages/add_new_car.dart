@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:vrooom/core/common/widgets/custom_app_bar.dart';
 import 'package:vrooom/core/common/widgets/custom_dropdown.dart';
 import 'package:vrooom/core/common/widgets/custom_text_field.dart';
+import 'package:vrooom/core/common/widgets/image_picker_widget.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/domain/entities/equipment.dart';
@@ -110,19 +110,6 @@ class _AddNewCarState extends State<AddNewCar> {
     }
     return null;
   }
-
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImage = File(pickedFile.path);
-        _errorMessage = null;
-      });
-    }
-  }
-
 
   Future<void> _addVehicle() async {
     final isFormValid = _formKey.currentState!.validate();
@@ -428,7 +415,16 @@ class _AddNewCarState extends State<AddNewCar> {
                     ),
                     const SizedBox(height: AppSpacing.md),
                     GestureDetector(
-                      onTap: _pickImage,
+                      onTap: () async {
+                        File? image = await ImagePickerWidget.pickImage();
+
+                        if (image != null) {
+                          setState(() {
+                            _selectedImage = image;
+                            _errorMessage = null;
+                          });
+                        }
+                      },
                       child: DottedBorder(
                         color: AppColors.container.neutral800,
                         strokeWidth: 2,
