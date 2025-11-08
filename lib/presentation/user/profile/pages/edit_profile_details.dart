@@ -168,7 +168,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
       await _editCurrentUserUseCase(request: userToUpdate);
 
       if (!context.mounted) return;
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     } catch (e) {
       _showError("Update failed: ${e.toString()}");
     } finally {
