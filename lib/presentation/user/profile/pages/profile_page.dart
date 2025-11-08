@@ -207,7 +207,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   SettingsTile(
                     icon: const AppSvg(asset: AppVectors.settings),
                     label: "Edit profile details",
-                    onTap: () => Navigator.pushNamed(context, AppRoutes.editProfileDetails),
+                    onTap: () async {
+                      final updated = await Navigator.pushNamed(context, AppRoutes.editProfileDetails);
+                      if (updated == true) {
+                        _load();
+                      }
+                    },
                   ),
                   const SettingsTile(
                     icon: AppSvg(asset: AppVectors.privacyPolicy),
