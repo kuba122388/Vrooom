@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:dartz/dartz.dart';
 import 'package:vrooom/data/models/user_model.dart';
 import 'package:vrooom/data/sources/user/user_api_service.dart';
+import 'package:vrooom/domain/entities/booking.dart';
 import 'package:vrooom/domain/entities/user.dart';
 import 'package:vrooom/domain/repositories/user_repository.dart';
 
@@ -65,6 +66,33 @@ class UserRepositoryImpl extends UserRepository {
       return Right(await userApiService.downloadUserProfilePicture(userId));
     } catch (e) {
       return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, List<Booking>>> getUserActiveRentals() async {
+    try {
+      return Right(await userApiService.getUserActiveRentals());
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, List<Booking>>> getUserUpcomingRentals() async {
+    try {
+      return Right(await userApiService.getUserUpcomingRentals());
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, List<Booking>>> getUserRentalHistory() async {
+    try {
+      return Right(await userApiService.getUserRentalHistory());
+    } catch (e) {
+    return Left(e.toString());
     }
   }
 }

@@ -38,7 +38,7 @@ class BookingModel extends Booking {
         ? DateTime.tryParse(json["endDate"])
         : null,
       totalAmount: json["totalAmount"] as double?,
-      vehicleImage: json["vehicleImage"] as String?,
+      vehicleImage: "http://192.168.0.168:8080/images/${json["vehicleImage"] as String?}",
       customerSurname: json["customerSurname"] as String?,
       customerEmail: json["customerEmail"] as String?,
       customerPhoneNumber: json["customerPhoneNumber"] as String?,

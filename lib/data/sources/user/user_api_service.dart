@@ -4,7 +4,10 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:vrooom/data/models/user_model.dart';
 import 'package:vrooom/data/sources/auth/auth_storage.dart';
+import 'package:vrooom/domain/entities/booking.dart';
 import 'package:vrooom/domain/entities/user.dart';
+
+import '../../models/boooking/booking_model.dart';
 
 class UserApiService {
   final Dio _dio;
@@ -116,6 +119,81 @@ class UserApiService {
       throw Exception("Network Error: ${e.message}");
     } catch (e) {
       throw Exception("Unexpected Error: $e");
+    }
+  }
+
+  Future<List<Booking>> getUserActiveRentals() async {
+    try {
+      final userId = await AuthStorage.getUserId();
+      if (userId == null) {
+        throw Exception("No userID in storage");
+      }
+
+      final response = await _dio.get("$_userApi/user/$userId/active-rentals");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data is List) {
+          return data.map((json) => BookingModel.fromJson(json)).toList();
+        }
+        throw Exception("Invalid response format - expected a list. ");
+      } else {
+        throw Exception("Received data about Users is not a list.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+
+  Future<List<Booking>> getUserUpcomingRentals() async {
+    try {
+      final userId = await AuthStorage.getUserId();
+      if (userId == null) {
+        throw Exception("No userID in storage");
+      }
+
+      final response = await _dio.get("$_userApi/user/$userId/upcoming-rentals");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data is List) {
+          return data.map((json) => BookingModel.fromJson(json)).toList();
+        }
+        throw Exception("Invalid response format - expected a list. ");
+      } else {
+        throw Exception("Received data about Users is not a list.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+
+  Future<List<Booking>> getUserRentalHistory() async {
+    try {
+      final userId = await AuthStorage.getUserId();
+      if (userId == null) {
+        throw Exception("No userID in storage");
+      }
+
+      final response = await _dio.get("$_userApi/user/$userId/rental-history");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data is List) {
+          return data.map((json) => BookingModel.fromJson(json)).toList();
+        }
+        throw Exception("Invalid response format - expected a list. ");
+      } else {
+        throw Exception("Received data about Users is not a list.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
     }
   }
 }
