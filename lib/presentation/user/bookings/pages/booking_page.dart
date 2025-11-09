@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/title_widget.dart';
+import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/domain/entities/booking.dart';
 import 'package:vrooom/domain/usecases/user/get_user_active_rentals_usecase.dart';
 import 'package:vrooom/domain/usecases/user/get_user_rental_history_usecase.dart';
@@ -107,7 +108,7 @@ class _BookingsPageState extends State<BookingsPage> {
               const TitleWidget(title: "Penalty Section:"),
               ..._penaltyRentals.map((item) => Column(
                 children: [
-                  BookingCarTile(booking: item),
+                  BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: item)),
                   const SizedBox(height: AppSpacing.md),
                 ],
               )),
@@ -116,7 +117,7 @@ class _BookingsPageState extends State<BookingsPage> {
               const TitleWidget(title: "Active Rentals:"),
               ..._activeRentals.map((item) => Column(
                 children: [
-                  BookingCarTile(booking: item),
+                  BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: item)),
                   const SizedBox(height: AppSpacing.md),
                 ],
               )),
@@ -125,7 +126,7 @@ class _BookingsPageState extends State<BookingsPage> {
               const TitleWidget(title: "Upcoming Rentals:"),
               ..._upcomingRentals.map((item) => Column(
                 children: [
-                  BookingCarTile(booking: item),
+                  BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: item)),
                   const SizedBox(height: AppSpacing.md),
                 ],
               )),
@@ -134,7 +135,7 @@ class _BookingsPageState extends State<BookingsPage> {
               const TitleWidget(title: "Rentals History:"),
               ..._rentalHistory.map((item) => Column(
                 children: [
-                  BookingCarTile(booking: item),
+                  BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: item)),
                   const SizedBox(height: AppSpacing.md),
                 ],
               )),
