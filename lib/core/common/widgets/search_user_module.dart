@@ -2,18 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 
 import '../../configs/assets/app_vectors.dart';
-import '../../configs/theme/app_spacing.dart';
 import 'app_svg.dart';
-import 'filter_tile.dart';
 
 class SearchUserModule extends StatelessWidget {
-  const SearchUserModule({super.key});
+  final void Function(String)? onSearchChanged;
+
+  const SearchUserModule({
+    super.key,
+    this.onSearchChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: AppColors.container.neutral900, borderRadius: BorderRadius.circular(10.0)),
+          color: AppColors.container.neutral900,
+          borderRadius: BorderRadius.circular(10.0)),
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
@@ -24,6 +28,7 @@ class SearchUserModule extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: TextField(
+                onChanged: onSearchChanged,
                 decoration: InputDecoration(
                   prefixIcon: Padding(
                     padding: const EdgeInsets.only(left: 15.0),
@@ -43,13 +48,6 @@ class SearchUserModule extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
-            const Center(
-              child: SizedBox(
-                width: 150,
-                child: FilterTile(text: "More Filters", svgPicture: AppVectors.filter),
-              ),
-            )
           ],
         ),
       ),
