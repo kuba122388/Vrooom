@@ -13,4 +13,6 @@ abstract class VehicleRepository {
     required Vehicle vehicle,
     required File imageFile,
   });
+
+  Future<Either<String, List<String>>> getRentalLocations();
 }

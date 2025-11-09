@@ -10,6 +10,7 @@ import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/domain/entities/equipment.dart';
 import 'package:vrooom/domain/entities/vehicle.dart';
 import 'package:vrooom/domain/usecases/vehicle/add_new_vehicle_usecase.dart';
+import 'package:vrooom/domain/usecases/vehicle/get_rental_locations_usecase.dart';
 
 import '../../../../core/common/widgets/app_svg.dart';
 import '../../../../core/configs/assets/app_vectors.dart';
@@ -29,6 +30,7 @@ class _AddNewCarState extends State<AddNewCar> {
   final ScrollController _scrollController = ScrollController();
 
   final AddNewVehiclesUseCase _addNewVehiclesUseCase = sl();
+  final GetRentalLocationsUseCase _getRentalLocationsUseCase = sl();
 
   final TextEditingController _makeController = TextEditingController();
   final TextEditingController _modelController = TextEditingController();
@@ -79,13 +81,35 @@ class _AddNewCarState extends State<AddNewCar> {
     'Blind Spot Monitor',
     'Keyless Entry'
   ];
+
+  List<String> rentalLocations = [];
+
   // Selected Dropdown Values
   String? _selectedBodyType;
   String? _selectedFuelType;
   String? _selectedTransmission;
   String? _selectedDriveType;
   String? _selectedSeats;
+  String? _selectedCarLocation;
   final List<String> _selectedEquipment = [];
+
+  @override
+  initState(){
+    _fetchRentalLocations();
+    super.initState();
+  }
+
+  Future<void> _fetchRentalLocations() async {
+    final result = await _getRentalLocationsUseCase();
+
+    result.fold((error){
+      print(error);
+    }, (locations){
+      setState(() {
+        rentalLocations = locations;
+      });
+    });
+  }
 
   // Validators
   String? _validateRequired(String? value) {
@@ -170,6 +194,7 @@ class _AddNewCarState extends State<AddNewCar> {
         availabilityStatus: availableForRent ? 'Available' : 'Not Available',
         wheelSize: wheelSize,
         equipmentList: equipment,
+        vehicleLocation: _selectedCarLocation!
       );
 
       final result = await _addNewVehiclesUseCase(
@@ -262,6 +287,14 @@ class _AddNewCarState extends State<AddNewCar> {
                       style: TextStyle(color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: AppSpacing.lg),
+                    CustomDropdownMenu(
+                      items: rentalLocations,
+                      label: "Car Location",
+                      hintText: "Select Car Location",
+                      initialValue: _selectedCarLocation,
+                      onSelected: (newValue) => setState(() => _selectedCarLocation = newValue),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
                     const Text(
                       "Basic Car Information",
                       textAlign: TextAlign.left,
@@ -288,7 +321,6 @@ class _AddNewCarState extends State<AddNewCar> {
                       initialValue: _selectedBodyType,
                       onSelected: (newValue) => setState(() => _selectedBodyType = newValue),
                     ),
-
 
                     const SizedBox(height: AppSpacing.lg),
                     const Text(

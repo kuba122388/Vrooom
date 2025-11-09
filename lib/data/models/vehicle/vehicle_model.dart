@@ -23,7 +23,7 @@ class VehicleModel extends Vehicle {
     required super.availabilityStatus,
     required super.wheelSize,
     required super.equipmentList,
-    required super.carLocation,
+    required super.vehicleLocation,
   });
 
   factory VehicleModel.fromEntity(Vehicle entity) {
@@ -49,7 +49,7 @@ class VehicleModel extends Vehicle {
         availabilityStatus: entity.availabilityStatus,
         wheelSize: entity.wheelSize,
         equipmentList: convertedEquipment,
-        carLocation: entity.carLocation);
+        vehicleLocation: entity.vehicleLocation);
   }
 
   factory VehicleModel.fromJson(Map<String, dynamic> json) {
@@ -76,7 +76,7 @@ class VehicleModel extends Vehicle {
       equipmentList: (json["equipmentList"] as List<dynamic>)
           .map((e) => EquipmentModel.fromJson(e))
           .toList(),
-      carLocation: json["carLocation"] as String,
+      vehicleLocation: json["carLocation"] as String,
     );
   }
 
@@ -101,7 +101,7 @@ class VehicleModel extends Vehicle {
       "equipment": equipmentList
           .map((e) => EquipmentModel.fromEntity(e).toJson())
           .toList(),
-      "carLocation": carLocation
+      "carLocation": vehicleLocation
     };
   }
 }

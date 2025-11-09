@@ -20,6 +20,7 @@ class Vehicle {
   final String availabilityStatus;
   final int wheelSize;
   final List<Equipment> equipmentList;
+  final String vehicleLocation;
 
   Vehicle(this.vehicleID, {
     required this.make,
@@ -40,5 +41,6 @@ class Vehicle {
     required this.availabilityStatus,
     required this.equipmentList,
     required this.wheelSize,
+    required this.vehicleLocation
   });
 }
