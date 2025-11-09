@@ -41,4 +41,13 @@ class VehicleRepositoryImpl extends VehicleRepository {
       return Left(e.toString());
     }
   }
+
+  @override
+  Future<Either<String, List<String>>> getRentalLocations() async {
+    try{
+      return Right(await vehicleApiService.getRentalLocations());
+    } catch (e){
+      return Left(e.toString());
+    }
+  }
 }

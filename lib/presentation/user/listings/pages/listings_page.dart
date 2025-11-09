@@ -20,6 +20,7 @@ class _ListingsPageState extends State<ListingsPage> {
   final GetAllVehiclesUseCase _getAllVehiclesUseCase = sl();
   bool _isLoading = true;
   List<VehicleSummary> _vehicles = [];
+  List<VehicleSummary> _filteredVehicles = [];
   String? _errorMessage;
 
   @override
@@ -42,32 +43,50 @@ class _ListingsPageState extends State<ListingsPage> {
         print("=== VEHICLES LOADED ===");
         setState(() {
           _vehicles = vehicleList;
+          _filteredVehicles = vehicleList;
           _isLoading = false;
         });
       },
     );
   }
 
+  void _onSearchChanged(String query){
+    setState(() {
+    if(query.isEmpty){
+      _filteredVehicles = _vehicles;
+    } else{
+      _filteredVehicles = _vehicles.where((vehicle) {
+        final searchLower = query.toLowerCase();
+        final fullCarName = "${vehicle.make} ${vehicle.model}";
+        return fullCarName.toLowerCase().contains(searchLower);
+      }).toList();
+    }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-        child: Column(
-          children: [
-            const SearchFilterModule(),
-            const SizedBox(
-              height: AppSpacing.xl,
-            ),
-            LoadingWidget(
-              isLoading: _isLoading,
-              errorMessage: _errorMessage,
-              futureResultObj: _vehicles,
-              emptyResultMsg: "No vehicles data found.",
-              futureBuilder: _buildVehicles,
-            ),
-            const SizedBox(width: AppSpacing.sm)
-          ],
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+          child: Column(
+            children: [
+              SearchFilterModule(onSearchChanged: _onSearchChanged),
+              const SizedBox(
+                height: AppSpacing.xl,
+              ),
+              LoadingWidget(
+                isLoading: _isLoading,
+                errorMessage: _errorMessage,
+                futureResultObj: _filteredVehicles,
+                emptyResultMsg: "No vehicles data found.",
+                futureBuilder: _buildVehicles,
+              ),
+              const SizedBox(width: AppSpacing.sm)
+            ],
+          ),
         ),
       ),
     );
@@ -76,19 +95,19 @@ class _ListingsPageState extends State<ListingsPage> {
   Widget _buildVehicles() {
     return Column(
       children: [
-        for (int i = 0; i < (_vehicles.length).ceil(); i++) ...[
+        for (int i = 0; i < (_filteredVehicles.length).ceil(); i++) ...[
           CarTile(
-            imgPath: _vehicles[i].vehicleImage,
-            make: _vehicles[i].make,
-            model: _vehicles[i].model,
-            price: _vehicles[i].pricePerDay,
-            description: _vehicles[i].description,
+            imgPath: _filteredVehicles[i].vehicleImage,
+            make: _filteredVehicles[i].make,
+            model: _filteredVehicles[i].model,
+            price: _filteredVehicles[i].pricePerDay,
+            description: _filteredVehicles[i].description,
             onTap: () {
               Navigator.pushNamed(
                 context,
                 AppRoutes.carDetails,
                 arguments: {
-                  "vehicleId": _vehicles[i].vehicleID,
+                  "vehicleId": _filteredVehicles[i].vehicleID,
                 },
               );
             },

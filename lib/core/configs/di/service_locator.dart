@@ -27,6 +27,7 @@ import 'package:vrooom/domain/usecases/user/get_user_upcoming_rentals_usecase.da
 import 'package:vrooom/domain/usecases/user/upload_user_profile_picture_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/add_new_vehicle_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_all_vehicles_usecase.dart';
+import 'package:vrooom/domain/usecases/vehicle/get_rental_locations_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_vehicle_details_usecase.dart';
 import 'package:vrooom/data/repositories/booking_repository_impl.dart';
 import 'package:vrooom/data/sources/booking/booking_api_service.dart';
@@ -61,6 +62,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<VehicleRepository>(VehicleRepositoryImpl(sl()));
   sl.registerSingleton<GetAllVehiclesUseCase>(GetAllVehiclesUseCase(sl()));
   sl.registerSingleton<GetVehicleDetailsUseCase>(GetVehicleDetailsUseCase(sl()));
+  sl.registerSingleton<GetRentalLocationsUseCase>(GetRentalLocationsUseCase(sl()));
 
   sl.registerSingleton<UserApiService>(UserApiService(sl()));
   sl.registerSingleton<UserRepository>(UserRepositoryImpl(sl()));

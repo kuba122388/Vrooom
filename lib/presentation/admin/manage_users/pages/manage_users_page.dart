@@ -21,6 +21,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
   final GetAllUsersUsecase _getAllUsersUsecase = sl();
   bool _isLoading = true;
   List<User> _usersList = [];
+  List<User> _filteredUsersList = [];
   String? _errorMessage;
 
   @override
@@ -45,8 +46,24 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
       print("=== USERS LOADED ===");
       setState(() {
         _usersList = usersList;
+        _filteredUsersList = usersList;
         _isLoading = false;
       });
+    });
+  }
+
+  void _onSearchChanged(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredUsersList = _usersList;
+      } else {
+        _filteredUsersList = _usersList.where((user) {
+          final searchLower = query.toLowerCase();
+          return user.name.toLowerCase().contains(searchLower) ||
+              user.email.toLowerCase().contains(searchLower) ||
+              user.phoneNumber.contains(searchLower);
+        }).toList();
+      }
     });
   }
 
@@ -61,7 +78,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SearchUserModule(),
+              SearchUserModule(onSearchChanged: _onSearchChanged),
               const SizedBox(height: AppSpacing.sm),
               const Text(
                 "Users",
@@ -75,7 +92,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
               LoadingWidget(
                 isLoading: _isLoading,
                 errorMessage: _errorMessage,
-                futureResultObj: _usersList,
+                futureResultObj: _filteredUsersList,
                 emptyResultMsg: "No Users data found.",
                 futureBuilder: _buildUsersDetails,
               )
@@ -90,11 +107,11 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
     return ListView.separated(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: _usersList.length,
+      itemCount: _filteredUsersList.length,
       separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
       itemBuilder: (context, index) {
         return UserInformationEntity(
-          user: _usersList[index],
+          user: _filteredUsersList[index],
           callback: _loadUsers,
         );
       },

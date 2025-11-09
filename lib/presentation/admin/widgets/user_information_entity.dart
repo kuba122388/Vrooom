@@ -80,14 +80,14 @@ class _UserInformationEntityState extends State<UserInformationEntity> {
                     ? Image.asset(
                         AppImages.person,
                         fit: BoxFit.cover,
-                        width: 60,
-                        height: 60,
+                        width: 50,
+                        height: 50,
                       )
                     : Image.memory(
                         _profilePic!,
                         fit: BoxFit.cover,
-                        width: 60,
-                        height: 60,
+                        width: 50,
+                        height: 50,
                       )
                 ),
                 const SizedBox(width: 10.0),
