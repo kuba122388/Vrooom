@@ -1,38 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vrooom/core/common/widgets/app_svg.dart';
+import 'package:vrooom/core/common/widgets/custom_container.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
+import 'package:vrooom/domain/entities/booking.dart';
 
-import '../../../../core/common/widgets/info_section_card.dart';
-import '../../../../core/configs/assets/app_images.dart';
 import '../../../../core/configs/assets/app_vectors.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
 
 class BookingCarTile extends StatelessWidget {
-  final String title;
-
-  final DateTime startDate;
-  final DateTime finishDate;
-
-  final String startPoint;
-  final String finishPoint;
-
-  final String? penalty;
+  final Booking booking;
 
   const BookingCarTile({
     super.key,
-    required this.title,
-    required this.startDate,
-    required this.finishDate,
-    required this.startPoint,
-    required this.finishPoint,
-    this.penalty,
+    required this.booking,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InfoSectionCard(
-      title: title,
+    return CustomContainer(
       child: IntrinsicHeight(
         child: Row(
           mainAxisSize: MainAxisSize.max,
@@ -40,8 +26,8 @@ class BookingCarTile extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
-              child: Image.asset(
-                AppImages.mercedes,
+              child: Image.network(
+                booking.vehicleImage as String,
                 height: 140.0,
                 width: 100.0,
                 fit: BoxFit.cover,
@@ -52,9 +38,9 @@ class BookingCarTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    "Mercedes-Benz C-Class",
-                    style: TextStyle(
+                  Text(
+                    "${booking.vehicleMake} ${booking.vehicleModel}",
+                    style: const TextStyle(
                       letterSpacing: -0.5,
                       fontWeight: FontWeight.w600,
                     ),
@@ -70,7 +56,7 @@ class BookingCarTile extends StatelessWidget {
                         height: 14.0,
                       ),
                       const SizedBox(width: AppSpacing.xxs),
-                      Text(DateFormat("dd.MM.yyyy").format(startDate)),
+                      Text(DateFormat("dd.MM.yyyy").format(booking.startDate as DateTime)),
                       const Spacer(),
                     ],
                   ),
@@ -82,7 +68,7 @@ class BookingCarTile extends StatelessWidget {
                         height: 14.0,
                       ),
                       const SizedBox(width: AppSpacing.xxs),
-                      Text(DateFormat("dd.MM.yyyy").format(finishDate)),
+                      Text(DateFormat("dd.MM.yyyy").format(booking.endDate as DateTime)),
                       const Spacer(),
                     ],
                   ),
@@ -96,7 +82,7 @@ class BookingCarTile extends StatelessWidget {
                         height: 14.0,
                       ),
                       const SizedBox(width: AppSpacing.xxs),
-                      Text(startPoint),
+                      Text("Warsaw"),
                       const Spacer(),
                     ],
                   ),
@@ -108,7 +94,7 @@ class BookingCarTile extends StatelessWidget {
                         height: 14.0,
                       ),
                       const SizedBox(width: AppSpacing.xxs),
-                      Text(finishPoint),
+                      Text("Lodz"),
                       const Spacer(),
                     ],
                   ),
@@ -118,9 +104,9 @@ class BookingCarTile extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      if (penalty != null)
+                      if (booking.penalty != 0)
                         Text(
-                          penalty!,
+                          booking.penalty.toString(),
                           style: const TextStyle(
                             color: AppColors.primary,
                             fontSize: 16.0,
