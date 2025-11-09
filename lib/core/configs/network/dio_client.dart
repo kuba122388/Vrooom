@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:vrooom/core/configs/network/network_config.dart';
 
 import '../../../data/sources/auth/auth_storage.dart';
 
@@ -6,7 +7,7 @@ class DioClient {
   static Dio createDio(AuthStorage tokenStorage) {
     final Dio dio = Dio(
       BaseOptions(
-        baseUrl: "http://192.168.0.168:8080",
+        baseUrl: NetworkConfig.ip,
         connectTimeout: const Duration(seconds: 5),
         receiveTimeout: const Duration(seconds: 5),
         headers: {

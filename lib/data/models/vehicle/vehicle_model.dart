@@ -1,5 +1,4 @@
-import 'package:vrooom/core/configs/network/dio_client.dart';
-
+import '../../../core/configs/network/network_config.dart';
 import '../../../domain/entities/vehicle.dart';
 import 'equipment_model.dart';
 
@@ -22,38 +21,36 @@ class VehicleModel extends Vehicle {
     required super.description,
     required super.vehicleImage,
     required super.availabilityStatus,
-        required super.wheelSize,
+    required super.wheelSize,
     required super.equipmentList,
+    required super.carLocation,
   });
 
   factory VehicleModel.fromEntity(Vehicle entity) {
-    final convertedEquipment = entity.equipmentList
-        .map((e) => EquipmentModel.fromEntity(e))
-        .toList();
+    final convertedEquipment =
+        entity.equipmentList.map((e) => EquipmentModel.fromEntity(e)).toList();
 
-    return VehicleModel(
-      entity.vehicleID,
-      make: entity.make,
-      model: entity.model,
-      type: entity.type,
-      pricePerDay: entity.pricePerDay,
-      deposit: entity.deposit,
-      gearShift: entity.gearShift,
-      driveType: entity.driveType,
-      fuelType: entity.fuelType,
-      engineCapacity: entity.engineCapacity,
-      horsePower: entity.horsePower,
-      averageConsumption: entity.averageConsumption,
-      numberOfSeats: entity.numberOfSeats,
-      numberOfDoors: entity.numberOfDoors,
-      description: entity.description,
-      vehicleImage: entity.vehicleImage,
-      availabilityStatus: entity.availabilityStatus,
-      wheelSize: entity.wheelSize,
-      equipmentList: convertedEquipment,
-    );
+    return VehicleModel(entity.vehicleID,
+        make: entity.make,
+        model: entity.model,
+        type: entity.type,
+        pricePerDay: entity.pricePerDay,
+        deposit: entity.deposit,
+        gearShift: entity.gearShift,
+        driveType: entity.driveType,
+        fuelType: entity.fuelType,
+        engineCapacity: entity.engineCapacity,
+        horsePower: entity.horsePower,
+        averageConsumption: entity.averageConsumption,
+        numberOfSeats: entity.numberOfSeats,
+        numberOfDoors: entity.numberOfDoors,
+        description: entity.description,
+        vehicleImage: entity.vehicleImage,
+        availabilityStatus: entity.availabilityStatus,
+        wheelSize: entity.wheelSize,
+        equipmentList: convertedEquipment,
+        carLocation: entity.carLocation);
   }
-
 
   factory VehicleModel.fromJson(Map<String, dynamic> json) {
     return VehicleModel(
@@ -73,10 +70,13 @@ class VehicleModel extends Vehicle {
       numberOfSeats: json["numberOfSeats"] as int,
       numberOfDoors: json["numberOfDoors"] as int,
       description: json["description"] as String,
-      vehicleImage: "http://192.168.0.168:8080/images/${json["vehicleImage"] as String}",
+      vehicleImage:
+          "${NetworkConfig.vehicleImages}/${json["vehicleImage"] as String}",
       availabilityStatus: json["availabilityStatus"] as String,
-      equipmentList:
-          (json["equipmentList"] as List<dynamic>).map((e) => EquipmentModel.fromJson(e)).toList(),
+      equipmentList: (json["equipmentList"] as List<dynamic>)
+          .map((e) => EquipmentModel.fromJson(e))
+          .toList(),
+      carLocation: json["carLocation"] as String,
     );
   }
 
@@ -93,12 +93,15 @@ class VehicleModel extends Vehicle {
       "engineCapacity": engineCapacity,
       "horsePower": horsePower,
       "averageConsumption": averageConsumption,
-      "wheelSize":wheelSize,
+      "wheelSize": wheelSize,
       "numberOfSeats": numberOfSeats,
       "numberOfDoors": numberOfDoors,
       "description": description,
       "vehicleImage": vehicleImage,
-      "equipment": equipmentList.map((e) => EquipmentModel.fromEntity(e).toJson()).toList()
+      "equipment": equipmentList
+          .map((e) => EquipmentModel.fromEntity(e).toJson())
+          .toList(),
+      "carLocation": carLocation
     };
   }
 }
