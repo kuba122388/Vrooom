@@ -7,7 +7,9 @@ import '../../configs/theme/app_spacing.dart';
 import 'app_svg.dart';
 
 class SearchFilterModule extends StatelessWidget {
-  const SearchFilterModule({super.key});
+  final void Function(String)? onSearchChanged;
+
+  const SearchFilterModule({super.key, this.onSearchChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,7 @@ class SearchFilterModule extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: TextField(
+                onChanged: onSearchChanged,
                 decoration: InputDecoration(
                   prefixIcon: Padding(
                     padding: const EdgeInsets.only(left: 15.0),
