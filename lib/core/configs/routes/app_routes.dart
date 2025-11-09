@@ -22,4 +22,5 @@ class AppRoutes {
   static const String contact = '/contact';
   static const String addNewCar = '/addNewCar';
   static const String privacyPolicy = '/privacyPolicy';
+  static const String userBookingDetails = '/userBookingDetails';
 }
