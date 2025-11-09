@@ -1,3 +1,4 @@
+import 'package:vrooom/core/configs/network/network_config.dart';
 import 'package:vrooom/domain/entities/booking.dart';
 
 class BookingModel extends Booking {
@@ -38,7 +39,7 @@ class BookingModel extends Booking {
         ? DateTime.tryParse(json["endDate"])
         : null,
       totalAmount: json["totalAmount"] as double?,
-      vehicleImage: "http://192.168.0.168:8080/images/${json["vehicleImage"] as String?}",
+      vehicleImage: "${NetworkConfig.vehicleImages}/${json["vehicleImage"] as String?}",
       customerSurname: json["customerSurname"] as String?,
       customerEmail: json["customerEmail"] as String?,
       customerPhoneNumber: json["customerPhoneNumber"] as String?,

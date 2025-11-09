@@ -1,3 +1,4 @@
+import 'package:vrooom/core/configs/network/network_config.dart';
 import 'package:vrooom/domain/entities/vehicle_summary.dart';
 
 class VehicleSummaryModel extends VehicleSummary {
@@ -18,7 +19,7 @@ class VehicleSummaryModel extends VehicleSummary {
       model: json["model"] as String,
       type: json["type"] as String,
       pricePerDay: json["pricePerDay"] as double,
-      vehicleImage: "http://192.168.0.168:8080/images/${json["vehicleImage"] as String}",
+      vehicleImage: "${NetworkConfig.vehicleImages}/${json["vehicleImage"] as String}",
       description: json["description"] as String,
     );
   }
