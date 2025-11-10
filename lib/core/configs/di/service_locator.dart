@@ -18,6 +18,7 @@ import 'package:vrooom/domain/usecases/booking/get_active_rentals_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/get_all_insurances_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/get_full_rental_history_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/get_recent_rentals_for_user_usecase.dart';
+import 'package:vrooom/domain/usecases/booking/get_upcoming_rentals_usecase.dart';
 import 'package:vrooom/domain/usecases/user/delete_user_by_id_usecase.dart';
 import 'package:vrooom/domain/usecases/user/download_user_profile_picture_usecase.dart';
 import 'package:vrooom/domain/usecases/user/edit_current_user_usecase.dart';
@@ -88,4 +89,5 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GetRecentRentalsForUserUseCase>(GetRecentRentalsForUserUseCase(sl()));
   sl.registerSingleton<GetFullRentalHistoryUseCase>(GetFullRentalHistoryUseCase(sl()));
   sl.registerSingleton<GetActiveRentalsUseCase>(GetActiveRentalsUseCase(sl()));
+  sl.registerSingleton<GetUpcomingRentalsUseCase>(GetUpcomingRentalsUseCase(sl()));
 }
