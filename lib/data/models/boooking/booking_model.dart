@@ -7,6 +7,7 @@ class BookingModel extends Booking {
     required super.customerName,
     required super.vehicleMake,
     required super.vehicleModel,
+    required super.vehicleProductionYear,
     required super.startDate,
     required super.endDate,
     required super.pickupAddress,
@@ -34,6 +35,7 @@ class BookingModel extends Booking {
       customerName: json["customerName"] as String?,
       vehicleMake: json["vehicleMake"] as String?,
       vehicleModel: json["vehicleModel"] as String?,
+      vehicleProductionYear: json["vehicleProductionYear"] as int,
       startDate: json["startDate"] != null
         ? DateTime.tryParse(json["startDate"])
         : null,
@@ -69,6 +71,7 @@ class BookingModel extends Booking {
       "customerName": customerName,
       "vehicleMake": vehicleMake,
       "vehicleModel": vehicleModel,
+      "vehicleProductionYear": vehicleProductionYear,
       "startDate": startDate,
       "endDate": endDate,
       "pickupAddress": pickupAddress,

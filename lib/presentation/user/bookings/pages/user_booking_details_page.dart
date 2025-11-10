@@ -44,7 +44,7 @@ class _UserBookingDetailsPageState extends State<UserBookingDetailsPage> {
       InfoRow(title: "Planned Drop-off Date", icon: AppVectors.calendar, text: DateFormat('dd-MM-yyyy').format(widget.booking.endDate as DateTime)),
 
       if (widget.booking.actualReturnDate != null) ... {
-        InfoRow(title: "Real Drop-off Date", icon: AppVectors.calendar, text: DateFormat('dd-MM-yyyy').format(widget.booking.actualReturnDate as DateTime)),
+        InfoRow(title: "Real Drop-off Date", icon: AppVectors.calendar, text: DateFormat('dd-MM-yyyy').format(widget.booking.actualReturnDate as DateTime), color: AppColors.primary),
       }
     ];
 
