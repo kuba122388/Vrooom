@@ -83,7 +83,7 @@ class BookingCarTile extends StatelessWidget {
                         children: [
                           const AppSvg(asset: AppVectors.locationStart, height: 14.0),
                           const SizedBox(width: AppSpacing.xxs),
-                          const Text("Warsaw"),
+                          Text(booking.pickupAddress?.split(", ").last as String),
                           const Spacer(),
                         ],
                       ),
@@ -92,7 +92,7 @@ class BookingCarTile extends StatelessWidget {
                         children: [
                           const AppSvg(asset: AppVectors.locationFinish, height: 14.0),
                           const SizedBox(width: AppSpacing.xxs),
-                          const Text("Lodz"),
+                          Text(booking.dropOffAddress?.split(", ").last as String),
                           const Spacer(),
                         ],
                       ),

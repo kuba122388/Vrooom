@@ -38,8 +38,8 @@ class _UserBookingDetailsPageState extends State<UserBookingDetailsPage> {
     final status = _getRentalStatus(widget.booking);
 
     List<InfoRow> data = [
-      const InfoRow(title: "Pickup Location", icon: AppVectors.mapPin, text: "Warsaw"),
-      const InfoRow(title: "Drop-off Location", icon: AppVectors.mapPin, text: "Crackow"),
+      InfoRow(title: "Pickup Location", icon: AppVectors.mapPin, text: widget.booking.pickupAddress?.split(", ").last as String),
+      InfoRow(title: "Drop-off Location", icon: AppVectors.mapPin, text: widget.booking.dropOffAddress?.split(", ").last as String),
       InfoRow(title: "Pickup Date", icon: AppVectors.calendar, text: DateFormat('dd-MM-yyyy').format(widget.booking.startDate as DateTime)),
       InfoRow(title: "Planned Drop-off Date", icon: AppVectors.calendar, text: DateFormat('dd-MM-yyyy').format(widget.booking.endDate as DateTime)),
 

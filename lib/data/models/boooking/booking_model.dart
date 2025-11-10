@@ -9,6 +9,8 @@ class BookingModel extends Booking {
     required super.vehicleModel,
     required super.startDate,
     required super.endDate,
+    required super.pickupAddress,
+    required super.dropOffAddress,
     required super.totalAmount,
     required super.vehicleImage,
     required super.customerSurname,
@@ -38,6 +40,8 @@ class BookingModel extends Booking {
       endDate: json["endDate"] != null
         ? DateTime.tryParse(json["endDate"])
         : null,
+      pickupAddress: json["pickupAddress"] as String?,
+      dropOffAddress: json["dropOffAddress"] as String?,
       totalAmount: json["totalAmount"] as double?,
       vehicleImage: "${NetworkConfig.vehicleImages}/${json["vehicleImage"] as String?}",
       customerSurname: json["customerSurname"] as String?,
@@ -67,6 +71,8 @@ class BookingModel extends Booking {
       "vehicleModel": vehicleModel,
       "startDate": startDate,
       "endDate": endDate,
+      "pickupAddress": pickupAddress,
+      "dropOffAddress": dropOffAddress,
       "totalAmount": totalAmount,
       "vehicleImage": vehicleImage,
       "customerSurname": customerSurname,
