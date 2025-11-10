@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 import 'package:vrooom/core/common/widgets/app_svg.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 
+import '../../../core/configs/assets/app_images.dart';
 import '../../../core/configs/assets/app_vectors.dart';
 import '../../../core/configs/theme/app_spacing.dart';
 import '../../../core/enums/rental_status.dart';
 
 class RentalInformationEntry extends StatelessWidget {
-  final String profileImage;
+  final Uint8List? profileImage;
   final String firstName;
   final String surname;
   final String reservationID;
@@ -45,12 +47,19 @@ class RentalInformationEntry extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(128.0),
-                  child: Image.asset(
-                    profileImage,
-                    width: 40,
-                    height: 40,
+                  child: profileImage == null
+                      ? Image.asset(
+                    AppImages.person,
                     fit: BoxFit.cover,
-                  ),
+                    width: 60,
+                    height: 60,
+                  )
+                      : Image.memory(
+                    profileImage!,
+                    fit: BoxFit.cover,
+                    width: 60,
+                    height: 60,
+                  )
                 ),
                 const SizedBox(width: 10.0),
                 Flexible(
@@ -82,7 +91,7 @@ class RentalInformationEntry extends StatelessWidget {
                 const SizedBox(width: AppSpacing.sm),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
-                  child: Image.asset(
+                  child: Image.network(
                     carImage,
                     width: 80,
                     height: 40,
