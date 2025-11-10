@@ -5,6 +5,8 @@ class Booking {
   final String? vehicleModel;
   final DateTime? startDate;
   final DateTime? endDate;
+  final String? pickupAddress;
+  final String? dropOffAddress;
   final double? totalAmount;
   final String? vehicleImage;
   final String? customerSurname;
@@ -29,6 +31,8 @@ class Booking {
     required this.vehicleModel,
     required this.startDate,
     required this.endDate,
+    required this.pickupAddress,
+    required this.dropOffAddress,
     required this.totalAmount,
     required this.vehicleImage,
     required this.customerSurname,
