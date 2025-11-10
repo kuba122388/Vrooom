@@ -15,4 +15,6 @@ abstract class VehicleRepository {
   });
 
   Future<Either<String, List<String>>> getRentalLocations();
+
+  Future<Either<String, List<Vehicle>>> getAllVehiclesWithDetails();
 }

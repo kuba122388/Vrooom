@@ -50,4 +50,13 @@ class VehicleRepositoryImpl extends VehicleRepository {
       return Left(e.toString());
     }
   }
+
+  @override
+  Future<Either<String, List<Vehicle>>> getAllVehiclesWithDetails() async {
+    try {
+      return Right(await vehicleApiService.getAllVehiclesWithDetails());
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
 }
