@@ -58,5 +58,27 @@ class BookingApiService {
       throw Exception("Unexpected error: $e");
     }
   }
+
+  Future<List<Booking>> getFullRentalHistory() async {
+    try {
+      final response = await _dio.get("$_bookingApi/rental-history");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data is List) {
+          return data.map((json) => BookingModel.fromJson(json)).toList();
+        }
+
+        throw Exception("Invalid response format - expected a list. ");
+      } else {
+        throw Exception("Received data about Rentals is not a list.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
 }
 

@@ -92,7 +92,16 @@ class UserRepositoryImpl extends UserRepository {
     try {
       return Right(await userApiService.getUserRentalHistory());
     } catch (e) {
-    return Left(e.toString());
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, int?>> getUserIdByEmail(String email) async {
+    try {
+      return Right(await userApiService.getUserIdByEmail(email));
+    } catch (e) {
+      return Left(e.toString());
     }
   }
 }

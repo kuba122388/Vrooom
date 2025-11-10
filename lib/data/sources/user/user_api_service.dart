@@ -196,4 +196,25 @@ class UserApiService {
       throw Exception("Unexpected error: $e");
     }
   }
+
+  Future<int?> getUserIdByEmail(String email) async {
+    try {
+      final response = await _dio.get(
+        "$_userApi/user/id",
+        queryParameters: {"email": email}
+      );
+
+      if (response.statusCode == 200) {
+        return int.parse(response.data.toString());
+      } else if (response.statusCode == 404) {
+        return null;
+      } else {
+        return null;
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
 }

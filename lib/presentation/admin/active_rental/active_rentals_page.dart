@@ -16,24 +16,24 @@ class ActiveRentalsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<RentalHistoryCarEntry> rentalHistory = [
-      RentalHistoryCarEntry(
-        rentalID: "RENT001",
-        startDate: DateTime(2025, 6, 30),
-        endDate: DateTime(2025, 7, 30),
-        rentalStatus: RentalStatus.finished,
-      ),
-      RentalHistoryCarEntry(
-        rentalID: "RENT002",
-        startDate: DateTime(2025, 6, 30),
-        endDate: DateTime(2025, 7, 30),
-        rentalStatus: RentalStatus.inProgress,
-      ),
-      RentalHistoryCarEntry(
-        rentalID: "RENT003",
-        startDate: DateTime(2025, 6, 30),
-        endDate: DateTime(2025, 7, 30),
-        rentalStatus: RentalStatus.overdue,
-      )
+      // RentalHistoryCarEntry(
+      //   rentalID: "RENT001",
+      //   startDate: DateTime(2025, 6, 30),
+      //   endDate: DateTime(2025, 7, 30),
+      //   rentalStatus: RentalStatus.finished,
+      // ),
+      // RentalHistoryCarEntry(
+      //   rentalID: "RENT002",
+      //   startDate: DateTime(2025, 6, 30),
+      //   endDate: DateTime(2025, 7, 30),
+      //   rentalStatus: RentalStatus.inProgress,
+      // ),
+      // RentalHistoryCarEntry(
+      //   rentalID: "RENT003",
+      //   startDate: DateTime(2025, 6, 30),
+      //   endDate: DateTime(2025, 7, 30),
+      //   rentalStatus: RentalStatus.overdue,
+      // )
     ];
 
     return Scaffold(

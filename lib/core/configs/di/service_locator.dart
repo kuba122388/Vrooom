@@ -15,6 +15,7 @@ import 'package:vrooom/domain/usecases/auth/login_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/logout_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/register_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/get_all_insurances_usecase.dart';
+import 'package:vrooom/domain/usecases/booking/get_full_rental_history_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/get_recent_rentals_for_user_usecase.dart';
 import 'package:vrooom/domain/usecases/user/delete_user_by_id_usecase.dart';
 import 'package:vrooom/domain/usecases/user/download_user_profile_picture_usecase.dart';
@@ -22,6 +23,7 @@ import 'package:vrooom/domain/usecases/user/edit_current_user_usecase.dart';
 import 'package:vrooom/domain/usecases/user/get_all_users_usecase.dart';
 import 'package:vrooom/domain/usecases/user/get_current_user_information_usecase.dart';
 import 'package:vrooom/domain/usecases/user/get_user_active_rentals_usecase.dart';
+import 'package:vrooom/domain/usecases/user/get_user_id_by_email_usecase.dart';
 import 'package:vrooom/domain/usecases/user/get_user_rental_history_usecase.dart';
 import 'package:vrooom/domain/usecases/user/get_user_upcoming_rentals_usecase.dart';
 import 'package:vrooom/domain/usecases/user/upload_user_profile_picture_usecase.dart';
@@ -77,9 +79,11 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GetUserActiveRentalsUseCase>(GetUserActiveRentalsUseCase(sl()));
   sl.registerSingleton<GetUserUpcomingRentalsUseCase>(GetUserUpcomingRentalsUseCase(sl()));
   sl.registerSingleton<GetUserRentalHistoryUseCase>(GetUserRentalHistoryUseCase(sl()));
+  sl.registerSingleton<GetUserIdByEmailUseCase>(GetUserIdByEmailUseCase(sl()));
 
   sl.registerSingleton<AddNewVehiclesUseCase>(AddNewVehiclesUseCase(sl()));
   sl.registerSingleton<GetAllInsurancesUseCase>(GetAllInsurancesUseCase(sl()));
 
   sl.registerSingleton<GetRecentRentalsForUserUseCase>(GetRecentRentalsForUserUseCase(sl()));
+  sl.registerSingleton<GetFullRentalHistoryUseCase>(GetFullRentalHistoryUseCase(sl()));
 }
