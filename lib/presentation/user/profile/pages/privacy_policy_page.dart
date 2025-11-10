@@ -28,19 +28,22 @@ class PrivacyPolicyPage extends StatelessWidget {
     return Scaffold(
       appBar: const CustomAppBar(title: "Privacy Policy"),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ...privacyPolicy
-                .map((policy) {
-              return Column(
-                children: [
-                  const SizedBox(height: AppSpacing.md),
-                  InfoSectionCard(title: policy.title, child: Text(policy.text)),
-                ],
-              );
-            }),
-            const SizedBox(height: AppSpacing.md)
-          ]
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Column(
+            children: [
+              ...privacyPolicy
+                  .map((policy) {
+                return Column(
+                  children: [
+                    const SizedBox(height: AppSpacing.md),
+                    InfoSectionCard(title: policy.title, child: Text(policy.text)),
+                  ],
+                );
+              }),
+              const SizedBox(height: AppSpacing.md)
+            ]
+          ),
         ),
       ),
     );
