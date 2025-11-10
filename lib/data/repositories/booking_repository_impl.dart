@@ -40,4 +40,13 @@ class BookingRepositoryImpl implements BookingRepository {
       return Left(e.toString());
     }
   }
+
+  @override
+  Future<Either<String, List<Booking>>> getActiveRentals() async {
+    try {
+      return Right(await bookingApiService.getActiveRentals());
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
 }
