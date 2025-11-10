@@ -15,6 +15,7 @@ class Vehicle {
   final double averageConsumption;
   final int numberOfSeats;
   final int numberOfDoors;
+  final int productionYear;
   final String description;
   final int mileage;
   final String vehicleImage;
@@ -37,6 +38,7 @@ class Vehicle {
     required this.averageConsumption,
     required this.numberOfSeats,
     required this.numberOfDoors,
+    required this.productionYear,
     required this.description,
     required this.mileage,
     required this.vehicleImage,

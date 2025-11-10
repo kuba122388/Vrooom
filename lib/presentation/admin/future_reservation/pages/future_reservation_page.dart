@@ -113,7 +113,7 @@ class _FutureReservationState extends State<FutureReservation> {
                         rentalStatus: RentalStatus.pending,
                         carImage: item.vehicleImage as String,
                         model: "${item.vehicleMake} ${item.vehicleModel}",
-                        productionYear: 2022
+                        productionYear: item.vehicleProductionYear as int
                       ),
                       const SizedBox(height: AppSpacing.sm)
                     ],

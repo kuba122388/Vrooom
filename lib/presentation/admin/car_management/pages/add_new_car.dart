@@ -189,6 +189,7 @@ class _AddNewCarState extends State<AddNewCar> {
         averageConsumption: averageConsumption,
         numberOfSeats: numberOfSeats,
         numberOfDoors: numberOfDoors,
+        productionYear: 2020,
         description: _descriptionController.text,
         mileage: 0,
         vehicleImage: "",
