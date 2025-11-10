@@ -3,65 +3,65 @@ import 'package:vrooom/core/common/widgets/primary_button.dart';
 import 'package:vrooom/core/common/widgets/search_filter_module.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
+import 'package:vrooom/domain/entities/vehicle.dart';
+import 'package:vrooom/domain/usecases/vehicle/get_all_vehicles_with_details_usecase.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
 import 'package:vrooom/presentation/admin/widgets/car_inventory_entry.dart';
 
-import '../../../../core/configs/assets/app_images.dart';
+import '../../../../core/configs/di/service_locator.dart';
+import '../../../../core/configs/theme/app_colors.dart';
 
-class CarManagementPage extends StatelessWidget {
+class CarManagementPage extends StatefulWidget {
   const CarManagementPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    List<CarInventoryEntry> carInventory = [
-      const CarInventoryEntry(
-          carImage: AppImages.mercedes,
-          carName: "Mercedes-Benz C-Class",
-          carStatus: CarStatus.available,
-          fuel: "Petrol",
-          mileage: 15000,
-          seats: 5,
-          transmission: "Automatic",
-          price: 55),
-      const CarInventoryEntry(
-          carImage: AppImages.mercedes,
-          carName: "Mercedes-Benz C-Class",
-          carStatus: CarStatus.maintenance,
-          fuel: "Petrol",
-          mileage: 15000,
-          seats: 5,
-          transmission: "Automatic",
-          price: 55),
-      const CarInventoryEntry(
-          carImage: AppImages.mercedes,
-          carName: "Mercedes-Benz C-Class",
-          carStatus: CarStatus.unavailable,
-          fuel: "Petrol",
-          mileage: 15000,
-          seats: 5,
-          transmission: "Automatic",
-          price: 55),
-      const CarInventoryEntry(
-          carImage: AppImages.mercedes,
-          carName: "Mercedes-Benz C-Class",
-          carStatus: CarStatus.booked,
-          fuel: "Petrol",
-          mileage: 15000,
-          seats: 5,
-          transmission: "Automatic",
-          price: 55),
-      const CarInventoryEntry(
-          carImage: AppImages.mercedes,
-          carName: "Mercedes-Benz C-Class",
-          carStatus: CarStatus.rented,
-          fuel: "Petrol",
-          mileage: 15000,
-          seats: 5,
-          transmission: "Automatic",
-          price: 55),
-    ];
+  State<CarManagementPage> createState() => _CarManagementPageState();
+}
 
+class _CarManagementPageState extends State<CarManagementPage> {
+  final GetAllVehiclesWithDetailsUseCase _getAllVehiclesWithDetailsUseCase = sl();
+
+  bool _isLoading = false;
+  List<Vehicle> _vehicles = [];
+
+  CarStatus _getCarStatus(String status) {
+    switch (status) {
+      case "Available":
+        return CarStatus.available;
+      case "Not Available":
+        return CarStatus.unavailable;
+      case "Maintenance":
+        return CarStatus.maintenance;
+      default:
+        return CarStatus.archived;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVehicles();
+  }
+
+  Future<void> _loadVehicles() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final result = await _getAllVehiclesWithDetailsUseCase();
+      result.fold(
+        (error) {},
+        (vehicleList) {
+          setState(() => _vehicles = vehicleList);
+        },
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: const AdminAppBar(
         title: "Manage cars",
@@ -83,26 +83,34 @@ class CarManagementPage extends StatelessWidget {
                   letterSpacing: -0.5,
                 ),
               ),
+
               const SizedBox(height: AppSpacing.xs),
-              ...carInventory.map((entry) {
-                return CarInventoryEntry(
-                    carImage: entry.carImage,
-                    carName: entry.carName,
-                    carStatus: entry.carStatus,
-                    fuel: entry.fuel,
-                    mileage: entry.mileage,
-                    seats: entry.seats,
-                    transmission: entry.transmission,
-                    price: entry.price);
-              }).expand(
-                (widget) => [widget, const SizedBox(height: AppSpacing.sm)],
-              ),
-              PrimaryButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(AppRoutes.addNewCar);
-                },
-                text: "Add New Car",
-              ),
+
+              if (_isLoading) ... [
+                const SizedBox(height: AppSpacing.xl),
+                const Center(child: CircularProgressIndicator(color: AppColors.primary))
+              ] else ... [
+                ..._vehicles.map((entry) {
+                  return CarInventoryEntry(
+                      carImage: entry.vehicleImage,
+                      carName: "${entry.make} ${entry.model}",
+                      carStatus: _getCarStatus(entry.availabilityStatus),
+                      fuel: entry.fuelType,
+                      mileage: 99821,
+                      seats: entry.numberOfSeats,
+                      transmission: entry.gearShift,
+                      price: entry.pricePerDay);
+                }).expand(
+                      (widget) => [widget, const SizedBox(height: AppSpacing.sm)],
+                ),
+
+                PrimaryButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(AppRoutes.addNewCar);
+                  },
+                  text: "Add New Car",
+                ),
+              ]
             ],
           ),
         ),

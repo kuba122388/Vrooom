@@ -34,7 +34,7 @@ class CarCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.0),
                 child: Column(
                   children: [
-                    Image.asset(
+                    Image.network(
                       carImage,
                       width: 120,
                       height: 120,
