@@ -16,6 +16,7 @@ class Vehicle {
   final int numberOfSeats;
   final int numberOfDoors;
   final String description;
+  final int mileage;
   final String vehicleImage;
   final String availabilityStatus;
   final int wheelSize;
@@ -37,6 +38,7 @@ class Vehicle {
     required this.numberOfSeats,
     required this.numberOfDoors,
     required this.description,
+    required this.mileage,
     required this.vehicleImage,
     required this.availabilityStatus,
     required this.equipmentList,

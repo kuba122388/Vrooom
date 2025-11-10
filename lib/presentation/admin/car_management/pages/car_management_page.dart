@@ -96,7 +96,7 @@ class _CarManagementPageState extends State<CarManagementPage> {
                       carName: "${entry.make} ${entry.model}",
                       carStatus: _getCarStatus(entry.availabilityStatus),
                       fuel: entry.fuelType,
-                      mileage: 99821,
+                      mileage: entry.mileage,
                       seats: entry.numberOfSeats,
                       transmission: entry.gearShift,
                       price: entry.pricePerDay);

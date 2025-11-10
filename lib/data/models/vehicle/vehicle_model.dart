@@ -19,6 +19,7 @@ class VehicleModel extends Vehicle {
     required super.numberOfSeats,
     required super.numberOfDoors,
     required super.description,
+    required super.mileage,
     required super.vehicleImage,
     required super.availabilityStatus,
     required super.wheelSize,
@@ -45,6 +46,7 @@ class VehicleModel extends Vehicle {
         numberOfSeats: entity.numberOfSeats,
         numberOfDoors: entity.numberOfDoors,
         description: entity.description,
+        mileage: entity.mileage,
         vehicleImage: entity.vehicleImage,
         availabilityStatus: entity.availabilityStatus,
         wheelSize: entity.wheelSize,
@@ -70,6 +72,7 @@ class VehicleModel extends Vehicle {
       numberOfSeats: json["numberOfSeats"] as int,
       numberOfDoors: json["numberOfDoors"] as int,
       description: json["description"] as String,
+      mileage: json["mileage"] as int,
       vehicleImage:
           "${NetworkConfig.vehicleImages}/${json["vehicleImage"] as String}",
       availabilityStatus: json["availabilityStatus"] as String,
@@ -97,6 +100,7 @@ class VehicleModel extends Vehicle {
       "numberOfSeats": numberOfSeats,
       "numberOfDoors": numberOfDoors,
       "description": description,
+      "mileage": mileage,
       "vehicleImage": vehicleImage,
       "equipment": equipmentList
           .map((e) => EquipmentModel.fromEntity(e).toJson())

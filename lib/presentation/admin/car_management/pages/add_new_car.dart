@@ -190,6 +190,7 @@ class _AddNewCarState extends State<AddNewCar> {
         numberOfSeats: numberOfSeats,
         numberOfDoors: numberOfDoors,
         description: _descriptionController.text,
+        mileage: 0,
         vehicleImage: "",
         availabilityStatus: availableForRent ? 'Available' : 'Not Available',
         wheelSize: wheelSize,
