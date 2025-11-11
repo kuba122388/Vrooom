@@ -9,7 +9,7 @@ import 'package:vrooom/domain/usecases/user/get_user_upcoming_rentals_usecase.da
 import '../../../../core/configs/di/service_locator.dart';
 import '../../../../core/configs/theme/app_colors.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
-import '../widgets/booking_car_tile.dart';
+import '../../../../core/common/widgets/booking_car_tile.dart';
 
 class BookingsPage extends StatefulWidget {
   const BookingsPage({super.key});
