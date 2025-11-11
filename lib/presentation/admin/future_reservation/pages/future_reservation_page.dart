@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:vrooom/core/common/widgets/search_filter_module.dart';
+import 'package:vrooom/core/common/widgets/search_car_module/search_filter_module.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
 import 'package:vrooom/presentation/admin/widgets/rental_information_entry.dart';
 
+import '../../../../core/common/widgets/search_car_module/filter_state.dart';
 import '../../../../core/configs/assets/app_images.dart';
+import '../../../../core/configs/di/service_locator.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
 import '../../../../core/enums/rental_status.dart';
+import '../../../../domain/usecases/vehicle/get_rental_locations_usecase.dart';
+import '../../../../domain/usecases/vehicle/get_vehicle_equipment_usecase.dart';
 
 class FutureReservation extends StatelessWidget {
-  const FutureReservation({super.key});
+  final FilterState _filterState = FilterState(
+    getRentalLocationsUseCase: sl<GetRentalLocationsUseCase>(),
+    getVehicleEquipmentUseCase: sl<GetVehicleEquipmentUseCase>(),
+  );
+
+
+  FutureReservation({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +71,7 @@ class FutureReservation extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SearchFilterModule(),
+              SearchFilterModule(filterState: _filterState,),
               const SizedBox(height: AppSpacing.sm),
               const Text(
                 "Upcoming Rentals",

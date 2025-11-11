@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/domain/usecases/vehicle/get_rental_locations_usecase.dart';
+import 'package:vrooom/domain/usecases/vehicle/get_vehicle_equipment_usecase.dart';
 import 'package:vrooom/presentation/admin/rental_history/widgets/rental_history_car_entry.dart';
 
-import '../../../../core/common/widgets/search_filter_module.dart';
+import '../../../core/common/widgets/search_car_module/filter_state.dart';
+import '../../../core/common/widgets/search_car_module/search_filter_module.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
 import '../../../core/common/widgets/primary_button.dart';
+import '../../../core/configs/di/service_locator.dart';
 import '../../../core/configs/routes/app_routes.dart';
 import '../../../core/configs/theme/app_text_styles.dart';
 import '../../../core/enums/rental_status.dart';
@@ -11,7 +15,12 @@ import '../widgets/admin_app_bar.dart';
 import '../widgets/admin_drawer.dart';
 
 class ActiveRentalsPage extends StatelessWidget {
-  const ActiveRentalsPage({super.key});
+  final FilterState _filterState = FilterState(
+    getRentalLocationsUseCase: sl<GetRentalLocationsUseCase>(),
+    getVehicleEquipmentUseCase: sl<GetVehicleEquipmentUseCase>(),
+  );
+
+  ActiveRentalsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +56,9 @@ class ActiveRentalsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SearchFilterModule(),
+              SearchFilterModule(
+                filterState: _filterState,
+              ),
               const SizedBox(height: AppSpacing.sm),
               const Text(
                 "Active Rentals",
@@ -75,7 +86,8 @@ class ActiveRentalsPage extends StatelessWidget {
                             width: 180,
                             textStyle: AppTextStyles.smallButton,
                             backgroundOpacity: 0.75,
-                            onPressed: () => Navigator.pushNamed(context, AppRoutes.finalizeRental),
+                            onPressed: () => Navigator.pushNamed(
+                                context, AppRoutes.finalizeRental),
                           ),
                         ),
                       ],

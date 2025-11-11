@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/presentation/admin/rental_history/widgets/rental_history_car_entry.dart';
 
-import '../../../../core/common/widgets/search_filter_module.dart';
+import '../../../../core/common/widgets/search_car_module/filter_state.dart';
+import '../../../../core/common/widgets/search_car_module/search_filter_module.dart';
+import '../../../../core/configs/di/service_locator.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
 import '../../../../core/enums/rental_status.dart';
+import '../../../../domain/usecases/vehicle/get_rental_locations_usecase.dart';
+import '../../../../domain/usecases/vehicle/get_vehicle_equipment_usecase.dart';
 import '../../widgets/admin_app_bar.dart';
 import '../../widgets/admin_drawer.dart';
 
 class RentalHistoryPage extends StatelessWidget {
-  const RentalHistoryPage({super.key});
+  final FilterState _filterState = FilterState(
+    getRentalLocationsUseCase: sl<GetRentalLocationsUseCase>(),
+    getVehicleEquipmentUseCase: sl<GetVehicleEquipmentUseCase>(),
+  );
+
+  RentalHistoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +53,7 @@ class RentalHistoryPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SearchFilterModule(),
+              SearchFilterModule(filterState: _filterState,),
               const SizedBox(height: AppSpacing.sm),
               const Text(
                 "Rental History",
