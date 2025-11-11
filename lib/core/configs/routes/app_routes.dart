@@ -23,4 +23,5 @@ class AppRoutes {
   static const String addNewCar = '/addNewCar';
   static const String privacyPolicy = '/privacyPolicy';
   static const String userBookingDetails = '/userBookingDetails';
+  static const String userRentalHistory = '/userRentalHistory';
 }

@@ -4,8 +4,8 @@ import 'package:vrooom/core/common/widgets/app_svg.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/domain/entities/booking.dart';
 
-import '../../../../core/configs/assets/app_vectors.dart';
-import '../../../../core/configs/theme/app_spacing.dart';
+import '../../configs/assets/app_vectors.dart';
+import '../../configs/theme/app_spacing.dart';
 
 class BookingCarTile extends StatelessWidget {
   final Booking booking;

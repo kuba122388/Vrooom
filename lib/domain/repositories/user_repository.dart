@@ -27,4 +27,10 @@ abstract class UserRepository {
   Future<Either<String, List<Booking>>> getUserRentalHistory();
 
   Future<Either<String, int?>> getUserIdByEmail(String email);
+
+  Future<Either<String, List<Booking>>> getUserActiveRentalsById(int userId);
+
+  Future<Either<String, List<Booking>>> getUserUpcomingRentalsById(int userId);
+
+  Future<Either<String, List<Booking>>> getUserRentalHistoryById(int userId);
 }
