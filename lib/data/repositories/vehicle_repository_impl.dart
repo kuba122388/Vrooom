@@ -39,7 +39,8 @@ class VehicleRepositoryImpl extends VehicleRepository {
     required File imageFile,
   }) async {
     try {
-      return Right(await vehicleApiService.addNewVehicle(vehicle: VehicleModel.fromEntity(vehicle), imageFile: imageFile));
+      return Right(await vehicleApiService.addNewVehicle(
+          vehicle: VehicleModel.fromEntity(vehicle), imageFile: imageFile));
     } catch (e) {
       return Left(e.toString());
     }
@@ -47,28 +48,38 @@ class VehicleRepositoryImpl extends VehicleRepository {
 
   @override
   Future<Either<String, List<String>>> getRentalLocations() async {
-    try{
+    try {
       return Right(await vehicleApiService.getRentalLocations());
-    } catch (e){
+    } catch (e) {
       return Left(e.toString());
     }
   }
 
   @override
   Future<Either<String, List<EquipmentModel>>> getAvailableEquipment() async {
-    try{
+    try {
       return Right(await vehicleApiService.getAvailableEquipment());
-    } catch (e){
+    } catch (e) {
       return Left(e.toString());
     }
   }
 
   @override
-  Future<Either<String, List<VehicleSummaryModel>>> getAvailableVehiclesBetweenDates(DateTimeRange dateRange) async {
-    try{
+  Future<Either<String, List<VehicleSummaryModel>>> getAvailableVehiclesBetweenDates(
+      DateTimeRange dateRange) async {
+    try {
       return Right(await vehicleApiService.getAvailableVehiclesBetweenDates(dateRange));
-    } catch (e){
-    return Left(e.toString());
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, List<Vehicle>>> getAllVehiclesWithDetails() async {
+    try {
+      return Right(await vehicleApiService.getAllVehiclesWithDetails());
+    } catch (e) {
+      return Left(e.toString());
     }
   }
 }

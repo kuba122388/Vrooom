@@ -20,5 +20,8 @@ abstract class VehicleRepository {
 
   Future<Either<String, List<Equipment>>> getAvailableEquipment();
 
-  Future<Either<String, List<VehicleSummary>>> getAvailableVehiclesBetweenDates(DateTimeRange dateRange);
+  Future<Either<String, List<VehicleSummary>>> getAvailableVehiclesBetweenDates(
+      DateTimeRange dateRange);
+
+  Future<Either<String, List<Vehicle>>> getAllVehiclesWithDetails();
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'dart:typed_data';
 
 import '../../../../core/configs/assets/app_images.dart';
 import '../../../../core/configs/theme/app_colors.dart';
@@ -9,16 +10,24 @@ import '../../widgets/car_card.dart';
 
 class RentalHistoryCarEntry extends StatelessWidget {
   final String rentalID;
+  final String carName;
+  final String carImage;
   final DateTime startDate;
   final DateTime endDate;
   final RentalStatus rentalStatus;
+  final String customerName;
+  final Uint8List? customerPicture;
 
   const RentalHistoryCarEntry({
     super.key,
     required this.rentalID,
+    required this.carName,
+    required this.carImage,
     required this.startDate,
     required this.endDate,
     required this.rentalStatus,
+    required this.customerName,
+    required this.customerPicture
   });
 
   TableRow _buildRow(String label, String value) {
@@ -47,8 +56,8 @@ class RentalHistoryCarEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CarCard(
-      carImage: AppImages.mercedes,
-      carName: "Mercedes-Benz C-Class",
+      carImage: carImage,
+      carName: carName,
       rightSide: Table(
         columnWidths: const {
           0: IntrinsicColumnWidth(),
@@ -66,15 +75,22 @@ class RentalHistoryCarEntry extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(50.0),
-              child: Image.asset(
+              child: customerPicture == null
+                  ? Image.asset(
                 AppImages.person,
-                height: 50.0,
-                width: 50.0,
                 fit: BoxFit.cover,
-              ),
+                width: 60,
+                height: 60,
+              )
+                  : Image.memory(
+                customerPicture!,
+                fit: BoxFit.cover,
+                width: 60,
+                height: 60,
+              )
             ),
             const SizedBox(width: AppSpacing.xs),
-            const Text("John Doe"),
+            Text(customerName),
             const Spacer(),
             Container(
               decoration: BoxDecoration(

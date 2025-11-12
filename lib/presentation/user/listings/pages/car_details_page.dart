@@ -82,10 +82,12 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
 
     final List<CarSpecRow> generalInfo = [
       CarSpecRow(iconPath: AppVectors.car, label: "Car Type", value: vehicle.type),
+      CarSpecRow(iconPath: AppVectors.odometer, label: "Mileage", value: vehicle.mileage.toString() ),
+      CarSpecRow(iconPath: AppVectors.calendar, label: "Production Year", value: vehicle.productionYear.toString()),
       CarSpecRow(
           iconPath: AppVectors.seats, label: "Seats", value: "${vehicle.numberOfSeats} seats"),
       CarSpecRow(
-          iconPath: AppVectors.gauge,
+          iconPath: AppVectors.carDoorsLeft,
           label: "Number of Doors",
           value: "${vehicle.numberOfDoors} doors"),
     ];

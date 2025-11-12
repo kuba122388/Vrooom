@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/domain/entities/booking.dart';
+import 'package:vrooom/domain/entities/user.dart';
 import 'package:vrooom/presentation/admin/active_rental/active_rentals_page.dart';
 import 'package:vrooom/presentation/admin/car_management/pages/add_new_car.dart';
 import 'package:vrooom/presentation/admin/car_management/pages/car_management_page.dart';
@@ -6,11 +8,13 @@ import 'package:vrooom/presentation/admin/discount_codes/pages/discount_codes_pa
 import 'package:vrooom/presentation/admin/future_reservation/pages/future_reservation_page.dart';
 import 'package:vrooom/presentation/admin/manage_users/pages/manage_users_page.dart';
 import 'package:vrooom/presentation/admin/car_management/pages/finalize_rental.dart';
+import 'package:vrooom/presentation/admin/manage_users/pages/user_rental_history_page.dart';
 import 'package:vrooom/presentation/admin/rental_history/pages/rental_history_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/email_verification_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/login_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/signup_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/verification_success_page.dart';
+import 'package:vrooom/presentation/user/bookings/pages/user_booking_details_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/booking_details_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/car_details_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/listings_page.dart';
@@ -60,6 +64,14 @@ class AppRouter {
         }
 
         return MaterialPageRoute(builder: (_) => CarDetailsPage(vehicleId: vehicleId));
+
+      case AppRoutes.userBookingDetails:
+        final booking = settings.arguments as Booking;
+        return MaterialPageRoute(builder: (_) => UserBookingDetailsPage(booking: booking));
+
+      case AppRoutes.userRentalHistory:
+        final user = settings.arguments as User;
+        return MaterialPageRoute(builder: (_) => UserRentalHistoryPage(user: user));
 
       case AppRoutes.bookingDetails:
         return MaterialPageRoute(builder: (_) => const BookingDetailsPage());

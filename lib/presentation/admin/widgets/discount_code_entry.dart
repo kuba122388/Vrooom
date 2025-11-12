@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/domain/entities/discount_code.dart';
 
 import '../../../core/configs/theme/app_colors.dart';
 import '../../../core/configs/theme/app_spacing.dart';
@@ -6,21 +7,16 @@ import '../../../core/configs/theme/app_spacing.dart';
 enum CodeStatus { active, inactive }
 
 class DiscountCodeEntry extends StatelessWidget {
-  final String code;
-  final int discount;
-  final String type;
-  final DateTime startDate;
-  final DateTime endDate;
-  final CodeStatus codeStatus;
+  final DiscountCode discountCode;
+  final VoidCallback onEditPressed;
+  final VoidCallback onDeletePressed;
 
-  const DiscountCodeEntry(
-      {super.key,
-      required this.code,
-      required this.discount,
-      required this.type,
-      required this.startDate,
-      required this.endDate,
-      required this.codeStatus});
+  const DiscountCodeEntry({
+    super.key,
+    required this.discountCode,
+    required this.onEditPressed,
+    required this.onDeletePressed,
+  });
 
   String _getStatus(CodeStatus status) {
     switch (status) {
@@ -33,6 +29,9 @@ class DiscountCodeEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final codeStatus = (discountCode.active ?? false) ? CodeStatus.active : CodeStatus.inactive;
+    final type = (discountCode.percentage ?? false) ? "Percentage" : "Fixed";
+
     return Container(
       decoration: BoxDecoration(
           color: AppColors.container.neutral700, borderRadius: BorderRadius.circular(10.0)),
@@ -51,7 +50,7 @@ class DiscountCodeEntry extends StatelessWidget {
                       style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
                     ),
                     Text(
-                      code,
+                      discountCode.code ?? "",
                       style: const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
                     ),
                   ],
@@ -68,7 +67,7 @@ class DiscountCodeEntry extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
                       child: Text(
-                        discount.toString(),
+                        discountCode.value?.toString() ?? "0.0",
                         style: const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
                       ),
                     ),
@@ -88,24 +87,6 @@ class DiscountCodeEntry extends StatelessWidget {
                 ),
                 TableRow(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
-                      child: Text(
-                        "Validity:",
-                        style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
-                      child: Text(
-                        "${startDate.toString().split(' ').first} - ${endDate.toString().split(' ').first}",
-                        style: const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
                     Text(
                       "Status:",
                       style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
@@ -118,7 +99,7 @@ class DiscountCodeEntry extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(width: AppSpacing.xs),
+            const SizedBox(height: AppSpacing.sm),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -126,7 +107,7 @@ class DiscountCodeEntry extends StatelessWidget {
                   width: 30,
                   height: 30,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: onEditPressed,
                     style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.container.neutral900,
                         foregroundColor: Colors.white,
@@ -143,7 +124,7 @@ class DiscountCodeEntry extends StatelessWidget {
                   width: 30,
                   height: 30,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: onDeletePressed,
                     style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,

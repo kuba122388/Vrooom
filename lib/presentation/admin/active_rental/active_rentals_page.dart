@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_rental_locations_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_vehicle_equipment_usecase.dart';
+import 'package:vrooom/domain/usecases/booking/get_active_rentals_usecase.dart';
+import 'dart:typed_data';
 import 'package:vrooom/presentation/admin/rental_history/widgets/rental_history_car_entry.dart';
 
 import '../../../core/common/widgets/search_car_module/filter_state.dart';
@@ -9,42 +11,89 @@ import '../../../../core/configs/theme/app_spacing.dart';
 import '../../../core/common/widgets/primary_button.dart';
 import '../../../core/configs/di/service_locator.dart';
 import '../../../core/configs/routes/app_routes.dart';
+import '../../../core/configs/theme/app_colors.dart';
 import '../../../core/configs/theme/app_text_styles.dart';
 import '../../../core/enums/rental_status.dart';
+import '../../../domain/entities/booking.dart';
+import '../../../domain/usecases/user/download_user_profile_picture_usecase.dart';
+import '../../../domain/usecases/user/get_user_id_by_email_usecase.dart';
 import '../widgets/admin_app_bar.dart';
 import '../widgets/admin_drawer.dart';
 
-class ActiveRentalsPage extends StatelessWidget {
+
+class ActiveRentalsPage extends StatefulWidget {
+  const ActiveRentalsPage({super.key});
+
+  @override
+  State<ActiveRentalsPage> createState() => _ActiveRentalsPageState();
+}
+
+class _ActiveRentalsPageState extends State<ActiveRentalsPage> {
+  final GetActiveRentalsUseCase _getActiveRentalsUseCase = sl();
+  final GetUserIdByEmailUseCase _getUserIdByEmailUseCase = sl();
+  final DownloadUserProfilePictureUseCase _downloadUserProfilePictureUseCase = sl();
+
   final FilterState _filterState = FilterState(
     getRentalLocationsUseCase: sl<GetRentalLocationsUseCase>(),
     getVehicleEquipmentUseCase: sl<GetVehicleEquipmentUseCase>(),
   );
 
-  ActiveRentalsPage({super.key});
+
+  bool _isLoading = false;
+  final List<Uint8List?> _customerImage = [];
+  List<Booking> _activeRentals = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final result = await _getActiveRentalsUseCase();
+      result.fold(
+            (error) {},
+            (vehicleList) {
+          _activeRentals = vehicleList;
+        },
+      );
+
+      _customerImage.clear();
+
+      final futures = _activeRentals.map((booking) async {
+        final idResult = await _getUserIdByEmailUseCase(email: booking.customerEmail!);
+        return await idResult.fold(
+              (error) async => null,
+              (userId) async {
+            final picResult = await _downloadUserProfilePictureUseCase(userId: userId as int);
+            return picResult.fold((error) => null, (success) => success);
+          },
+        );
+      }).toList();
+
+      final images = await Future.wait(futures);
+      _customerImage.addAll(images);
+
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  RentalStatus _getRentalStatus(Booking booking) {
+    if (booking.bookingStatus == "Pending" && booking.endDate!.isBefore(DateTime.now())) {
+      return RentalStatus.overdue;
+    } else if (booking.bookingStatus == "Pending") {
+      return RentalStatus.pending;
+    }
+
+    return RentalStatus.completed;
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<RentalHistoryCarEntry> rentalHistory = [
-      RentalHistoryCarEntry(
-        rentalID: "RENT001",
-        startDate: DateTime(2025, 6, 30),
-        endDate: DateTime(2025, 7, 30),
-        rentalStatus: RentalStatus.finished,
-      ),
-      RentalHistoryCarEntry(
-        rentalID: "RENT002",
-        startDate: DateTime(2025, 6, 30),
-        endDate: DateTime(2025, 7, 30),
-        rentalStatus: RentalStatus.inProgress,
-      ),
-      RentalHistoryCarEntry(
-        rentalID: "RENT003",
-        startDate: DateTime(2025, 6, 30),
-        endDate: DateTime(2025, 7, 30),
-        rentalStatus: RentalStatus.overdue,
-      )
-    ];
-
     return Scaffold(
       appBar: const AdminAppBar(
         title: "Active Rentals",
@@ -69,37 +118,64 @@ class ActiveRentalsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
-              ...rentalHistory.expand(
-                (entry) => [
-                  if (entry.rentalStatus == RentalStatus.finished) ...[
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Opacity(
-                          opacity: 0.5,
-                          child: entry,
-                        ),
-                        Align(
+
+              if (_isLoading) ... [
+                const SizedBox(height: AppSpacing.xl),
+                const Center(child: CircularProgressIndicator(color: AppColors.primary))
+              ] else ... [
+                ..._activeRentals.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final item = entry.value;
+
+                  return Column(
+                    children: [
+                      if (_getRentalStatus(item) == RentalStatus.pending) ... [
+                        Stack(
                           alignment: Alignment.center,
-                          child: PrimaryButton(
-                            text: "FINALIZE RENTAL",
-                            width: 180,
-                            textStyle: AppTextStyles.smallButton,
-                            backgroundOpacity: 0.75,
-                            onPressed: () => Navigator.pushNamed(
-                                context, AppRoutes.finalizeRental),
-                          ),
+                          children: [
+                            Opacity(
+                              opacity: 0.5,
+                              child: RentalHistoryCarEntry(
+                                  rentalID: item.bookingID.toString(),
+                                  carName: "${item.vehicleMake} ${item.vehicleModel}",
+                                  carImage: item.vehicleImage as String,
+                                  startDate: DateTime(item.startDate!.year, item.startDate!.month, item.startDate!.day),
+                                  endDate: DateTime(item.endDate!.year, item.endDate!.month, item.endDate!.day),
+                                  rentalStatus: _getRentalStatus(item),
+                                  customerName: "${item.customerName} ${item.customerSurname}",
+                                  customerPicture: _customerImage[index]
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: PrimaryButton(
+                                text: "FINALIZE RENTAL",
+                                width: 180,
+                                textStyle: AppTextStyles.smallButton,
+                                backgroundOpacity: 0.75,
+                                onPressed: () => Navigator.pushNamed(context, AppRoutes.finalizeRental),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ] else ... [
+                        RentalHistoryCarEntry(
+                            rentalID: item.bookingID.toString(),
+                            carName: "${item.vehicleMake} ${item.vehicleModel}",
+                            carImage: item.vehicleImage as String,
+                            startDate: DateTime(item.startDate!.year, item.startDate!.month, item.startDate!.day),
+                            endDate: DateTime(item.endDate!.year, item.endDate!.month, item.endDate!.day),
+                            rentalStatus: _getRentalStatus(item),
+                            customerName: "${item.customerName} ${item.customerSurname}",
+                            customerPicture: _customerImage[index]
                         ),
                       ],
-                    ),
-                  ] else ...[
-                    entry
-                  ],
-                  const SizedBox(
-                    height: AppSpacing.sm,
-                  ),
-                ],
-              ),
+
+                      const SizedBox(height: AppSpacing.sm)
+                    ],
+                  );
+                })
+              ]
             ],
           ),
         ),

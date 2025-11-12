@@ -3,6 +3,7 @@ import 'package:vrooom/core/common/utils/email_launcher.dart';
 import 'package:vrooom/core/common/widgets/app_svg.dart';
 import 'package:vrooom/core/configs/assets/app_images.dart';
 import 'package:vrooom/core/configs/assets/app_vectors.dart';
+import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/domain/entities/user.dart';
 import 'package:vrooom/domain/usecases/user/download_user_profile_picture_usecase.dart';
@@ -238,7 +239,7 @@ class _UserInformationEntityState extends State<UserInformationEntity> {
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => Navigator.pushNamed(context, AppRoutes.userRentalHistory, arguments: widget.user),
                   style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: AppColors.container.neutral900,

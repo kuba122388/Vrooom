@@ -147,6 +147,26 @@ class UserApiService {
     }
   }
 
+  Future<List<Booking>> getUserActiveRentalsById(int userId) async {
+    try {
+      final response = await _dio.get("$_userApi/user/$userId/active-rentals");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data is List) {
+          return data.map((json) => BookingModel.fromJson(json)).toList();
+        }
+        throw Exception("Invalid response format - expected a list. ");
+      } else {
+        throw Exception("Received data about Users is not a list.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+
   Future<List<Booking>> getUserUpcomingRentals() async {
     try {
       final userId = await AuthStorage.getUserId();
@@ -154,6 +174,26 @@ class UserApiService {
         throw Exception("No userID in storage");
       }
 
+      final response = await _dio.get("$_userApi/user/$userId/upcoming-rentals");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data is List) {
+          return data.map((json) => BookingModel.fromJson(json)).toList();
+        }
+        throw Exception("Invalid response format - expected a list. ");
+      } else {
+        throw Exception("Received data about Users is not a list.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+
+  Future<List<Booking>> getUserUpcomingRentalsById(int userId) async {
+    try {
       final response = await _dio.get("$_userApi/user/$userId/upcoming-rentals");
 
       if (response.statusCode == 200) {
@@ -189,6 +229,47 @@ class UserApiService {
         throw Exception("Invalid response format - expected a list. ");
       } else {
         throw Exception("Received data about Users is not a list.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+
+  Future<List<Booking>> getUserRentalHistoryById(int userId) async {
+    try {
+      final response = await _dio.get("$_userApi/user/$userId/rental-history");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data is List) {
+          return data.map((json) => BookingModel.fromJson(json)).toList();
+        }
+        throw Exception("Invalid response format - expected a list. ");
+      } else {
+        throw Exception("Received data about Users is not a list.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+
+  Future<int?> getUserIdByEmail(String email) async {
+    try {
+      final response = await _dio.get(
+        "$_userApi/user/id",
+        queryParameters: {"email": email}
+      );
+
+      if (response.statusCode == 200) {
+        return int.parse(response.data.toString());
+      } else if (response.statusCode == 404) {
+        return null;
+      } else {
+        return null;
       }
     } on DioException catch (e) {
       throw Exception("Network error: ${e.message}");

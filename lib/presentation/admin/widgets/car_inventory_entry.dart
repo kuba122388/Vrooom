@@ -6,7 +6,7 @@ import '../../../core/common/widgets/app_svg.dart';
 import '../../../core/configs/assets/app_vectors.dart';
 import '../../../core/configs/theme/app_spacing.dart';
 
-enum CarStatus { available, maintenance, booked, rented, unavailable }
+enum CarStatus { available, maintenance, booked, rented, unavailable, archived }
 
 class CarInventoryEntry extends StatelessWidget {
   final String carImage;
@@ -42,6 +42,8 @@ class CarInventoryEntry extends StatelessWidget {
         return AppColors.container.progress200;
       case CarStatus.rented:
         return AppColors.container.danger500;
+      case CarStatus.archived:
+        return AppColors.container.claret;
     }
   }
 
@@ -57,6 +59,8 @@ class CarInventoryEntry extends StatelessWidget {
         return "Rented";
       case CarStatus.unavailable:
         return "Unavailable";
+      case CarStatus.archived:
+        return "Archived";
     }
   }
 

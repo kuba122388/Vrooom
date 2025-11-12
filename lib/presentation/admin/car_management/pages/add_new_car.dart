@@ -46,6 +46,8 @@ class _AddNewCarState extends State<AddNewCar> {
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _colorController = TextEditingController();
   final TextEditingController _plateController = TextEditingController();
+  final TextEditingController _mileageController = TextEditingController();
+  final TextEditingController _productionYearController = TextEditingController();
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -168,6 +170,8 @@ class _AddNewCarState extends State<AddNewCar> {
       final numberOfSeats = int.tryParse(_selectedSeats!) ?? 0;
       final numberOfDoors = int.tryParse(_numberOfDoorsController.text) ?? 0;
       final wheelSize = int.tryParse(_wheelSizeController.text) ?? 0;
+      final productionYear = int.tryParse(_productionYearController.text) ?? 0;
+      final mileage = int.tryParse(_mileageController.text) ?? 0;
 
       List<Equipment> equipment =  [];
       for(String name in _selectedEquipment){
@@ -189,7 +193,9 @@ class _AddNewCarState extends State<AddNewCar> {
         averageConsumption: averageConsumption,
         numberOfSeats: numberOfSeats,
         numberOfDoors: numberOfDoors,
+        productionYear: productionYear,
         description: _descriptionController.text,
+        mileage: mileage,
         vehicleImage: "",
         availabilityStatus: availableForRent ? 'Available' : 'Not Available',
         wheelSize: wheelSize,
@@ -313,6 +319,18 @@ class _AddNewCarState extends State<AddNewCar> {
                       hintText: 'e.g., Camry SE',
                       label: "Model",
                       validator: _validateRequired,
+                    ),
+                    CustomTextField(
+                      controller: _productionYearController,
+                      hintText: 'e.g., 2021',
+                      label: "Production year",
+                      validator: _validateNumber,
+                    ),
+                    CustomTextField(
+                      controller: _mileageController,
+                      hintText: 'e.g., 6592',
+                      label: "Mileage (km)",
+                      validator: _validateNumber,
                     ),
                     CustomDropdownMenu(
                       items: bodyTypes,

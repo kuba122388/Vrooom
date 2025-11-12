@@ -92,7 +92,43 @@ class UserRepositoryImpl extends UserRepository {
     try {
       return Right(await userApiService.getUserRentalHistory());
     } catch (e) {
-    return Left(e.toString());
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, int?>> getUserIdByEmail(String email) async {
+    try {
+      return Right(await userApiService.getUserIdByEmail(email));
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, List<Booking>>> getUserActiveRentalsById(int userId) async {
+    try {
+      return Right(await userApiService.getUserActiveRentalsById(userId));
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, List<Booking>>> getUserRentalHistoryById(int userId) async {
+    try {
+      return Right(await userApiService.getUserRentalHistoryById(userId));
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, List<Booking>>> getUserUpcomingRentalsById(int userId) async {
+    try {
+      return Right(await userApiService.getUserUpcomingRentalsById(userId));
+    } catch (e) {
+      return Left(e.toString());
     }
   }
 }
