@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/custom_text_field.dart';
 import 'package:vrooom/core/common/widgets/loading_widget.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
-import 'package:vrooom/core/common/widgets/loading_widget.dart';
 import 'package:vrooom/core/configs/di/service_locator.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 import 'package:vrooom/domain/entities/discount_code.dart';
 import 'package:vrooom/domain/usecases/discount_codes/add_discount_code_usecase.dart';
+import 'package:vrooom/domain/usecases/discount_codes/delete_discount_code_usecase.dart';
 import 'package:vrooom/domain/usecases/discount_codes/get_all_discount_codes_usecase.dart';
+import 'package:vrooom/domain/usecases/discount_codes/update_discount_code_usecase.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
 import 'package:vrooom/presentation/admin/widgets/discount_code_entry.dart';
@@ -23,6 +24,8 @@ class DiscountCodesPage extends StatefulWidget {
 class _DiscountCodesPageState extends State<DiscountCodesPage> {
   final GetAllDiscountCodesUseCase _getAllDiscountCodesUsecase = sl();
   final AddDiscountCodeUseCase _addDiscountCodeUseCase = sl();
+  final UpdateDiscountCodeUseCase _updateDiscountCodeUseCase = sl();
+  final DeleteDiscountCodeUseCase _deleteDiscountCodeUseCase = sl();
 
   bool _isLoading = true;
   String? _errorMessage;
@@ -46,17 +49,6 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
     final result = await _getAllDiscountCodesUsecase();
 
     result.fold(
-      (error) {
-
-  Future<void> _loadDiscountCodes() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    final result = await _getAllDiscountCodesUsecase();
-
-    result.fold(
           (error) {
         print("=== ERROR OCCURED === $error");
         setState(() {
@@ -64,10 +56,8 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
           _isLoading = false;
         });
       },
-      (codesList) {
-        print("=== DISCOUNT CODES LOADED ===");
           (codesList) {
-            ("=== DISCOUNT CODES LOADED ===");
+        print("=== DISCOUNT CODES LOADED ===");
         setState(() {
           _allCodesList = codesList;
           _filterCodes();
@@ -83,13 +73,6 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
         _displayedCodesList = _allCodesList.where((code) => code.active == true).toList();
       } else {
         _displayedCodesList = _allCodesList.where((code) => code.active != true).toList();
-        _displayedCodesList = _allCodesList
-            .where((code) => code.active == true)
-            .toList();
-      } else {
-        _displayedCodesList = _allCodesList
-            .where((code) => code.active != true)
-            .toList();
       }
     });
   }
@@ -103,7 +86,7 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
       floatingActionButton: SizedBox(
         width: 220,
         child: FloatingActionButton(
-          onPressed: _showAddCodeDialog,
+          onPressed: () => _showAddOrEditCodeDialog(null),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
@@ -189,9 +172,6 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                 errorMessage: _errorMessage,
                 futureResultObj: _displayedCodesList,
                 emptyResultMsg: _activeCode ? "No active codes found." : "No expired codes found.",
-                emptyResultMsg: _activeCode
-                    ? "No active codes found."
-                    : "No expired codes found.",
                 futureBuilder: _buildCodesList,
               ),
             ),
@@ -210,23 +190,64 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
         final codeEntity = _displayedCodesList[index];
 
         return DiscountCodeEntry(
-          code: codeEntity.code ?? "",
-          discount: codeEntity.value ?? 0.0,
-          type: (codeEntity.percentage ?? false) ? "Percentage" : "Fixed",
-          codeStatus: (codeEntity.active ?? false) ? CodeStatus.active : CodeStatus.inactive,
+          discountCode: codeEntity,
+          onEditPressed: () => _showAddOrEditCodeDialog(codeEntity),
+          onDeletePressed: () => _showDeleteDialog(codeEntity),
         );
       },
     );
   }
 
-  void _showAddCodeDialog() {
-    final formKey = GlobalKey<FormState>();
-    final codeController = TextEditingController();
-    final valueController = TextEditingController();
+  void _showDeleteDialog(DiscountCode code) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Delete Code"),
+          content: Text("Are you sure you want to delete the code '${code.code ?? ""}'?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (code.id == null) return;
+                final result = await _deleteDiscountCodeUseCase(code.id!);
+                Navigator.pop(context);
+                result.fold(
+                      (error) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Error deleting code: $error"), backgroundColor: Colors.red),
+                    );
+                  },
+                      (_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Code deleted successfully!"), backgroundColor: Colors.green),
+                    );
+                    _loadDiscountCodes();
+                  },
+                );
+              },
+              child: const Text("Delete"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-    bool isPercentage = false;
+  void _showAddOrEditCodeDialog(DiscountCode? codeToEdit) {
+    final formKey = GlobalKey<FormState>();
+    final codeController = TextEditingController(text: codeToEdit?.code ?? "");
+    final valueController = TextEditingController(text: codeToEdit?.value?.toString() ?? "");
+
+    bool isPercentage = codeToEdit?.percentage ?? false;
+    bool isActive = codeToEdit?.active ?? true;
     bool isDialogLoading = false;
     String? dialogErrorMessage;
+
+    final bool isEditing = codeToEdit != null;
 
     showDialog(
       context: context,
@@ -234,7 +255,7 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text("Add New Promo Code"),
+              title: Text(isEditing ? "Edit Promo Code" : "Add New Promo Code"),
               content: SingleChildScrollView(
                 child: Form(
                   key: formKey,
@@ -281,6 +302,19 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                         activeTrackColor: AppColors.primary,
                         inactiveTrackColor: AppColors.container.neutral700,
                       ),
+                      SwitchListTile(
+                        title: const Text("Active?"),
+                        value: isActive,
+                        onChanged: (bool value) {
+                          setDialogState(() {
+                            isActive = value;
+                          });
+                        },
+                        activeThumbColor: AppColors.background,
+                        inactiveThumbColor: AppColors.container.neutral900,
+                        activeTrackColor: AppColors.primary,
+                        inactiveTrackColor: AppColors.container.neutral700,
+                      ),
                       if (isDialogLoading)
                         const Padding(
                           padding: EdgeInsets.only(top: 16.0),
@@ -312,7 +346,8 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                     ),
                     Expanded(
                       child: PrimaryButton(
-                        text: "Add code",
+                        height: 80,
+                        text: isEditing ? "Save Changes" : "Add code",
                         onPressed: isDialogLoading
                             ? null
                             : () async {
@@ -322,15 +357,17 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                               dialogErrorMessage = null;
                             });
 
-                            final newCode = DiscountCode(
-                              id: null,
+                            final finalCode = DiscountCode(
+                              id: codeToEdit?.id,
                               code: codeController.text,
                               value: double.tryParse(valueController.text) ?? 0.0,
                               percentage: isPercentage,
-                              active: true,
+                              active: isActive,
                             );
 
-                            final result = await _addDiscountCodeUseCase(newCode);
+                            final result = isEditing
+                                ? await _updateDiscountCodeUseCase(finalCode)
+                                : await _addDiscountCodeUseCase(finalCode);
 
                             result.fold(
                                   (error) {
@@ -343,7 +380,9 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                                 Navigator.pop(context);
                                 _loadDiscountCodes();
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Code added successfully!"), backgroundColor: Colors.green),
+                                  SnackBar(
+                                      content: Text(isEditing ? "Code updated successfully!" : "Code added successfully!"),
+                                      backgroundColor: Colors.green),
                                 );
                               },
                             );
@@ -351,10 +390,8 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                         },
                       ),
                     ),
-
                   ],
                 )
-
               ],
             );
           },
@@ -362,5 +399,4 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
       },
     );
   }
-}
 }
