@@ -13,7 +13,9 @@ import 'package:vrooom/presentation/admin/manage_users/pages/manage_users_page.d
 import 'package:vrooom/presentation/admin/car_management/pages/finalize_rental.dart';
 import 'package:vrooom/presentation/admin/manage_users/pages/user_rental_history_page.dart';
 import 'package:vrooom/presentation/admin/rental_history/pages/rental_history_page.dart';
+import 'package:vrooom/presentation/user/auth/pages/change_password_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/email_verification_page.dart';
+import 'package:vrooom/presentation/user/auth/pages/forgot_password_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/login_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/signup_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/verification_success_page.dart';
@@ -68,6 +70,12 @@ class AppRouter {
         }
 
         return MaterialPageRoute(builder: (_) => CarDetailsPage(vehicleId: vehicleId));
+
+      case AppRoutes.forgotPassword:
+        return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
+
+      case AppRoutes.changePassword:
+        return MaterialPageRoute(builder: (_) => const ChangePasswordPage());
 
       case AppRoutes.userBookingDetails:
         final args = settings.arguments as Map<String, dynamic>;
