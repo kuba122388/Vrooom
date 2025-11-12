@@ -111,6 +111,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
       separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
       itemBuilder: (context, index) {
         return UserInformationEntity(
+          key: ValueKey(_filteredUsersList[index].customerID),
           user: _filteredUsersList[index],
           callback: _loadUsers,
         );
