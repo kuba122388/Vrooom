@@ -118,23 +118,27 @@ class _MapWidgetState extends State<MapWidget> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppColors.background,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            InfoSectionCard(
-              title: office.name,
-              child: Column(
-                children: office.infoSection
-                    .expand(
-                      (widget) => [
-                    widget,
-                    const SizedBox(height: AppSpacing.xs),
-                  ],
-                ).toList(),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              InfoSectionCard(
+                title: office.name,
+                child: Column(
+                  children: office.infoSection
+                      .expand(
+                        (widget) => [
+                      widget,
+                      const SizedBox(height: AppSpacing.xs),
+                    ],
+                  ).toList(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+        actionsAlignment: MainAxisAlignment.center,
         actions: [
           PrimaryButton(
             text: 'Open in maps',

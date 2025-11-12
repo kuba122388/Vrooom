@@ -18,7 +18,7 @@ class ContactRow extends StatelessWidget {
       children: [
         AppSvg(asset: svgAsset),
         const SizedBox(width: AppSpacing.xs),
-        Text(label, style: const TextStyle(fontSize: 14.0)),
+        Expanded(child: Text(label, softWrap: true, overflow: TextOverflow.visible, style: const TextStyle(fontSize: 14.0))),
       ],
     );
   }
