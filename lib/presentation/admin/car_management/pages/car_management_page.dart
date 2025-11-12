@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vrooom/core/common/widgets/primary_button.dart';
 import 'package:vrooom/core/common/widgets/search_car_module/search_filter_module.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
@@ -10,12 +9,10 @@ import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
 import 'package:vrooom/presentation/admin/widgets/car_inventory_entry.dart';
 
 import '../../../../core/common/widgets/search_car_module/filter_state.dart';
-import '../../../../core/configs/assets/app_images.dart';
 import '../../../../core/configs/di/service_locator.dart';
 import '../../../../domain/usecases/vehicle/get_rental_locations_usecase.dart';
 import '../../../../domain/usecases/vehicle/get_vehicle_equipment_usecase.dart';
 
-import '../../../../core/configs/di/service_locator.dart';
 import '../../../../core/configs/theme/app_colors.dart';
 
 class CarManagementPage extends StatefulWidget {
@@ -76,6 +73,20 @@ class _CarManagementPageState extends State<CarManagementPage> {
       appBar: const AdminAppBar(
         title: "Manage cars",
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: SizedBox(
+        width: 180,
+        child: FloatingActionButton(
+          onPressed: () => Navigator.of(context).pushNamed(AppRoutes.addNewCar),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          child: const Text(
+            "Add New Car",
+            style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.5, fontSize: 20),
+          ),
+        ),
+      ),
       drawer: const AdminDrawer(),
       body: SingleChildScrollView(
         child: Padding(
@@ -114,12 +125,6 @@ class _CarManagementPageState extends State<CarManagementPage> {
                   );
                 }).expand(
                   (widget) => [widget, const SizedBox(height: AppSpacing.sm)],
-                ),
-                PrimaryButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(AppRoutes.addNewCar);
-                  },
-                  text: "Add New Car",
                 ),
               ]
             ],
