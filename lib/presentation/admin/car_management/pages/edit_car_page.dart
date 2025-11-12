@@ -1,36 +1,39 @@
 import 'dart:io';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:vrooom/core/common/widgets/custom_app_bar.dart';
-import 'package:vrooom/core/common/widgets/custom_dropdown.dart';
-import 'package:vrooom/core/common/widgets/custom_text_field.dart';
-import 'package:vrooom/core/common/widgets/image_picker_widget.dart';
-import 'package:vrooom/core/common/widgets/primary_button.dart';
-import 'package:vrooom/core/configs/theme/app_colors.dart';
-import 'package:vrooom/domain/entities/equipment.dart';
+import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/domain/entities/vehicle.dart';
-import 'package:vrooom/domain/usecases/vehicle/add_new_vehicle_usecase.dart';
-import 'package:vrooom/domain/usecases/vehicle/get_rental_locations_usecase.dart';
+import 'package:vrooom/domain/usecases/vehicle/update_vehicle_usecase.dart';
 
 import '../../../../core/common/widgets/app_svg.dart';
+import '../../../../core/common/widgets/custom_app_bar.dart';
+import '../../../../core/common/widgets/custom_dropdown.dart';
+import '../../../../core/common/widgets/custom_text_field.dart';
+import '../../../../core/common/widgets/image_picker_widget.dart';
+import '../../../../core/common/widgets/primary_button.dart';
 import '../../../../core/configs/assets/app_vectors.dart';
 import '../../../../core/configs/di/service_locator.dart';
-import '../../../../core/configs/routes/app_routes.dart';
+import '../../../../core/configs/theme/app_colors.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
+import '../../../../domain/entities/equipment.dart';
+import '../../../../domain/usecases/vehicle/get_rental_locations_usecase.dart';
 
-class AddNewCar extends StatefulWidget {
-  const AddNewCar({super.key});
+class EditCarPage extends StatefulWidget {
+  final Vehicle vehicle;
+
+  const EditCarPage({super.key, required this.vehicle});
 
   @override
-  State<AddNewCar> createState() => _AddNewCarState();
+  State<EditCarPage> createState() => _EditCarPageState();
 }
 
-class _AddNewCarState extends State<AddNewCar> {
+class _EditCarPageState extends State<EditCarPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final ScrollController _scrollController = ScrollController();
 
-  final AddNewVehiclesUseCase _addNewVehiclesUseCase = sl();
+  final UpdateVehicleUseCase _updateVehicleUseCase = sl();
   final GetRentalLocationsUseCase _getRentalLocationsUseCase = sl();
 
   final TextEditingController _makeController = TextEditingController();
@@ -43,16 +46,13 @@ class _AddNewCarState extends State<AddNewCar> {
   final TextEditingController _consumptionController = TextEditingController();
   final TextEditingController _wheelSizeController = TextEditingController();
   final TextEditingController _numberOfDoorsController = TextEditingController();
-  final TextEditingController _brandLogoController = TextEditingController();
-  final TextEditingController _yearController = TextEditingController();
-  final TextEditingController _colorController = TextEditingController();
-  final TextEditingController _plateController = TextEditingController();
   final TextEditingController _mileageController = TextEditingController();
   final TextEditingController _productionYearController = TextEditingController();
 
   bool _isLoading = false;
   String? _errorMessage;
   File? _selectedImage;
+  String _defaultImage = '';
 
   // Dropdown options
   List<String> fuelTypes = ['Petrol', 'Diesel', 'Electric', 'Hybrid', 'Gas', 'LPG'];
@@ -94,24 +94,53 @@ class _AddNewCarState extends State<AddNewCar> {
   String? _selectedDriveType;
   String? _selectedSeats;
   String? _selectedCarLocation;
-  final List<String> _selectedEquipment = [];
+  List<String> _selectedEquipment = [];
 
   @override
   initState(){
-    _fetchRentalLocations();
     super.initState();
+    setState(() {
+      _isLoading = true;
+    });
+    _fetchRentalLocations().then( (_) => _setDefaultValues()).then( (_) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   Future<void> _fetchRentalLocations() async {
     final result = await _getRentalLocationsUseCase();
 
     result.fold((error){
-      print(error);
     }, (locations){
       setState(() {
         rentalLocations = locations;
       });
     });
+  }
+
+  void _setDefaultValues() {
+    _makeController.text = widget.vehicle.make;
+    _modelController.text = widget.vehicle.model;
+    _priceController.text = widget.vehicle.pricePerDay.toString();
+    _descriptionController.text = widget.vehicle.description;
+    _depositController.text = widget.vehicle.deposit.toString();
+    _engineCapacityController.text = widget.vehicle.engineCapacity.toString();
+    _horsePowerController.text = widget.vehicle.horsePower.toString();
+    _consumptionController.text = widget.vehicle.averageConsumption.toString();
+    _wheelSizeController.text = widget.vehicle.wheelSize.toString();
+    _numberOfDoorsController.text = widget.vehicle.numberOfDoors.toString();
+    _mileageController.text = widget.vehicle.mileage.toString();
+    _productionYearController.text = widget.vehicle.productionYear.toString();
+    _selectedBodyType = widget.vehicle.type;
+    _selectedFuelType = widget.vehicle.fuelType;
+    _selectedTransmission = widget.vehicle.gearShift;
+    _selectedDriveType = widget.vehicle.driveType;
+    _selectedSeats = widget.vehicle.numberOfSeats.toString();
+    _selectedCarLocation = widget.vehicle.vehicleLocation;
+    _selectedEquipment = widget.vehicle.equipmentList.map((item) => item.equipmentName).toList();
+    _defaultImage = widget.vehicle.vehicleImage;
   }
 
   // Validators
@@ -138,20 +167,12 @@ class _AddNewCarState extends State<AddNewCar> {
     return null;
   }
 
-  Future<void> _addVehicle() async {
+  Future<void> _editVehicle() async {
     final isFormValid = _formKey.currentState!.validate();
 
     if (!isFormValid || _selectedBodyType == null || _selectedFuelType == null || _selectedTransmission == null || _selectedSeats == null) {
       setState(() {
         _errorMessage = "Please fill in all required fields and select all options.";
-        _isLoading = false;
-      });
-      return;
-    }
-
-    if (_selectedImage == null) {
-      setState(() {
-        _errorMessage = "Please select a car image.";
         _isLoading = false;
       });
       return;
@@ -180,33 +201,33 @@ class _AddNewCarState extends State<AddNewCar> {
       }
 
       final Vehicle newVehicle = Vehicle(
-        0,
-        make: _makeController.text,
-        model: _modelController.text,
-        type: _selectedBodyType!,
-        pricePerDay: pricePerDay,
-        deposit: deposit,
-        gearShift: _selectedTransmission!,
-        driveType: _selectedDriveType ?? 'Front-wheel drive',
-        fuelType: _selectedFuelType!,
-        engineCapacity: engineCapacity,
-        horsePower: horsePower,
-        averageConsumption: averageConsumption,
-        numberOfSeats: numberOfSeats,
-        numberOfDoors: numberOfDoors,
-        productionYear: productionYear,
-        description: _descriptionController.text,
-        mileage: mileage,
-        vehicleImage: "",
-        availabilityStatus: availableForRent ? 'Available' : 'Not Available',
-        wheelSize: wheelSize,
-        equipmentList: equipment,
-        vehicleLocation: _selectedCarLocation!
+          widget.vehicle.vehicleID,
+          make: _makeController.text,
+          model: _modelController.text,
+          type: _selectedBodyType!,
+          pricePerDay: pricePerDay,
+          deposit: deposit,
+          gearShift: _selectedTransmission!,
+          driveType: _selectedDriveType ?? 'Front-wheel drive',
+          fuelType: _selectedFuelType!,
+          engineCapacity: engineCapacity,
+          horsePower: horsePower,
+          averageConsumption: averageConsumption,
+          numberOfSeats: numberOfSeats,
+          numberOfDoors: numberOfDoors,
+          productionYear: productionYear,
+          description: _descriptionController.text,
+          mileage: mileage,
+          vehicleImage: widget.vehicle.vehicleImage,
+          availabilityStatus: availableForRent ? 'Available' : 'Not Available',
+          wheelSize: wheelSize,
+          equipmentList: equipment,
+          vehicleLocation: _selectedCarLocation!
       );
 
-      final result = await _addNewVehiclesUseCase(
+      final result = await _updateVehicleUseCase (
         vehicle: newVehicle,
-        imageFile: _selectedImage!,
+        imageFile: _selectedImage,
       );
 
       result.fold(
@@ -217,9 +238,9 @@ class _AddNewCarState extends State<AddNewCar> {
           });
         },
             (addedVehicle) {
-          setState(() {
-            _isLoading = false;
-          });
+            setState(() {
+              _isLoading = false;
+            });
           Navigator.of(context).pushReplacementNamed(AppRoutes.carManagement);
         },
       );
@@ -243,10 +264,6 @@ class _AddNewCarState extends State<AddNewCar> {
     _consumptionController.dispose();
     _wheelSizeController.dispose();
     _numberOfDoorsController.dispose();
-    _brandLogoController.dispose();
-    _yearController.dispose();
-    _colorController.dispose();
-    _plateController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -254,6 +271,13 @@ class _AddNewCarState extends State<AddNewCar> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        appBar: CustomAppBar(title: "Edit Car"),
+        body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+      );
+    }
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop,result) {
@@ -262,7 +286,7 @@ class _AddNewCarState extends State<AddNewCar> {
         }
       },
       child: Scaffold(
-        appBar: const CustomAppBar(title: "Add New Car"),
+        appBar: const CustomAppBar(title: "Edit Car"),
         body: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Container(
@@ -286,14 +310,7 @@ class _AddNewCarState extends State<AddNewCar> {
                           style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                         ),
                       ),
-                    const SizedBox(height: AppSpacing.md),
 
-                    const Text(
-                      "Add a new Vehicle to Your Fleet",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
                     CustomDropdownMenu(
                       items: rentalLocations,
                       label: "Car Location",
@@ -489,22 +506,51 @@ class _AddNewCarState extends State<AddNewCar> {
                             color: AppColors.container.neutral800,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: _selectedImage != null
-                              ? ClipRRect(
+                          child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
-                            child: Image.file(
+                            child: _selectedImage != null
+                              ? Image.file(
                               _selectedImage!,
                               fit: BoxFit.cover,
-                            ),
+                            )
+                            : Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                Image.network(
+                                  _defaultImage,
+                                  fit: BoxFit.cover,
+                                ),
+
+                                Opacity(
+                                  opacity: 0.7,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                ),
+
+                                const Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      AppSvg(asset: AppVectors.upload, height: 40, width: 40),
+                                      SizedBox(height: AppSpacing.md),
+                                      Text(
+                                        "Upload a car image",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ]
+                            )
                           )
-                              : const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              AppSvg(asset: AppVectors.upload, height: 40, width: 40),
-                              SizedBox(height: AppSpacing.md),
-                              Text("Upload a car image", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
-                            ],
-                          ),
                         ),
                       ),
                     ),
@@ -567,15 +613,22 @@ class _AddNewCarState extends State<AddNewCar> {
                       children: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text("Cancel", style: TextStyle(color: Colors.white, fontSize: 16.0)),
+                          child: const Text(
+                            "Cancel",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20.0,
+                              letterSpacing: -0.5
+                            )
+                          ),
                         ),
-                        const SizedBox(width: AppSpacing.xs),
+                        const Spacer(),
                         PrimaryButton(
                           width: 200,
-                          text: _isLoading ? "Adding..." : "Save Car",
-                          onPressed: _isLoading ? null : _addVehicle,
+                          text: "Save",
+                          onPressed: _editVehicle,
                         ),
-
                       ],
                     ),
                   ],

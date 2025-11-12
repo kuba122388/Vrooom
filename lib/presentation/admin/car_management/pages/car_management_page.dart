@@ -92,14 +92,16 @@ class _CarManagementPageState extends State<CarManagementPage> {
               ] else ... [
                 ..._vehicles.map((entry) {
                   return CarInventoryEntry(
-                      carImage: entry.vehicleImage,
-                      carName: "${entry.make} ${entry.model}",
-                      carStatus: _getCarStatus(entry.availabilityStatus),
-                      fuel: entry.fuelType,
-                      mileage: entry.mileage,
-                      seats: entry.numberOfSeats,
-                      transmission: entry.gearShift,
-                      price: entry.pricePerDay);
+                    carImage: entry.vehicleImage,
+                    carName: "${entry.make} ${entry.model}",
+                    carStatus: _getCarStatus(entry.availabilityStatus),
+                    fuel: entry.fuelType,
+                    mileage: entry.mileage,
+                    seats: entry.numberOfSeats,
+                    transmission: entry.gearShift,
+                    price: entry.pricePerDay,
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.carManagementDetail, arguments: entry),
+                  );
                 }).expand(
                       (widget) => [widget, const SizedBox(height: AppSpacing.sm)],
                 ),

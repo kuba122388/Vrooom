@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/domain/entities/booking.dart';
 import 'package:vrooom/domain/entities/user.dart';
+import 'package:vrooom/domain/entities/vehicle.dart';
 import 'package:vrooom/presentation/admin/active_rental/active_rentals_page.dart';
 import 'package:vrooom/presentation/admin/car_management/pages/add_new_car.dart';
+import 'package:vrooom/presentation/admin/car_management/pages/car_management_details.dart';
 import 'package:vrooom/presentation/admin/car_management/pages/car_management_page.dart';
+import 'package:vrooom/presentation/admin/car_management/pages/edit_car_page.dart';
 import 'package:vrooom/presentation/admin/discount_codes/pages/discount_codes_page.dart';
 import 'package:vrooom/presentation/admin/future_reservation/pages/future_reservation_page.dart';
 import 'package:vrooom/presentation/admin/manage_users/pages/manage_users_page.dart';
@@ -72,6 +75,14 @@ class AppRouter {
       case AppRoutes.userRentalHistory:
         final user = settings.arguments as User;
         return MaterialPageRoute(builder: (_) => UserRentalHistoryPage(user: user));
+
+      case AppRoutes.carManagementDetail:
+        final vehicle = settings.arguments as Vehicle;
+        return MaterialPageRoute(builder: (_) => CarManagementDetail(vehicle: vehicle));
+
+      case AppRoutes.editCar:
+        final vehicle = settings.arguments as Vehicle;
+        return MaterialPageRoute(builder: (_) => EditCarPage(vehicle: vehicle));
 
       case AppRoutes.bookingDetails:
         return MaterialPageRoute(builder: (_) => const BookingDetailsPage());

@@ -45,6 +45,7 @@ import 'package:vrooom/domain/usecases/vehicle/get_vehicle_details_usecase.dart'
 import 'package:vrooom/data/repositories/booking_repository_impl.dart';
 import 'package:vrooom/data/sources/booking/booking_api_service.dart';
 import 'package:vrooom/domain/repositories/booking_repository.dart';
+import 'package:vrooom/domain/usecases/vehicle/update_vehicle_usecase.dart';
 import '../../../domain/repositories/vehicle_repository.dart';
 import '../../../domain/usecases/discount_codes/add_discount_code_usecase.dart';
 import '../../../domain/usecases/discount_codes/get_all_discount_codes_usecase.dart';
@@ -79,6 +80,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GetVehicleDetailsUseCase>(GetVehicleDetailsUseCase(sl()));
   sl.registerSingleton<GetRentalLocationsUseCase>(GetRentalLocationsUseCase(sl()));
   sl.registerSingleton<GetAllVehiclesWithDetailsUseCase>(GetAllVehiclesWithDetailsUseCase(sl()));
+  sl.registerSingleton<UpdateVehicleUseCase>(UpdateVehicleUseCase(sl()));
 
   sl.registerSingleton<DiscountCodeService>(DiscountCodeService(sl()));
   sl.registerSingleton<DiscountCodesRepository>(DiscountCodeRepositoryImpl(sl()));
@@ -86,8 +88,6 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<AddDiscountCodeUseCase>(AddDiscountCodeUseCase(sl()));
   sl.registerSingleton<UpdateDiscountCodeUseCase>(UpdateDiscountCodeUseCase(sl()));
   sl.registerSingleton<DeleteDiscountCodeUseCase>(DeleteDiscountCodeUseCase(sl()));
-
-
 
   sl.registerSingleton<UserApiService>(UserApiService(sl()));
   sl.registerSingleton<UserRepository>(UserRepositoryImpl(sl()));

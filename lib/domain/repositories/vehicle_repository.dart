@@ -14,6 +14,11 @@ abstract class VehicleRepository {
     required File imageFile,
   });
 
+  Future<Either<String, Vehicle>> updateVehicle({
+    required Vehicle vehicle,
+    File? imageFile,
+  });
+
   Future<Either<String, List<String>>> getRentalLocations();
 
   Future<Either<String, List<Vehicle>>> getAllVehiclesWithDetails();

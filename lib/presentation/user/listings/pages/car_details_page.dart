@@ -214,24 +214,24 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                         label: "Deposit",
                         value: "\$${vehicle.deposit.toStringAsFixed(2)}",
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: AppSpacing.xxs,
                       ),
                       InfoRow(
                         label: "Daily Rate",
                         value: "\$${vehicle.pricePerDay.toStringAsFixed(2)} /day",
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: AppSpacing.xxs,
                       ),
-                      InfoRow(
+                      const InfoRow(
                         label: "Rental days",
                         value: "3 days",
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: AppSpacing.xxs,
                       ),
-                      Divider(),
+                      const Divider(),
                       InfoRow(
                         label: "Estimated Total",
                         value: "\$${_calculatePrice()}",

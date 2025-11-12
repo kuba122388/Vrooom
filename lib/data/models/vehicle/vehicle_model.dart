@@ -88,6 +88,7 @@ class VehicleModel extends Vehicle {
 
   Map<String, dynamic> toJson() {
     return {
+      "vehicleID": vehicleID,
       "make": make,
       "model": model,
       "type": type,
@@ -106,7 +107,7 @@ class VehicleModel extends Vehicle {
       "description": description,
       "mileage": mileage,
       "vehicleImage": vehicleImage,
-      "equipment": equipmentList
+      "equipmentList": equipmentList
           .map((e) => EquipmentModel.fromEntity(e).toJson())
           .toList(),
       "carLocation": vehicleLocation

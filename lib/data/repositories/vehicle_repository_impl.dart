@@ -59,4 +59,13 @@ class VehicleRepositoryImpl extends VehicleRepository {
       return Left(e.toString());
     }
   }
+
+  @override
+  Future<Either<String, Vehicle>> updateVehicle({required Vehicle vehicle, File? imageFile}) async {
+    try {
+      return Right(await vehicleApiService.updateVehicle(vehicle: VehicleModel.fromEntity(vehicle), imageFile: imageFile));
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
 }
