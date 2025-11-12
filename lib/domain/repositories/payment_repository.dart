@@ -1,7 +1,7 @@
-
 import 'package:dartz/dartz.dart';
-import 'package:vrooom/domain/entities/vehicle_summary.dart';
+
+import '../entities/stripe_session.dart';
 
 abstract class PaymentRepository {
-  Future<Either<String, List<VehicleSummary>>> createStripeSession();
+  Future<Either<String, StripeSession>> createStripeSession(double amount);
 }

@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/app_svg.dart';
@@ -13,12 +12,12 @@ import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 import 'package:vrooom/core/configs/theme/app_text_styles.dart';
 import 'package:vrooom/domain/usecases/booking/get_all_insurances_usecase.dart';
-import 'package:vrooom/presentation/user/listings/pages/payment_success_page.dart';
-import 'package:http/http.dart' as http;
+import 'package:vrooom/domain/usecases/payment/create_stripe_session_usecase.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../core/common/widgets/custom_checkbox.dart';
 import '../../../../core/configs/di/service_locator.dart';
+import '../../../../core/configs/routes/app_routes.dart';
 import '../../../../domain/entities/insurance.dart';
 
 
@@ -43,7 +42,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   bool _isLoading = false;
   String? _errorMessage;
   final GetAllInsurancesUseCase _getAllInsurancesUseCase = sl();
-
+  final CreateStripeSessionUseCase _createStripeSessionUseCase = sl();
   Insurance? _selectedInsurance;
   List<Insurance> _insuranceOptions = [];
 
@@ -85,90 +84,62 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     }
   }
 
-  Future<Map<String, dynamic>> createStripeSession(double amount) async {
-
-    final String backendUrl = 'http://192.168.1.12:8080/api/payment/create-checkout-session';
-
-    try {
-      final response = await http.post(
-        Uri.parse(backendUrl),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'amount': amount,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Server error: ${response.body}')),
-          );
-        }
-        throw Exception('Failed to create Stripe session');
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Network error: $e')),
-        );
-      }
-      throw Exception('Network error');
-    }
-  }
-
   void _openStripeCheckout() async {
     try {
       final double finalAmount = totalPrice - discountAmount;
 
-      final sessionResponse = await createStripeSession(finalAmount);
-      final url = sessionResponse['url'];
+      final sessionResponse = await _createStripeSessionUseCase(finalAmount);
 
       if (!mounted) return;
 
-      final WebViewController controller = WebViewController()
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setNavigationDelegate(
-          NavigationDelegate(
-            onNavigationRequest: (NavigationRequest request) {
+      sessionResponse.fold(
+            (error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Payment error: $error")),
+          );
+        },
+            (stripeSession) async {
+          final WebViewController controller = WebViewController()
+            ..setJavaScriptMode(JavaScriptMode.unrestricted)
+            ..setNavigationDelegate(
+              NavigationDelegate(
+                onNavigationRequest: (NavigationRequest request) {
+                  if (request.url.contains("vrooom-app.com/?success=true")) {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, AppRoutes.paymentSuccess);
+                    return NavigationDecision.prevent;
+                  }
 
-              if (request.url.contains("vrooom-app.com/?success=true")) {
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const PaymentSuccessPage()),
-                );
-                return NavigationDecision.prevent;
-              }
+                  if (request.url.contains("vrooom-app.com/?canceled=true")) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Payment cancelled")),
+                    );
+                    return NavigationDecision.prevent;
+                  }
 
-              if (request.url.contains("vrooom-app.com/?success=false")) {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Payment cancelled")),
-                );
-                return NavigationDecision.prevent;
-              }
-              return NavigationDecision.navigate;
-            },
-          ),
-        )
-        ..loadRequest(Uri.parse(url));
+                  return NavigationDecision.navigate;
+                },
+              ),
+            )
+            ..loadRequest(Uri.parse(stripeSession.url));
 
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => Scaffold(
-            appBar: AppBar(title: const Text("Complete Payment")),
-            body: WebViewWidget(controller: controller),
-          ),
-        ),
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => Scaffold(
+                appBar: AppBar(title: const Text("Complete Payment")),
+                body: WebViewWidget(controller: controller),
+              ),
+            ),
+          );
+        },
       );
-
     } catch (e) {
-      print("Error creating payment: $e");
+      debugPrint("Error creating payment: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Unexpected error occurred")),
+      );
     }
   }
 
