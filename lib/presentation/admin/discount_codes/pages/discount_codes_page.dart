@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/custom_text_field.dart';
 import 'package:vrooom/core/common/widgets/loading_widget.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
+import 'package:vrooom/core/common/widgets/loading_widget.dart';
 import 'package:vrooom/core/configs/di/service_locator.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
@@ -46,6 +47,17 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
 
     result.fold(
       (error) {
+
+  Future<void> _loadDiscountCodes() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    final result = await _getAllDiscountCodesUsecase();
+
+    result.fold(
+          (error) {
         print("=== ERROR OCCURED === $error");
         setState(() {
           _errorMessage = error;
@@ -54,6 +66,8 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
       },
       (codesList) {
         print("=== DISCOUNT CODES LOADED ===");
+          (codesList) {
+            ("=== DISCOUNT CODES LOADED ===");
         setState(() {
           _allCodesList = codesList;
           _filterCodes();
@@ -69,6 +83,13 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
         _displayedCodesList = _allCodesList.where((code) => code.active == true).toList();
       } else {
         _displayedCodesList = _allCodesList.where((code) => code.active != true).toList();
+        _displayedCodesList = _allCodesList
+            .where((code) => code.active == true)
+            .toList();
+      } else {
+        _displayedCodesList = _allCodesList
+            .where((code) => code.active != true)
+            .toList();
       }
     });
   }
@@ -118,15 +139,15 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                     },
                     style: _activeCode
                         ? ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: AppColors.primary,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0))
+                        foregroundColor: Colors.white,
+                        backgroundColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0))
                         : ElevatedButton.styleFrom(
-                            foregroundColor: AppColors.text.neutral400,
-                            backgroundColor: AppColors.container.neutral900,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)),
+                        foregroundColor: AppColors.text.neutral400,
+                        backgroundColor: AppColors.container.neutral900,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)),
                     child: const Text(
                       "Active Codes",
                       style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.5),
@@ -144,15 +165,15 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                     },
                     style: !_activeCode
                         ? ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: AppColors.primary,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0))
+                        foregroundColor: Colors.white,
+                        backgroundColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0))
                         : ElevatedButton.styleFrom(
-                            foregroundColor: AppColors.text.neutral400,
-                            backgroundColor: AppColors.container.neutral900,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)),
+                        foregroundColor: AppColors.text.neutral400,
+                        backgroundColor: AppColors.container.neutral900,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)),
                     child: const Text(
                       "Expired Codes",
                       style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.5),
@@ -168,6 +189,9 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                 errorMessage: _errorMessage,
                 futureResultObj: _displayedCodesList,
                 emptyResultMsg: _activeCode ? "No active codes found." : "No expired codes found.",
+                emptyResultMsg: _activeCode
+                    ? "No active codes found."
+                    : "No expired codes found.",
                 futureBuilder: _buildCodesList,
               ),
             ),
@@ -338,4 +362,5 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
       },
     );
   }
+}
 }
