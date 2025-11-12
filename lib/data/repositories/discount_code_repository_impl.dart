@@ -28,4 +28,25 @@ class DiscountCodeRepositoryImpl extends DiscountCodesRepository {
       return Left(e.toString());
     }
   }
+
+  @override
+  Future<Either<String, void>> deleteDiscountCode(int id) async {
+    try {
+      await discountCodeService.deleteDiscountCode(id: id);
+      return const Right(null);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, DiscountCode>> updateDiscountCode(DiscountCode code) async {
+    try {
+      final discountCode = DiscountCodeModel.fromEntity(code);
+      final response = await discountCodeService.updateDiscountCode(discountCode: discountCode);
+      return Right(response.toEntity());
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
 }
