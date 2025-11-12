@@ -27,5 +27,27 @@ class DiscountCodeService {
       throw ("Unexpected Error: $e");
     }
   }
+
+  Future<DiscountCodeModel> addNewDiscountCode({
+    required DiscountCodeModel discountCode
+  }) async {
+    try {
+      final response = await _dio.post(
+        _discountCodesApi,
+        data: discountCode.toJson(),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return DiscountCodeModel.fromJson(response.data);
+      } else {
+        throw ("Error adding discount code.");
+      }
+    } on DioException catch (e) {
+      throw ("Network Error: ${e.message}");
+    } catch (e) {
+      throw ("Unexpected Error: $e");
+    }
+  }
+
 }
 
