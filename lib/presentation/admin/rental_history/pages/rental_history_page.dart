@@ -114,7 +114,9 @@ class _RentalHistoryPageState extends State<RentalHistoryPage> {
                       RentalHistoryCarEntry(
                         onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: {'booking' : item, 'title' : '${item.customerName} ${item.customerSurname}'}),
                         booking: item,
-                        customerPicture: _customerImage[index]
+                        customerPicture: _customerImage[index],
+                        customerPictureSize: 30,
+                        vehicleImageSize: 100,
                       ),
                       const SizedBox(height: AppSpacing.sm)
                     ],
