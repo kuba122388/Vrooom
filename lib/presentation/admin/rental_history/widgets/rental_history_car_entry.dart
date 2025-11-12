@@ -13,12 +13,16 @@ class RentalHistoryCarEntry extends StatelessWidget {
   final Booking booking;
   final Uint8List? customerPicture;
   final VoidCallback? onTap;
+  final double customerPictureSize;
+  final double vehicleImageSize;
 
   const RentalHistoryCarEntry({
     super.key,
     this.onTap,
     required this.booking,
-    required this.customerPicture
+    required this.customerPicture,
+    this.customerPictureSize = 60,
+    this.vehicleImageSize = 120
   });
 
   TableRow _buildRow(String label, String value) {
@@ -62,6 +66,7 @@ class RentalHistoryCarEntry extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: CarCard(
+        carImageSize: vehicleImageSize,
         carImage: booking.vehicleImage as String,
         carName: "${booking.vehicleMake} ${booking.vehicleModel}",
         rightSide: Table(
@@ -85,14 +90,14 @@ class RentalHistoryCarEntry extends StatelessWidget {
                     ? Image.asset(
                   AppImages.person,
                   fit: BoxFit.cover,
-                  width: 60,
-                  height: 60,
+                  width: customerPictureSize,
+                  height: customerPictureSize,
                 )
                     : Image.memory(
                   customerPicture!,
                   fit: BoxFit.cover,
-                  width: 60,
-                  height: 60,
+                  width: customerPictureSize,
+                  height: customerPictureSize,
                 )
               ),
               const SizedBox(width: AppSpacing.xs),

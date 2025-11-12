@@ -136,6 +136,8 @@ class _ActiveRentalsPageState extends State<ActiveRentalsPage> {
                             Opacity(
                               opacity: 0.5,
                               child: RentalHistoryCarEntry(
+                                  customerPictureSize: 30,
+                                  vehicleImageSize: 100,
                                   booking: item,
                                   customerPicture: _customerImage[index]
                               ),
@@ -154,6 +156,8 @@ class _ActiveRentalsPageState extends State<ActiveRentalsPage> {
                         ),
                       ] else ... [
                         RentalHistoryCarEntry(
+                          customerPictureSize: 30,
+                          vehicleImageSize: 100,
                           onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: {'booking' : item, 'title' : '${item.customerName} ${item.customerSurname}'}),
                           booking: item,
                           customerPicture: _customerImage[index]
