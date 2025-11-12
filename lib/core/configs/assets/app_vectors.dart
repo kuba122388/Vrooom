@@ -62,4 +62,6 @@ class AppVectors {
   static const horsePower = '${basePath}horse-power$format';
 
   static const logout = '${basePath}log-out$format';
+  static const odometer = '${basePath}odometer$format';
+  static const carDoorsLeft = '${basePath}car-door-left$format';
 }
