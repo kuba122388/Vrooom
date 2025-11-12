@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/app_svg.dart';
 import 'package:vrooom/core/common/widgets/custom_app_bar.dart';
@@ -11,10 +12,16 @@ import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 import 'package:vrooom/core/configs/theme/app_text_styles.dart';
 import 'package:vrooom/domain/usecases/booking/get_all_insurances_usecase.dart';
+import 'package:vrooom/domain/usecases/payment/create_stripe_session_usecase.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../core/common/widgets/custom_checkbox.dart';
 import '../../../../core/configs/di/service_locator.dart';
+import '../../../../core/configs/routes/app_routes.dart';
 import '../../../../domain/entities/insurance.dart';
+
+
+
 
 class BookingDetailsPage extends StatefulWidget {
   const BookingDetailsPage({super.key});
@@ -35,7 +42,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   bool _isLoading = false;
   String? _errorMessage;
   final GetAllInsurancesUseCase _getAllInsurancesUseCase = sl();
-
+  final CreateStripeSessionUseCase _createStripeSessionUseCase = sl();
   Insurance? _selectedInsurance;
   List<Insurance> _insuranceOptions = [];
 
@@ -77,6 +84,66 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     }
   }
 
+  void _openStripeCheckout() async {
+    try {
+      final double finalAmount = totalPrice - discountAmount;
+
+      final sessionResponse = await _createStripeSessionUseCase(finalAmount);
+
+      if (!mounted) return;
+
+      sessionResponse.fold(
+            (error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Payment error: $error")),
+          );
+        },
+            (stripeSession) async {
+          final WebViewController controller = WebViewController()
+            ..setJavaScriptMode(JavaScriptMode.unrestricted)
+            ..setNavigationDelegate(
+              NavigationDelegate(
+                onNavigationRequest: (NavigationRequest request) {
+                  if (request.url.contains("vrooom-app.com/?success=true")) {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, AppRoutes.paymentSuccess);
+                    return NavigationDecision.prevent;
+                  }
+
+                  if (request.url.contains("vrooom-app.com/?canceled=true")) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Payment cancelled")),
+                    );
+                    return NavigationDecision.prevent;
+                  }
+
+                  return NavigationDecision.navigate;
+                },
+              ),
+            )
+            ..loadRequest(Uri.parse(stripeSession.url));
+
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => Scaffold(
+                appBar: AppBar(title: const Text("Complete Payment")),
+                body: WebViewWidget(controller: controller),
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      debugPrint("Error creating payment: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Unexpected error occurred")),
+      );
+    }
+  }
+
+
   DateTime startDate = DateTime(
     DateTime.now().year,
     DateTime.now().month,
@@ -101,7 +168,6 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           padding: const EdgeInsets.all(30.0),
           child: Column(
             children: [
-              // RENTAL DURATION - PICKUP DATE - DROPOFF DATE
               InfoSectionCard(
                 title: "Rental Duration",
                 child: Column(
@@ -208,13 +274,11 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     items: _insuranceOptions.map((Insurance option) {
                       return DropdownMenuItem<Insurance>(
                         value: option,
-                        child: Flexible(
-                          child: Text(
-                            "${option.insuranceType} (+${option.insuranceCost} PLN)",
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            softWrap: false,
-                          ),
+                        child: Text(
+                          "${option.insuranceType} (+${option.insuranceCost} PLN)",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          softWrap: false,
                         ),
                       );
                     }).toList(),
@@ -222,6 +286,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     onChanged: (Insurance? newValue) {
                       setState(() {
                         _selectedInsurance = newValue;
+                        // TODO update with insurance
                       });
                     },
 
@@ -249,7 +314,6 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 ]),
               ),
 
-              // PAYMENT INFORMATION - CREDIT CARD - STRIPE
               const SizedBox(height: AppSpacing.md),
               InfoSectionCard(
                 title: "Payment Information",
@@ -343,7 +407,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                         },
                       ),
                     ] else if (selectedPayment == PaymentMethod.stripe) ...[
-                      const Text("Confirm booking and finalize payment."),
+                      const Text("You will be redirected to Stripe to finalize payment."),
                     ],
                     const SizedBox(height: AppSpacing.sm),
                     const Divider(),
@@ -416,7 +480,21 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
-              const PrimaryButton(text: "Confirm booking"),
+
+              PrimaryButton(
+                text: "Confirm booking",
+                onPressed: () {
+
+                  if (selectedPayment == PaymentMethod.stripe) {
+                    _openStripeCheckout();
+                  } else {
+                    print("Handling Credit Card Payment...");
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Credit Card payment not implemented yet.")),
+                    );
+                  }
+                },
+              ),
             ],
           ),
         ),

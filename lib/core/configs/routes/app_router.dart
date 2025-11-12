@@ -21,6 +21,7 @@ import 'package:vrooom/presentation/user/bookings/pages/user_booking_details_pag
 import 'package:vrooom/presentation/user/listings/pages/booking_details_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/car_details_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/listings_page.dart';
+import 'package:vrooom/presentation/user/listings/pages/payment_success_page.dart';
 import 'package:vrooom/presentation/user/profile/pages/contact_page.dart';
 import 'package:vrooom/presentation/user/profile/pages/edit_profile_details.dart';
 import 'package:vrooom/presentation/user/profile/pages/privacy_policy_page.dart';
@@ -91,13 +92,13 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const EditProfileDetails());
 
       case AppRoutes.carManagement:
-        return MaterialPageRoute(builder: (_) => const CarManagementPage());
+        return MaterialPageRoute(builder: (_) => CarManagementPage());
 
       case AppRoutes.finalizeRental:
         return MaterialPageRoute(builder: (_) => const FinalizeRentalPage());
 
       case AppRoutes.futureReservation:
-        return MaterialPageRoute(builder: (_) => const FutureReservation());
+        return MaterialPageRoute(builder: (_) => FutureReservation());
 
       case AppRoutes.manageUsers:
         return MaterialPageRoute(builder: (_) => const ManageUsersPage());
@@ -109,10 +110,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const DiscountCodesPage());
 
       case AppRoutes.rentalHistory:
-        return MaterialPageRoute(builder: (_) => const RentalHistoryPage());
+        return MaterialPageRoute(builder: (_) => RentalHistoryPage());
 
       case AppRoutes.activeRentals:
-        return MaterialPageRoute(builder: (_) => const ActiveRentalsPage());
+        return MaterialPageRoute(builder: (_) => ActiveRentalsPage());
 
       case AppRoutes.contact:
         return MaterialPageRoute(builder: (_) => const ContactPage());
@@ -121,6 +122,9 @@ class AppRouter {
 
       case AppRoutes.privacyPolicy:
         return MaterialPageRoute(builder: (_) => const PrivacyPolicyPage());
+      case AppRoutes.paymentSuccess:
+        return MaterialPageRoute(builder: (_) => const PaymentSuccessPage());
+
 
       default:
         return MaterialPageRoute(

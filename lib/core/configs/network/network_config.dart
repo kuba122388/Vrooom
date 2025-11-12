@@ -1,4 +1,4 @@
-class NetworkConfig{
+class NetworkConfig {
   const NetworkConfig._();
 
   static const String ip = "http://192.168.0.168:8080";

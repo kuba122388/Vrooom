@@ -1,3 +1,5 @@
+import 'package:vrooom/domain/entities/equipment.dart';
+
 class VehicleSummary{
   final int vehicleID;
   final String make;
@@ -6,6 +8,8 @@ class VehicleSummary{
   final double pricePerDay;
   final String vehicleImage;
   final String description;
+  final List<Equipment> equipmentList;
+  final String vehicleLocation;
 
   VehicleSummary({
     required this.vehicleID,
@@ -15,5 +19,7 @@ class VehicleSummary{
     required this.pricePerDay,
     required this.vehicleImage,
     required this.description,
+    required this.equipmentList,
+    required this.vehicleLocation,
 });
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
-import 'package:vrooom/core/common/widgets/search_filter_module.dart';
+import 'package:vrooom/core/common/widgets/search_car_module/search_filter_module.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 import 'package:vrooom/domain/entities/vehicle.dart';
@@ -8,6 +8,12 @@ import 'package:vrooom/domain/usecases/vehicle/get_all_vehicles_with_details_use
 import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
 import 'package:vrooom/presentation/admin/widgets/car_inventory_entry.dart';
+
+import '../../../../core/common/widgets/search_car_module/filter_state.dart';
+import '../../../../core/configs/assets/app_images.dart';
+import '../../../../core/configs/di/service_locator.dart';
+import '../../../../domain/usecases/vehicle/get_rental_locations_usecase.dart';
+import '../../../../domain/usecases/vehicle/get_vehicle_equipment_usecase.dart';
 
 import '../../../../core/configs/di/service_locator.dart';
 import '../../../../core/configs/theme/app_colors.dart';
@@ -21,6 +27,10 @@ class CarManagementPage extends StatefulWidget {
 
 class _CarManagementPageState extends State<CarManagementPage> {
   final GetAllVehiclesWithDetailsUseCase _getAllVehiclesWithDetailsUseCase = sl();
+  final FilterState _filterState = FilterState(
+    getRentalLocationsUseCase: sl<GetRentalLocationsUseCase>(),
+    getVehicleEquipmentUseCase: sl<GetVehicleEquipmentUseCase>(),
+  );
 
   bool _isLoading = false;
   List<Vehicle> _vehicles = [];
@@ -73,7 +83,9 @@ class _CarManagementPageState extends State<CarManagementPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SearchFilterModule(),
+              SearchFilterModule(
+                filterState: _filterState,
+              ),
               const SizedBox(height: AppSpacing.sm),
               const Text(
                 "Car Inventory",
@@ -83,13 +95,11 @@ class _CarManagementPageState extends State<CarManagementPage> {
                   letterSpacing: -0.5,
                 ),
               ),
-
               const SizedBox(height: AppSpacing.xs),
-
-              if (_isLoading) ... [
+              if (_isLoading) ...[
                 const SizedBox(height: AppSpacing.xl),
                 const Center(child: CircularProgressIndicator(color: AppColors.primary))
-              ] else ... [
+              ] else ...[
                 ..._vehicles.map((entry) {
                   return CarInventoryEntry(
                     carImage: entry.vehicleImage,
@@ -103,9 +113,8 @@ class _CarManagementPageState extends State<CarManagementPage> {
                     onTap: () => Navigator.pushNamed(context, AppRoutes.carManagementDetail, arguments: entry),
                   );
                 }).expand(
-                      (widget) => [widget, const SizedBox(height: AppSpacing.sm)],
+                  (widget) => [widget, const SizedBox(height: AppSpacing.sm)],
                 ),
-
                 PrimaryButton(
                   onPressed: () {
                     Navigator.of(context).pushNamed(AppRoutes.addNewCar);

@@ -1,71 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vrooom/core/common/widgets/loading_widget.dart';
-import 'package:vrooom/core/common/widgets/search_filter_module.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
-import 'package:vrooom/domain/entities/vehicle_summary.dart';
-import 'package:vrooom/domain/usecases/vehicle/get_all_vehicles_usecase.dart';
-
-import '../../../../core/configs/di/service_locator.dart';
-import '../../../../core/configs/routes/app_routes.dart';
+import 'package:vrooom/core/configs/routes/app_routes.dart';
+import 'package:vrooom/core/configs/di/service_locator.dart';
+import 'package:vrooom/core/common/widgets/search_car_module/search_filter_module.dart';
+import '../../../../core/common/widgets/search_car_module/filter_state.dart';
+import '../controllers/vehicle_list_controller.dart';
 import '../widgets/car_tile.dart';
 
-class ListingsPage extends StatefulWidget {
+class ListingsPage extends StatelessWidget {
   const ListingsPage({super.key});
 
   @override
-  State<ListingsPage> createState() => _ListingsPageState();
-}
-
-class _ListingsPageState extends State<ListingsPage> {
-  final GetAllVehiclesUseCase _getAllVehiclesUseCase = sl();
-  bool _isLoading = true;
-  List<VehicleSummary> _vehicles = [];
-  List<VehicleSummary> _filteredVehicles = [];
-  String? _errorMessage;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadVehicles();
-  }
-
-  Future<void> _loadVehicles() async {
-    final result = await _getAllVehiclesUseCase();
-    result.fold(
-      (error) {
-        print("=== ERROR OCCURED === $error");
-        setState(() {
-          _errorMessage = error;
-          _isLoading = false;
-        });
-      },
-      (vehicleList) {
-        print("=== VEHICLES LOADED ===");
-        setState(() {
-          _vehicles = vehicleList;
-          _filteredVehicles = vehicleList;
-          _isLoading = false;
-        });
-      },
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => FilterState(
+          getRentalLocationsUseCase: sl(),
+          getVehicleEquipmentUseCase: sl(),
+        )),
+        ChangeNotifierProxyProvider<FilterState, VehicleListController>(
+          create: (context) => VehicleListController(
+            filterState: context.read<FilterState>(),
+          ),
+          update: (_, filterState, previous) =>
+          previous!..filterState.loadFilterOptions(),
+        ),
+      ],
+      child: const _ListingsView(),
     );
   }
+}
 
-  void _onSearchChanged(String query){
-    setState(() {
-    if(query.isEmpty){
-      _filteredVehicles = _vehicles;
-    } else{
-      _filteredVehicles = _vehicles.where((vehicle) {
-        final searchLower = query.toLowerCase();
-        final fullCarName = "${vehicle.make} ${vehicle.model}";
-        return fullCarName.toLowerCase().contains(searchLower);
-      }).toList();
-    }
-    });
-  }
+class _ListingsView extends StatelessWidget {
+  const _ListingsView();
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<VehicleListController>();
+    final filterState = context.watch<FilterState>();
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: SingleChildScrollView(
@@ -73,18 +48,36 @@ class _ListingsPageState extends State<ListingsPage> {
           padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
           child: Column(
             children: [
-              SearchFilterModule(onSearchChanged: _onSearchChanged),
-              const SizedBox(
-                height: AppSpacing.xl,
+              SearchFilterModule(
+                onSearchChanged: controller.onSearchChanged,
+                filterState: filterState,
               ),
+              const SizedBox(height: AppSpacing.xl),
+
+              if (filterState.hasActiveFilters ||
+                  controller.searchQuery.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                  child: Text(
+                    '${controller.filteredVehicles.length} vehicles found',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+
               LoadingWidget(
-                isLoading: _isLoading,
-                errorMessage: _errorMessage,
-                futureResultObj: _filteredVehicles,
-                emptyResultMsg: "No vehicles data found.",
-                futureBuilder: _buildVehicles,
+                isLoading: controller.isLoading,
+                errorMessage: controller.errorMessage,
+                futureResultObj: controller.filteredVehicles,
+                emptyResultMsg:
+                filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
+                    ? "No vehicles match your filters."
+                    : "No vehicles data found.",
+                futureBuilder: () => _buildVehicles(context, controller),
               ),
-              const SizedBox(width: AppSpacing.sm)
+              const SizedBox(width: AppSpacing.sm),
             ],
           ),
         ),
@@ -92,29 +85,29 @@ class _ListingsPageState extends State<ListingsPage> {
     );
   }
 
-  Widget _buildVehicles() {
+  Widget _buildVehicles(BuildContext context, VehicleListController controller) {
     return Column(
-      children: [
-        for (int i = 0; i < (_filteredVehicles.length).ceil(); i++) ...[
-          CarTile(
-            imgPath: _filteredVehicles[i].vehicleImage,
-            make: _filteredVehicles[i].make,
-            model: _filteredVehicles[i].model,
-            price: _filteredVehicles[i].pricePerDay,
-            description: _filteredVehicles[i].description,
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                AppRoutes.carDetails,
-                arguments: {
-                  "vehicleId": _filteredVehicles[i].vehicleID,
-                },
-              );
-            },
-          ),
-          const SizedBox(height: AppSpacing.md),
-        ],
-      ],
+      children: controller.filteredVehicles.map((vehicle) {
+        return Column(
+          children: [
+            CarTile(
+              imgPath: vehicle.vehicleImage,
+              make: vehicle.make,
+              model: vehicle.model,
+              price: vehicle.pricePerDay,
+              description: vehicle.description,
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.carDetails,
+                  arguments: {"vehicleId": vehicle.vehicleID},
+                );
+              },
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
+        );
+      }).toList(),
     );
   }
 }

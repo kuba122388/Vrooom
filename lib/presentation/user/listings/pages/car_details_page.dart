@@ -156,6 +156,11 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 InfoSectionCard(
+                  title: "Location",
+                  child: CarSpecRow(iconPath: AppVectors.mapPin, label: vehicle.vehicleLocation, value: "")
+                ),
+                const SizedBox(height: AppSpacing.md),
+                InfoSectionCard(
                   title: "General",
                   child: Column(
                     children: generalInfo.map((spec) {
