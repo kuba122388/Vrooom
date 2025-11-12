@@ -45,6 +45,11 @@ class AdminMenuConfig {
       svgVector: AppVectors.discount,
       route: AppRoutes.discountCodes,
     ),
+    const AdminMenuItem(
+      title: "Settings",
+      svgVector: AppVectors.settings,
+      route: AppRoutes.adminSettings
+    )
   ];
 
   AdminMenuConfig._();
