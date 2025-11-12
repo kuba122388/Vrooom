@@ -17,7 +17,7 @@ import 'package:vrooom/presentation/user/auth/pages/email_verification_page.dart
 import 'package:vrooom/presentation/user/auth/pages/login_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/signup_page.dart';
 import 'package:vrooom/presentation/user/auth/pages/verification_success_page.dart';
-import 'package:vrooom/presentation/user/bookings/pages/user_booking_details_page.dart';
+import 'package:vrooom/core/common/widgets/user_booking_details.dart';
 import 'package:vrooom/presentation/user/listings/pages/booking_details_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/car_details_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/listings_page.dart';
@@ -70,8 +70,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => CarDetailsPage(vehicleId: vehicleId));
 
       case AppRoutes.userBookingDetails:
-        final booking = settings.arguments as Booking;
-        return MaterialPageRoute(builder: (_) => UserBookingDetailsPage(booking: booking));
+        final args = settings.arguments as Map<String, dynamic>;
+        final booking = args['booking'] as Booking;
+        final title = args['title'] as String;
+        return MaterialPageRoute(builder: (_) => UserBookingDetails(booking: booking, title: title));
 
       case AppRoutes.userRentalHistory:
         final user = settings.arguments as User;
@@ -92,13 +94,13 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const EditProfileDetails());
 
       case AppRoutes.carManagement:
-        return MaterialPageRoute(builder: (_) => CarManagementPage());
+        return MaterialPageRoute(builder: (_) => const CarManagementPage());
 
       case AppRoutes.finalizeRental:
         return MaterialPageRoute(builder: (_) => const FinalizeRentalPage());
 
       case AppRoutes.futureReservation:
-        return MaterialPageRoute(builder: (_) => FutureReservation());
+        return MaterialPageRoute(builder: (_) => const FutureReservation());
 
       case AppRoutes.manageUsers:
         return MaterialPageRoute(builder: (_) => const ManageUsersPage());
@@ -110,10 +112,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const DiscountCodesPage());
 
       case AppRoutes.rentalHistory:
-        return MaterialPageRoute(builder: (_) => RentalHistoryPage());
+        return MaterialPageRoute(builder: (_) => const RentalHistoryPage());
 
       case AppRoutes.activeRentals:
-        return MaterialPageRoute(builder: (_) => ActiveRentalsPage());
+        return MaterialPageRoute(builder: (_) => const ActiveRentalsPage());
 
       case AppRoutes.contact:
         return MaterialPageRoute(builder: (_) => const ContactPage());
