@@ -43,12 +43,14 @@ import 'package:vrooom/domain/usecases/user/get_user_upcoming_rentals_usecase.da
 import 'package:vrooom/domain/usecases/user/upload_user_profile_picture_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/add_new_vehicle_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_all_vehicles_usecase.dart';
+import 'package:vrooom/domain/usecases/vehicle/get_available_vehicles_between_dates_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_all_vehicles_with_details_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_rental_locations_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_vehicle_details_usecase.dart';
 import 'package:vrooom/data/repositories/booking_repository_impl.dart';
 import 'package:vrooom/data/sources/booking/booking_api_service.dart';
 import 'package:vrooom/domain/repositories/booking_repository.dart';
+import 'package:vrooom/domain/usecases/vehicle/get_vehicle_equipment_usecase.dart';
 import '../../../domain/repositories/vehicle_repository.dart';
 import '../../../domain/usecases/discount_codes/add_discount_code_usecase.dart';
 import '../../../domain/usecases/discount_codes/get_all_discount_codes_usecase.dart';
@@ -82,6 +84,10 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GetAllVehiclesUseCase>(GetAllVehiclesUseCase(sl()));
   sl.registerSingleton<GetVehicleDetailsUseCase>(GetVehicleDetailsUseCase(sl()));
   sl.registerSingleton<GetRentalLocationsUseCase>(GetRentalLocationsUseCase(sl()));
+
+  sl.registerSingleton<GetVehicleEquipmentUseCase>(GetVehicleEquipmentUseCase(sl()));
+  sl.registerSingleton<GetAvailableVehiclesBetweenDatesUseCase>(GetAvailableVehiclesBetweenDatesUseCase(sl()));
+
   sl.registerSingleton<GetAllVehiclesWithDetailsUseCase>(GetAllVehiclesWithDetailsUseCase(sl()));
 
   sl.registerSingleton<DiscountCodeService>(DiscountCodeService(sl()));

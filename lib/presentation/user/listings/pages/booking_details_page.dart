@@ -278,6 +278,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                           "${option.insuranceType} (+${option.insuranceCost} PLN)",
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
+                          softWrap: false,
                         ),
                       );
                     }).toList(),

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/domain/usecases/vehicle/get_rental_locations_usecase.dart';
+import 'package:vrooom/domain/usecases/vehicle/get_vehicle_equipment_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/get_active_rentals_usecase.dart';
 import 'dart:typed_data';
 import 'package:vrooom/presentation/admin/rental_history/widgets/rental_history_car_entry.dart';
 
-import '../../../../core/common/widgets/search_filter_module.dart';
+import '../../../core/common/widgets/search_car_module/filter_state.dart';
+import '../../../core/common/widgets/search_car_module/search_filter_module.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
 import '../../../core/common/widgets/primary_button.dart';
 import '../../../core/configs/di/service_locator.dart';
@@ -17,6 +20,7 @@ import '../../../domain/usecases/user/get_user_id_by_email_usecase.dart';
 import '../widgets/admin_app_bar.dart';
 import '../widgets/admin_drawer.dart';
 
+
 class ActiveRentalsPage extends StatefulWidget {
   const ActiveRentalsPage({super.key});
 
@@ -28,6 +32,12 @@ class _ActiveRentalsPageState extends State<ActiveRentalsPage> {
   final GetActiveRentalsUseCase _getActiveRentalsUseCase = sl();
   final GetUserIdByEmailUseCase _getUserIdByEmailUseCase = sl();
   final DownloadUserProfilePictureUseCase _downloadUserProfilePictureUseCase = sl();
+
+  final FilterState _filterState = FilterState(
+    getRentalLocationsUseCase: sl<GetRentalLocationsUseCase>(),
+    getVehicleEquipmentUseCase: sl<GetVehicleEquipmentUseCase>(),
+  );
+
 
   bool _isLoading = false;
   final List<Uint8List?> _customerImage = [];
@@ -95,7 +105,9 @@ class _ActiveRentalsPageState extends State<ActiveRentalsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SearchFilterModule(),
+              SearchFilterModule(
+                filterState: _filterState,
+              ),
               const SizedBox(height: AppSpacing.sm),
               const Text(
                 "Active Rentals",
