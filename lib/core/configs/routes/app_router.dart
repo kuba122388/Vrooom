@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/common/widgets/settings_widget.dart';
 import 'package:vrooom/domain/entities/booking.dart';
 import 'package:vrooom/domain/entities/user.dart';
 import 'package:vrooom/domain/entities/vehicle.dart';
@@ -115,6 +116,10 @@ class AppRouter {
 
       case AppRoutes.adminSettings:
         return MaterialPageRoute(builder: (_) => const AdminSettingsPage());
+
+      case AppRoutes.settingsWidget:
+        final popScreen = settings.arguments as bool;
+        return MaterialPageRoute(builder: (_) => SettingsWidget(popScreen: popScreen));
 
       case AppRoutes.discountCodes:
         return MaterialPageRoute(builder: (_) => const DiscountCodesPage());
