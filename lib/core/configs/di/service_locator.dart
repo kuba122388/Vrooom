@@ -44,6 +44,7 @@ import 'package:vrooom/data/repositories/booking_repository_impl.dart';
 import 'package:vrooom/data/sources/booking/booking_api_service.dart';
 import 'package:vrooom/domain/repositories/booking_repository.dart';
 import '../../../domain/repositories/vehicle_repository.dart';
+import '../../../domain/usecases/discount_codes/add_discount_code_usecase.dart';
 import '../../../domain/usecases/discount_codes/get_all_discount_codes_usecase.dart';
 import '../network/dio_client.dart';
 
@@ -80,6 +81,8 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<DiscountCodeService>(DiscountCodeService(sl()));
   sl.registerSingleton<DiscountCodesRepository>(DiscountCodeRepositoryImpl(sl()));
   sl.registerSingleton<GetAllDiscountCodesUseCase>(GetAllDiscountCodesUseCase(sl()));
+  sl.registerSingleton<AddDiscountCodeUseCase>(AddDiscountCodeUseCase(sl()));
+
 
   sl.registerSingleton<UserApiService>(UserApiService(sl()));
   sl.registerSingleton<UserRepository>(UserRepositoryImpl(sl()));

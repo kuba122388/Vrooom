@@ -19,6 +19,16 @@ class DiscountCodeModel extends DiscountCode {
     );
   }
 
+  factory DiscountCodeModel.fromEntity(DiscountCode entity) {
+    return DiscountCodeModel(
+      id: entity.id,
+      code: entity.code,
+      value: entity.value,
+      percentage: entity.percentage,
+      active: entity.active,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       "id": id,
@@ -27,5 +37,15 @@ class DiscountCodeModel extends DiscountCode {
       "percentage": percentage,
       "active": active,
     };
+  }
+
+  DiscountCode toEntity() {
+    return DiscountCode(
+      id: id,
+      code: code,
+      value: value,
+      percentage: percentage,
+      active: active,
+    );
   }
 }
