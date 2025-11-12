@@ -7,10 +7,8 @@ enum CodeStatus { active, inactive }
 
 class DiscountCodeEntry extends StatelessWidget {
   final String code;
-  final int discount;
+  final double discount;
   final String type;
-  final DateTime startDate;
-  final DateTime endDate;
   final CodeStatus codeStatus;
 
   const DiscountCodeEntry(
@@ -18,8 +16,6 @@ class DiscountCodeEntry extends StatelessWidget {
       required this.code,
       required this.discount,
       required this.type,
-      required this.startDate,
-      required this.endDate,
       required this.codeStatus});
 
   String _getStatus(CodeStatus status) {
@@ -83,24 +79,6 @@ class DiscountCodeEntry extends StatelessWidget {
                     Text(
                       type,
                       style: const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
-                      child: Text(
-                        "Validity:",
-                        style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
-                      child: Text(
-                        "${startDate.toString().split(' ').first} - ${endDate.toString().split(' ').first}",
-                        style: const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
-                      ),
                     ),
                   ],
                 ),
