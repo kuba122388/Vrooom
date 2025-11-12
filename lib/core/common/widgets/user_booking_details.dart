@@ -178,9 +178,9 @@ class _UserBookingDetailsState extends State<UserBookingDetails> {
                     title: "Payment & Insurance",
                     child: Column(
                       children: [
-                        InfoRow(title: "Insurance", text: "\$${widget.booking.insuranceCost}"),
+                        InfoRow(title: "Insurance", text: "\$${widget.booking.insuranceCost?.toStringAsFixed(2)}"),
                         const SizedBox(height: AppSpacing.xs),
-                        InfoRow(title: "Total Price", text: "\$${widget.booking.totalAmount}", color: AppColors.primary)
+                        InfoRow(title: "Total Price", text: "\$${widget.booking.totalAmount?.toStringAsFixed(2)}", color: AppColors.primary)
                       ],
                     )
                   ),
