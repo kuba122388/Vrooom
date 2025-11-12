@@ -18,6 +18,7 @@ import 'package:vrooom/presentation/user/bookings/pages/user_booking_details_pag
 import 'package:vrooom/presentation/user/listings/pages/booking_details_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/car_details_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/listings_page.dart';
+import 'package:vrooom/presentation/user/listings/pages/payment_success_page.dart';
 import 'package:vrooom/presentation/user/profile/pages/contact_page.dart';
 import 'package:vrooom/presentation/user/profile/pages/edit_profile_details.dart';
 import 'package:vrooom/presentation/user/profile/pages/privacy_policy_page.dart';
@@ -110,6 +111,9 @@ class AppRouter {
 
       case AppRoutes.privacyPolicy:
         return MaterialPageRoute(builder: (_) => const PrivacyPolicyPage());
+      case AppRoutes.paymentSuccess:
+        return MaterialPageRoute(builder: (_) => const PaymentSuccessPage());
+
 
       default:
         return MaterialPageRoute(
