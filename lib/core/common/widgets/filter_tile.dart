@@ -7,16 +7,25 @@ import 'app_svg.dart';
 class FilterTile extends StatelessWidget {
   final String text;
   final String svgPicture;
+  final bool isActive;
 
-  const FilterTile({super.key, required this.text, required this.svgPicture});
+  const FilterTile({
+    super.key,
+    required this.text,
+    required this.svgPicture,
+    this.isActive = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(10.0),
-          border: Border.all(color: AppColors.container.neutral700)),
+        color: isActive ? AppColors.primary.withValues(alpha: 0.2) : Colors.black,
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(
+          color: isActive ? AppColors.primary : AppColors.container.neutral700,
+        ),
+      ),
       height: 40,
       child: Center(
         child: Row(
@@ -24,13 +33,21 @@ class FilterTile extends StatelessWidget {
           children: [
             AppSvg(
               asset: svgPicture,
-              color: AppColors.svg.neutral400,
+              color: isActive ? AppColors.primary : AppColors.svg.neutral400,
               height: 15.0,
             ),
             const SizedBox(width: AppSpacing.xxs),
-            Text(
-              text,
-              style: const TextStyle(fontFamily: 'Roboto', letterSpacing: -0.5),
+            Flexible(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  letterSpacing: -0.5,
+                  color: isActive ? AppColors.primary : Colors.white,
+                  fontSize: 13,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),

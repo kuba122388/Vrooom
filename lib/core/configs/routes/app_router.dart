@@ -80,13 +80,13 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const EditProfileDetails());
 
       case AppRoutes.carManagement:
-        return MaterialPageRoute(builder: (_) => const CarManagementPage());
+        return MaterialPageRoute(builder: (_) => CarManagementPage());
 
       case AppRoutes.finalizeRental:
         return MaterialPageRoute(builder: (_) => const FinalizeRentalPage());
 
       case AppRoutes.futureReservation:
-        return MaterialPageRoute(builder: (_) => const FutureReservation());
+        return MaterialPageRoute(builder: (_) => FutureReservation());
 
       case AppRoutes.manageUsers:
         return MaterialPageRoute(builder: (_) => const ManageUsersPage());
@@ -98,10 +98,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const DiscountCodesPage());
 
       case AppRoutes.rentalHistory:
-        return MaterialPageRoute(builder: (_) => const RentalHistoryPage());
+        return MaterialPageRoute(builder: (_) => RentalHistoryPage());
 
       case AppRoutes.activeRentals:
-        return MaterialPageRoute(builder: (_) => const ActiveRentalsPage());
+        return MaterialPageRoute(builder: (_) => ActiveRentalsPage());
 
       case AppRoutes.contact:
         return MaterialPageRoute(builder: (_) => const ContactPage());

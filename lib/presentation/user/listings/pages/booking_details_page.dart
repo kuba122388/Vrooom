@@ -208,13 +208,11 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     items: _insuranceOptions.map((Insurance option) {
                       return DropdownMenuItem<Insurance>(
                         value: option,
-                        child: Flexible(
-                          child: Text(
-                            "${option.insuranceType} (+${option.insuranceCost} PLN)",
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            softWrap: false,
-                          ),
+                        child: Text(
+                          "${option.insuranceType} (+${option.insuranceCost} PLN)",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          softWrap: false,
                         ),
                       );
                     }).toList(),
