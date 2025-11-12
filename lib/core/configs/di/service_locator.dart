@@ -2,13 +2,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:vrooom/data/repositories/auth_repository_impl.dart';
+import 'package:vrooom/data/repositories/discount_code_repository_impl.dart';
 import 'package:vrooom/data/repositories/user_repository_impl.dart';
 import 'package:vrooom/data/repositories/vehicle_repository_impl.dart';
 import 'package:vrooom/data/sources/auth/auth_api_service.dart';
 import 'package:vrooom/data/sources/auth/auth_storage.dart';
+import 'package:vrooom/data/sources/discount_codes/discount_code_service.dart';
 import 'package:vrooom/data/sources/user/user_api_service.dart';
 import 'package:vrooom/data/sources/vehicle/vehicle_api_service.dart';
 import 'package:vrooom/domain/repositories/auth_repository.dart';
+import 'package:vrooom/domain/repositories/discount_code_repository.dart';
 import 'package:vrooom/domain/repositories/user_repository.dart';
 import 'package:vrooom/domain/usecases/auth/change_password_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/login_usecase.dart';
@@ -41,6 +44,7 @@ import 'package:vrooom/data/repositories/booking_repository_impl.dart';
 import 'package:vrooom/data/sources/booking/booking_api_service.dart';
 import 'package:vrooom/domain/repositories/booking_repository.dart';
 import '../../../domain/repositories/vehicle_repository.dart';
+import '../../../domain/usecases/discount_codes/get_all_discount_codes_usecase.dart';
 import '../network/dio_client.dart';
 
 final sl = GetIt.instance;
@@ -72,6 +76,10 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GetVehicleDetailsUseCase>(GetVehicleDetailsUseCase(sl()));
   sl.registerSingleton<GetRentalLocationsUseCase>(GetRentalLocationsUseCase(sl()));
   sl.registerSingleton<GetAllVehiclesWithDetailsUseCase>(GetAllVehiclesWithDetailsUseCase(sl()));
+
+  sl.registerSingleton<DiscountCodeService>(DiscountCodeService(sl()));
+  sl.registerSingleton<DiscountCodesRepository>(DiscountCodeRepositoryImpl(sl()));
+  sl.registerSingleton<GetAllDiscountCodesUseCase>(GetAllDiscountCodesUseCase(sl()));
 
   sl.registerSingleton<UserApiService>(UserApiService(sl()));
   sl.registerSingleton<UserRepository>(UserRepositoryImpl(sl()));
