@@ -27,4 +27,6 @@ class AppRoutes {
   static const String carManagementDetail = '/carManagementDetail';
   static const String editCar = '/editCar';
   static const String paymentSuccess = '/paymentSuccess';
+  static const String forgotPassword = '/forgotPassword';
+  static const String changePassword = '/changePassword';
 }

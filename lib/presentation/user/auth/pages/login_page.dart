@@ -98,11 +98,12 @@ class _LoginPageState extends State<LoginPage> {
                     hintText: 'Your password',
                     isPassword: true,
                     controller: _passwordController),
-                const Align(
+                Align(
                   alignment: Alignment.centerRight,
                   child: PressableText(
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.forgotPassword),
                     text: 'Forgot password?',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppColors.primary,
                     ),
                   ),
