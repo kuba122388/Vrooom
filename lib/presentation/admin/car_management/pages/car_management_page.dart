@@ -90,10 +90,8 @@ class _CarManagementPageState extends State<CarManagementPage> {
       drawer: const AdminDrawer(),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               SearchFilterModule(
                 filterState: _filterState,
               ),
@@ -109,27 +107,36 @@ class _CarManagementPageState extends State<CarManagementPage> {
               const SizedBox(height: AppSpacing.xs),
               if (_isLoading) ...[
                 const SizedBox(height: AppSpacing.xl),
-                const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                const Center(child: CircularProgressIndicator(color: AppColors.primary)),
               ] else ...[
-                ..._vehicles.map((entry) {
-                  return CarInventoryEntry(
-                    carImage: entry.vehicleImage,
-                    carName: "${entry.make} ${entry.model}",
-                    carStatus: _getCarStatus(entry.availabilityStatus),
-                    fuel: entry.fuelType,
-                    mileage: entry.mileage,
-                    seats: entry.numberOfSeats,
-                    transmission: entry.gearShift,
-                    price: entry.pricePerDay,
-                    onTap: () => Navigator.pushNamed(context, AppRoutes.carManagementDetail, arguments: entry),
-                  );
-                }).expand(
-                  (widget) => [widget, const SizedBox(height: AppSpacing.sm)],
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 60),
+                  child: Column(
+                    children: [
+                      ..._vehicles.map((entry) {
+                        return CarInventoryEntry(
+                          carImage: entry.vehicleImage,
+                          carName: "${entry.make} ${entry.model}",
+                          carStatus: _getCarStatus(entry.availabilityStatus),
+                          fuel: entry.fuelType,
+                          mileage: entry.mileage,
+                          seats: entry.numberOfSeats,
+                          transmission: entry.gearShift,
+                          price: entry.pricePerDay,
+                          onTap: () => Navigator.pushNamed(
+                            context,
+                            AppRoutes.carManagementDetail,
+                            arguments: entry,
+                          ),
+                        );
+                      }).expand(
+                        (widget) => [widget, const SizedBox(height: AppSpacing.sm)],
+                      ),
+                    ],
+                  ),
                 ),
-              ]
-            ],
-          ),
-        ),
+              ],
+            ])),
       ),
     );
   }
