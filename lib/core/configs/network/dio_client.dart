@@ -19,10 +19,21 @@ class DioClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = await tokenStorage.getToken();
+          final excludedPaths = [
+            '/api/auth/login',
+            '/api/auth/register',
+            '/api/auth/google',
+            '/api/auth/facebook',
+          ];
 
-          if (token != null && token.isNotEmpty) {
-            options.headers['Authorization'] = 'Bearer $token';
+          final isExcluded = excludedPaths.any((path) => options.path.contains(path));
+
+          if (!isExcluded) {
+            final token = await tokenStorage.getToken();
+
+            if (token != null && token.isNotEmpty) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
           }
 
           handler.next(options);

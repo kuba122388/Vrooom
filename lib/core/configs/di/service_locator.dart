@@ -74,7 +74,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<AuthApiService>(AuthApiService(sl()));
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(),sl()));
 
-  sl.registerSingleton<BookingApiService>(BookingApiService(sl()));
+  sl.registerSingleton<BookingApiService>(BookingApiService(sl<Dio>(), sl<AuthStorage>()));
   sl.registerSingleton<BookingRepository>(BookingRepositoryImpl(sl()));
 
   sl.registerSingleton<LoginUseCase>(LoginUseCase(sl()));
@@ -107,7 +107,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<PaymentRepository>(PaymentRepositoryImpl(sl()));
   sl.registerSingleton<CreateStripeSessionUseCase>(CreateStripeSessionUseCase(sl()));
 
-  sl.registerSingleton<UserApiService>(UserApiService(sl()));
+  sl.registerSingleton<UserApiService>(UserApiService(sl<Dio>(), sl<AuthStorage>()));
   sl.registerSingleton<UserRepository>(UserRepositoryImpl(sl()));
   sl.registerSingleton<GetAllUsersUsecase>(GetAllUsersUsecase(sl()));
   sl.registerSingleton<EditCurrentUserUseCase>(EditCurrentUserUseCase(sl()));
