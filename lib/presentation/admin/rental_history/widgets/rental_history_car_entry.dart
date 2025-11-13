@@ -6,28 +6,23 @@ import '../../../../core/configs/assets/app_images.dart';
 import '../../../../core/configs/theme/app_colors.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
 import '../../../../core/enums/rental_status.dart';
+import '../../../../domain/entities/booking.dart';
 import '../../widgets/car_card.dart';
 
 class RentalHistoryCarEntry extends StatelessWidget {
-  final String rentalID;
-  final String carName;
-  final String carImage;
-  final DateTime startDate;
-  final DateTime endDate;
-  final RentalStatus rentalStatus;
-  final String customerName;
+  final Booking booking;
   final Uint8List? customerPicture;
+  final VoidCallback? onTap;
+  final double customerPictureSize;
+  final double vehicleImageSize;
 
   const RentalHistoryCarEntry({
     super.key,
-    required this.rentalID,
-    required this.carName,
-    required this.carImage,
-    required this.startDate,
-    required this.endDate,
-    required this.rentalStatus,
-    required this.customerName,
-    required this.customerPicture
+    this.onTap,
+    required this.booking,
+    required this.customerPicture,
+    this.customerPictureSize = 60,
+    this.vehicleImageSize = 120
   });
 
   TableRow _buildRow(String label, String value) {
@@ -53,56 +48,73 @@ class RentalHistoryCarEntry extends StatelessWidget {
     );
   }
 
+  RentalStatus _getRentalStatus(Booking booking) {
+    switch (booking.bookingStatus) {
+      case "Pending":
+        return RentalStatus.pending;
+      case "Cancelled":
+        return RentalStatus.cancelled;
+      default:
+        return RentalStatus.completed;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return CarCard(
-      carImage: carImage,
-      carName: carName,
-      rightSide: Table(
-        columnWidths: const {
-          0: IntrinsicColumnWidth(),
-          1: FlexColumnWidth(),
-        },
-        children: [
-          _buildRow("Rental ID", rentalID),
-          _buildRow("Start date", DateFormat("dd-MM-yyyy").format(startDate)),
-          _buildRow("End date", DateFormat("dd-MM-yyyy").format(endDate)),
-        ],
-      ),
-      bottom: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-        child: Row(
+    final rentalStatus = _getRentalStatus(booking);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: CarCard(
+        carImageSize: vehicleImageSize,
+        carImage: booking.vehicleImage as String,
+        carName: "${booking.vehicleMake} ${booking.vehicleModel}",
+        rightSide: Table(
+          columnWidths: const {
+            0: IntrinsicColumnWidth(),
+            1: FlexColumnWidth(),
+          },
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(50.0),
-              child: customerPicture == null
-                  ? Image.asset(
-                AppImages.person,
-                fit: BoxFit.cover,
-                width: 60,
-                height: 60,
-              )
-                  : Image.memory(
-                customerPicture!,
-                fit: BoxFit.cover,
-                width: 60,
-                height: 60,
-              )
-            ),
-            const SizedBox(width: AppSpacing.xs),
-            Text(customerName),
-            const Spacer(),
-            Container(
-              decoration: BoxDecoration(
-                color: rentalStatus.color,
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                child: Text(rentalStatus.displayText),
-              ),
-            )
+            _buildRow("Rental ID", booking.bookingID.toString()),
+            _buildRow("Start date", DateFormat("dd-MM-yyyy").format(booking.startDate as DateTime)),
+            _buildRow("End date", DateFormat("dd-MM-yyyy").format(booking.endDate as DateTime)),
           ],
+        ),
+        bottom: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(50.0),
+                child: customerPicture == null
+                    ? Image.asset(
+                  AppImages.person,
+                  fit: BoxFit.cover,
+                  width: customerPictureSize,
+                  height: customerPictureSize,
+                )
+                    : Image.memory(
+                  customerPicture!,
+                  fit: BoxFit.cover,
+                  width: customerPictureSize,
+                  height: customerPictureSize,
+                )
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Text("${booking.customerName} ${booking.customerSurname}"),
+              const Spacer(),
+              Container(
+                decoration: BoxDecoration(
+                  color: rentalStatus.color,
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                  child: Text(rentalStatus.displayText),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

@@ -17,6 +17,8 @@ import 'package:vrooom/domain/repositories/discount_code_repository.dart';
 import 'package:vrooom/domain/repositories/payment_repository.dart';
 import 'package:vrooom/domain/repositories/user_repository.dart';
 import 'package:vrooom/domain/usecases/auth/change_password_usecase.dart';
+import 'package:vrooom/domain/usecases/auth/facebook_login_usecase.dart';
+import 'package:vrooom/domain/usecases/auth/google_login_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/login_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/logout_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/register_usecase.dart';
@@ -50,6 +52,7 @@ import 'package:vrooom/domain/usecases/vehicle/get_vehicle_details_usecase.dart'
 import 'package:vrooom/data/repositories/booking_repository_impl.dart';
 import 'package:vrooom/data/sources/booking/booking_api_service.dart';
 import 'package:vrooom/domain/repositories/booking_repository.dart';
+import 'package:vrooom/domain/usecases/vehicle/update_vehicle_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_vehicle_equipment_usecase.dart';
 import '../../../domain/repositories/vehicle_repository.dart';
 import '../../../domain/usecases/discount_codes/add_discount_code_usecase.dart';
@@ -78,6 +81,8 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase(sl()));
   sl.registerSingleton<LogoutUseCase>(LogoutUseCase(sl()));
   sl.registerSingleton<ChangePasswordUseCase>(ChangePasswordUseCase(sl()));
+  sl.registerSingleton<GoogleLoginUseCase>(GoogleLoginUseCase(sl()));
+  sl.registerSingleton<FacebookLoginUseCase>(FacebookLoginUseCase(sl()));
 
   sl.registerSingleton<VehicleApiService>(VehicleApiService(sl()));
   sl.registerSingleton<VehicleRepository>(VehicleRepositoryImpl(sl()));
@@ -89,6 +94,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GetAvailableVehiclesBetweenDatesUseCase>(GetAvailableVehiclesBetweenDatesUseCase(sl()));
 
   sl.registerSingleton<GetAllVehiclesWithDetailsUseCase>(GetAllVehiclesWithDetailsUseCase(sl()));
+  sl.registerSingleton<UpdateVehicleUseCase>(UpdateVehicleUseCase(sl()));
 
   sl.registerSingleton<DiscountCodeService>(DiscountCodeService(sl()));
   sl.registerSingleton<DiscountCodesRepository>(DiscountCodeRepositoryImpl(sl()));

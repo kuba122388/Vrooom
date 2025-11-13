@@ -108,7 +108,7 @@ class _BookingsPageState extends State<BookingsPage> {
               const TitleWidget(title: "Penalty Section:"),
               ..._penaltyRentals.map((item) => Column(
                 children: [
-                  BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: item)),
+                  BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: {'booking' : item, 'title' : 'Booking details'})),
                   const SizedBox(height: AppSpacing.md),
                 ],
               )),
@@ -117,7 +117,7 @@ class _BookingsPageState extends State<BookingsPage> {
               const TitleWidget(title: "Active Rentals:"),
               ..._activeRentals.map((item) => Column(
                 children: [
-                  BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: item)),
+                  BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: {'booking' : item, 'title' : 'Booking details'})),
                   const SizedBox(height: AppSpacing.md),
                 ],
               )),
@@ -126,7 +126,7 @@ class _BookingsPageState extends State<BookingsPage> {
               const TitleWidget(title: "Upcoming Rentals:"),
               ..._upcomingRentals.map((item) => Column(
                 children: [
-                  BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: item)),
+                  BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: {'booking' : item, 'title' : 'Booking details'})),
                   const SizedBox(height: AppSpacing.md),
                 ],
               )),
@@ -135,7 +135,7 @@ class _BookingsPageState extends State<BookingsPage> {
               const TitleWidget(title: "Rentals History:"),
               ..._rentalHistory.map((item) => Column(
                 children: [
-                  BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: item)),
+                  BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: {'booking' : item, 'title' : 'Booking details'})),
                   const SizedBox(height: AppSpacing.md),
                 ],
               )),

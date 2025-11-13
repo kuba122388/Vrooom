@@ -8,6 +8,10 @@ abstract class AuthRepository {
     required String password,
   });
 
+  Future<Either<String, User>> googleLogin({required String token});
+
+  Future<Either<String, User>> facebookLogin({required String token});
+
   Future<Either<String, void>> logout();
 
   Future<Either<String, User>> register({
@@ -22,8 +26,6 @@ abstract class AuthRepository {
     required String country,
   });
 
-  Future<Either<String, void>> changePassword({
-    required String oldPassword,
-    required String newPassword
-  });
+  Future<Either<String, void>> changePassword(
+      {required String oldPassword, required String newPassword});
 }

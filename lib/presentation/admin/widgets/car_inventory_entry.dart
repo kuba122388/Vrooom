@@ -17,6 +17,7 @@ class CarInventoryEntry extends StatelessWidget {
   final int seats;
   final double price;
   final CarStatus carStatus;
+  final VoidCallback? onTap;
 
   const CarInventoryEntry({
     super.key,
@@ -28,6 +29,7 @@ class CarInventoryEntry extends StatelessWidget {
     required this.seats,
     required this.price,
     required this.carStatus,
+    this.onTap
   });
 
   Color _getStatusColor(CarStatus status) {
@@ -66,86 +68,89 @@ class CarInventoryEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CarCard(
-      carName: carName,
-      carImage: carImage,
-      rightSide: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const AppSvg(
-                asset: AppVectors.fuel,
-                color: AppColors.primary,
-                height: 18.0,
-              ),
-              const SizedBox(width: AppSpacing.xxs),
-              Text(fuel),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xxs),
-          Row(
-            children: [
-              const AppSvg(
-                asset: AppVectors.carFront,
-                color: AppColors.primary,
-                height: 18.0,
-              ),
-              const SizedBox(width: AppSpacing.xxs),
-              Text("$mileage km"),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xxs),
-          Row(
-            children: [
-              const AppSvg(
-                asset: AppVectors.gauge,
-                color: AppColors.primary,
-                height: 18.0,
-              ),
-              const SizedBox(width: AppSpacing.xxs),
-              Text(transmission),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xxs),
-          Row(
-            children: [
-              const AppSvg(
-                asset: AppVectors.seats,
-                color: AppColors.primary,
-                height: 18.0,
-              ),
-              const SizedBox(width: AppSpacing.xxs),
-              Text("$seats seats"),
-            ],
-          ),
-        ],
-      ),
-      bottom: Row(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: _getStatusColor(carStatus),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-              child: Text(_getStatusText(carStatus)),
-            ),
-          ),
-          const Spacer(),
-          RichText(
-            text: TextSpan(
-              text: "\$${price.toStringAsFixed(2)}",
-              children: const [
-                TextSpan(
-                  text: " per day",
-                  style: TextStyle(fontSize: 10.0),
+    return GestureDetector(
+      onTap: onTap,
+      child: CarCard(
+        carName: carName,
+        carImage: carImage,
+        rightSide: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const AppSvg(
+                  asset: AppVectors.fuel,
+                  color: AppColors.primary,
+                  height: 18.0,
                 ),
+                const SizedBox(width: AppSpacing.xxs),
+                Text(fuel),
               ],
             ),
-          ),
-        ],
+            const SizedBox(height: AppSpacing.xxs),
+            Row(
+              children: [
+                const AppSvg(
+                  asset: AppVectors.carFront,
+                  color: AppColors.primary,
+                  height: 18.0,
+                ),
+                const SizedBox(width: AppSpacing.xxs),
+                Text("$mileage km"),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xxs),
+            Row(
+              children: [
+                const AppSvg(
+                  asset: AppVectors.gauge,
+                  color: AppColors.primary,
+                  height: 18.0,
+                ),
+                const SizedBox(width: AppSpacing.xxs),
+                Text(transmission),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xxs),
+            Row(
+              children: [
+                const AppSvg(
+                  asset: AppVectors.seats,
+                  color: AppColors.primary,
+                  height: 18.0,
+                ),
+                const SizedBox(width: AppSpacing.xxs),
+                Text("$seats seats"),
+              ],
+            ),
+          ],
+        ),
+        bottom: Row(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: _getStatusColor(carStatus),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                child: Text(_getStatusText(carStatus)),
+              ),
+            ),
+            const Spacer(),
+            RichText(
+              text: TextSpan(
+                text: "\$${price.toStringAsFixed(2)}",
+                children: const [
+                  TextSpan(
+                    text: " per day",
+                    style: TextStyle(fontSize: 10.0),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

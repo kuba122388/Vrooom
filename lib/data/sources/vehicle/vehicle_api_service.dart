@@ -137,6 +137,54 @@ class VehicleApiService {
     }
   }
 
+  Future<Vehicle> updateVehicle({required VehicleModel vehicle, File? imageFile}) async {
+    try {
+      FormData formData;
+
+      if (imageFile != null) {
+        String? fileName = imageFile.path.split('/').last;
+
+        formData = FormData.fromMap({
+          "vehicle": MultipartFile.fromString(
+            jsonEncode(vehicle.toJson()),
+            contentType: MediaType.parse("application/json"),
+          ),
+          "file": await MultipartFile.fromFile(
+            imageFile.path,
+            filename: fileName,
+          ),
+        });
+      } else {
+        formData = FormData.fromMap({
+          "vehicle": MultipartFile.fromString(
+            jsonEncode(vehicle.toJson()),
+            contentType: MediaType.parse("application/json"),
+          ),
+        });
+      }
+
+      print("================Equipment=============\n");
+      for (var item in vehicle.equipmentList) {
+        print("${item.equipmentName}\n");
+      }
+
+      final response = await _dio.put(
+        "$_vehicleApi/update",
+        data: formData,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return VehicleModel.fromJson(response.data);
+      } else {
+        throw ("Error adding vehicle.");
+      }
+    } on DioException catch (e) {
+      throw ("Network Error: ${e.message}");
+    } catch (e) {
+      throw ("Unexpected Error: $e");
+    }
+  }
+
   Future<List<Vehicle>> getAllVehiclesWithDetails() async {
     try {
       final response = await _dio.get(_vehicleApi);

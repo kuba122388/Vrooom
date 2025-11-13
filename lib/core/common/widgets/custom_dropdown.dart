@@ -37,6 +37,16 @@ class _CustomDropdownMenuState extends State<CustomDropdownMenu> {
   }
 
   @override
+  void didUpdateWidget(covariant CustomDropdownMenu oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue) {
+      setState(() {
+        selectedValue = widget.initialValue;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

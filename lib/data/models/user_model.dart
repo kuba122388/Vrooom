@@ -21,11 +21,11 @@ class UserModel extends User {
       name: json["name"] as String,
       surname: json["surname"] as String,
       email: json["email"] as String,
-      phoneNumber: json["phoneNumber"] as String,
-      streetAddress: json["streetAddress"] as String,
-      city: json["city"] as String,
-      postalCode: json["postalCode"] as String,
-      country: json["country"] as String,
+      phoneNumber: json["phoneNumber"] as String? ?? "",
+      streetAddress: json["streetAddress"] as String? ?? "",
+      city: json["city"] as String? ?? "" ,
+      postalCode: json["postalCode"] as String? ?? "",
+      country: json["country"] as String? ?? "",
       role: RoleExtension.fromJson(json["role"] as String),
     );
   }

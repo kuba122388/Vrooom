@@ -8,6 +8,7 @@ class CarCard extends StatelessWidget {
   final String carName;
   final Widget rightSide;
   final Widget bottom;
+  final double carImageSize;
 
   const CarCard({
     super.key,
@@ -15,6 +16,7 @@ class CarCard extends StatelessWidget {
     required this.carName,
     required this.rightSide,
     required this.bottom,
+    this.carImageSize = 120
   });
 
   @override
@@ -36,8 +38,8 @@ class CarCard extends StatelessWidget {
                   children: [
                     Image.network(
                       carImage,
-                      width: 120,
-                      height: 120,
+                      width: carImageSize,
+                      height: carImageSize,
                       fit: BoxFit.cover,
                     ),
                   ],

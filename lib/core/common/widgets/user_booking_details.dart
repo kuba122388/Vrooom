@@ -9,19 +9,20 @@ import 'package:vrooom/core/configs/theme/app_spacing.dart';
 import 'package:vrooom/domain/entities/booking.dart';
 import 'package:vrooom/presentation/user/bookings/widgets/info_row.dart';
 
-import '../../../../core/configs/theme/app_colors.dart';
-import '../../../../core/enums/rental_status.dart';
+import '../../configs/theme/app_colors.dart';
+import '../../enums/rental_status.dart';
 
-class UserBookingDetailsPage extends StatefulWidget {
+class UserBookingDetails extends StatefulWidget {
   final Booking booking;
+  final String title;
 
-  const UserBookingDetailsPage({super.key, required this.booking});
+  const UserBookingDetails({super.key, required this.booking, required this.title});
 
   @override
-  State<UserBookingDetailsPage> createState() => _UserBookingDetailsPageState();
+  State<UserBookingDetails> createState() => _UserBookingDetailsState();
 }
 
-class _UserBookingDetailsPageState extends State<UserBookingDetailsPage> {
+class _UserBookingDetailsState extends State<UserBookingDetails> {
   RentalStatus _getRentalStatus(Booking booking) {
     switch (booking.bookingStatus) {
       case "Pending":
@@ -49,7 +50,7 @@ class _UserBookingDetailsPageState extends State<UserBookingDetailsPage> {
     ];
 
     return Scaffold(
-      appBar: const CustomAppBar(title: "Booking Details"),
+      appBar: CustomAppBar(title: widget.title),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,9 +178,9 @@ class _UserBookingDetailsPageState extends State<UserBookingDetailsPage> {
                     title: "Payment & Insurance",
                     child: Column(
                       children: [
-                        InfoRow(title: "Insurance", text: "\$${widget.booking.insuranceCost}"),
+                        InfoRow(title: "Insurance", text: "\$${widget.booking.insuranceCost?.toStringAsFixed(2)}"),
                         const SizedBox(height: AppSpacing.xs),
-                        InfoRow(title: "Total Price", text: "\$${widget.booking.totalAmount}", color: AppColors.primary)
+                        InfoRow(title: "Total Price", text: "\$${widget.booking.totalAmount?.toStringAsFixed(2)}", color: AppColors.primary)
                       ],
                     )
                   ),

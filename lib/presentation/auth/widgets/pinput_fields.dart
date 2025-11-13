@@ -75,6 +75,9 @@ class _PinputFieldsState extends State<PinputFields> {
                   if (pin == '2222') {
                     Navigator.pushNamed(context, AppRoutes.verifyEmailSuccess);
                   }
+                  if (pin == '1111') {
+                    Navigator.pushNamed(context, AppRoutes.changePassword);
+                  }
                 },
                 onChanged: (value) {
                   debugPrint('onChanged: $value');

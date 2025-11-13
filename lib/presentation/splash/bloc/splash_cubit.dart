@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vrooom/presentation/user/splash/bloc/splash_state.dart';
+import 'package:vrooom/presentation/splash/bloc/splash_state.dart';
 
 class SplashCubit extends Cubit<SplashState> {
   SplashCubit() : super(DisplaySplash());

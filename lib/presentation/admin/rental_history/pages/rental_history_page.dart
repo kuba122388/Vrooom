@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/configs/routes/app_routes.dart';
+import 'dart:typed_data';
+
 import 'package:vrooom/domain/entities/booking.dart';
 import 'package:vrooom/presentation/admin/rental_history/widgets/rental_history_car_entry.dart';
 import 'package:provider/provider.dart';
@@ -6,8 +9,10 @@ import 'package:provider/provider.dart';
 import '../../../../core/common/widgets/loading_widget.dart';
 import '../../../../core/common/widgets/search_car_module/filter_state.dart';
 import '../../../../core/configs/di/service_locator.dart';
+
 import '../../../../core/configs/theme/app_spacing.dart';
 import '../../../../core/enums/rental_status.dart';
+
 import '../../widgets/admin_app_bar.dart';
 import '../../widgets/admin_drawer.dart';
 import '../../widgets/search_car_module/widget/search_filter_module_admin.dart';
@@ -108,15 +113,15 @@ class _RentalHistoryView extends StatelessWidget {
         return Column(
           children: [
             RentalHistoryCarEntry(
-                rentalID: item.bookingID.toString(),
-                carName: "${item.vehicleMake} ${item.vehicleModel}",
-                carImage: item.vehicleImage as String,
-                startDate:
-                    DateTime(item.startDate!.year, item.startDate!.month, item.startDate!.day),
-                endDate: DateTime(item.endDate!.year, item.endDate!.month, item.endDate!.day),
-                rentalStatus: _getRentalStatus(item),
-                customerName: "${item.customerName} ${item.customerSurname}",
-                customerPicture: controller.customerImage[index]),
+              onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: {
+                'booking': item,
+                'title': '${item.customerName} ${item.customerSurname}'
+              }),
+              booking: item,
+              customerPicture: controller.customerImage[index],
+              customerPictureSize: 30,
+              vehicleImageSize: 100,
+            ),
             const SizedBox(height: AppSpacing.sm),
           ],
         );

@@ -120,15 +120,9 @@ class _ActiveRentalsView extends StatelessWidget {
                   Opacity(
                     opacity: 0.5,
                     child: RentalHistoryCarEntry(
-                        rentalID: item.bookingID.toString(),
-                        carName: "${item.vehicleMake} ${item.vehicleModel}",
-                        carImage: item.vehicleImage as String,
-                        startDate: DateTime(
-                            item.startDate!.year, item.startDate!.month, item.startDate!.day),
-                        endDate:
-                            DateTime(item.endDate!.year, item.endDate!.month, item.endDate!.day),
-                        rentalStatus: _getRentalStatus(item),
-                        customerName: "${item.customerName} ${item.customerSurname}",
+                        customerPictureSize: 30,
+                        vehicleImageSize: 100,
+                        booking: item,
                         customerPicture: controller.customerImage[index]),
                   ),
                   Align(
@@ -145,14 +139,14 @@ class _ActiveRentalsView extends StatelessWidget {
               ),
             ] else ...[
               RentalHistoryCarEntry(
-                  rentalID: item.bookingID.toString(),
-                  carName: "${item.vehicleMake} ${item.vehicleModel}",
-                  carImage: item.vehicleImage as String,
-                  startDate:
-                      DateTime(item.startDate!.year, item.startDate!.month, item.startDate!.day),
-                  endDate: DateTime(item.endDate!.year, item.endDate!.month, item.endDate!.day),
-                  rentalStatus: _getRentalStatus(item),
-                  customerName: "${item.customerName} ${item.customerSurname}",
+                  customerPictureSize: 30,
+                  vehicleImageSize: 100,
+                  onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails,
+                          arguments: {
+                            'booking': item,
+                            'title': '${item.customerName} ${item.customerSurname}'
+                          }),
+                  booking: item,
                   customerPicture: controller.customerImage[index]),
             ],
             const SizedBox(height: AppSpacing.sm)

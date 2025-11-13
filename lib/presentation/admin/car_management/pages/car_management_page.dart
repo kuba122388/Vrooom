@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
+import 'package:vrooom/core/common/widgets/search_car_module/search_filter_module.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
@@ -9,7 +10,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/common/widgets/loading_widget.dart';
 import '../../../../core/common/widgets/search_car_module/filter_state.dart';
-import '../../../../core/common/widgets/search_car_module/search_filter_module.dart';
 import '../../../../core/configs/di/service_locator.dart';
 import '../controllers/vehicle_list_management_controller.dart';
 
@@ -115,14 +115,20 @@ class _CarManagementView extends StatelessWidget {
         return Column(
           children: [
             CarInventoryEntry(
-                carImage: vehicle.vehicleImage,
-                carName: "${vehicle.make} ${vehicle.model}",
-                carStatus: _getCarStatus(vehicle.availabilityStatus),
-                fuel: vehicle.fuelType,
-                mileage: vehicle.mileage,
-                seats: vehicle.numberOfSeats,
-                transmission: vehicle.gearShift,
-                price: vehicle.pricePerDay),
+              carImage: vehicle.vehicleImage,
+              carName: "${vehicle.make} ${vehicle.model}",
+              carStatus: _getCarStatus(vehicle.availabilityStatus),
+              fuel: vehicle.fuelType,
+              mileage: vehicle.mileage,
+              seats: vehicle.numberOfSeats,
+              transmission: vehicle.gearShift,
+              price: vehicle.pricePerDay,
+              onTap: () => Navigator.pushNamed(
+                context,
+                AppRoutes.carManagementDetail,
+                arguments: vehicle,
+              ),
+            ),
             const SizedBox(height: AppSpacing.md),
           ],
         );

@@ -3,6 +3,7 @@ import 'package:vrooom/core/common/widgets/custom_app_bar.dart';
 import 'package:vrooom/core/common/widgets/info_section_card.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
 import 'package:vrooom/core/configs/assets/app_vectors.dart';
+import 'package:vrooom/core/configs/theme/app_text_styles.dart';
 import 'package:vrooom/presentation/user/profile/widgets/contact_row.dart';
 import 'package:vrooom/presentation/user/profile/widgets/map_widget.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
@@ -68,6 +69,7 @@ class _ContactPageState extends State<ContactPage> {
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     PrimaryButton(
+                      textStyle: AppTextStyles.smallButton,
                       text: "Go to main rental location",
                       onPressed: () {
                         _centerMapCallback?.call();
