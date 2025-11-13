@@ -1,7 +1,9 @@
 sealed class SplashState {}
 
-class DisplaySplash extends SplashState{}
+class DisplaySplash extends SplashState {}
 
-class Authenticated extends SplashState{}
+class Unauthenticated extends SplashState {}
 
-class Unauthenticated extends SplashState{}
+class AuthenticatedUser extends SplashState {}
+
+class AuthenticatedAdmin extends SplashState {}

@@ -22,7 +22,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final request = LoginRequestModel(email: email, password: password);
       final response = await authApiService.login(request);
 
-      tokenStorage.saveLoginData(response.jwt, response.user.customerID);
+      await tokenStorage.saveLoginData(response.jwt, response.user.customerID, response.user.role.toString());
       return Right(response.user);
     } catch (e) {
       return Left(e.toString());
@@ -34,25 +34,25 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await authApiService.googleLogin(token);
 
-      tokenStorage.saveLoginData(response.jwt, response.user.customerID);
+      tokenStorage.saveLoginData(response.jwt, response.user.customerID, response.user.role.toString());
       return Right(response.user);
     } catch (e) {
       return Left(e.toString());
     }
   }
-
 
   @override
   Future<Either<String, User>> facebookLogin({required String token}) async{
     try {
       final response = await authApiService.facebookLogin(token);
 
-      tokenStorage.saveLoginData(response.jwt, response.user.customerID);
+      tokenStorage.saveLoginData(response.jwt, response.user.customerID, response.user.role.toString());
       return Right(response.user);
     } catch (e) {
       return Left(e.toString());
     }
   }
+
   @override
   Future<Either<String, void>> changePassword({
     required String oldPassword,
@@ -72,7 +72,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<String, void>> logout() async {
     try {
       await authApiService.logout();
-      tokenStorage.clear();
+      await tokenStorage.clear();
       return const Right(null);
     } catch (e) {
       return Left(e.toString());

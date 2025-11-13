@@ -6,6 +6,7 @@ import 'package:vrooom/presentation/splash/bloc/splash_cubit.dart';
 import 'core/configs/di/service_locator.dart';
 import 'core/configs/routes/app_router.dart';
 import 'core/configs/routes/app_routes.dart';
+import 'data/sources/auth/auth_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +20,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SplashCubit()..appStarted(),
+      create: (context) => SplashCubit(
+        authStorage: sl<AuthStorage>(),
+      )..appStarted(),
       child: MaterialApp(
         theme: AppTheme.appTheme,
         debugShowCheckedModeBanner: false,

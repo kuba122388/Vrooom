@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:vrooom/data/models/user_model.dart';
 import 'package:vrooom/data/sources/auth/auth_storage.dart';
 import 'package:vrooom/domain/entities/booking.dart';
@@ -13,8 +14,9 @@ class UserApiService {
   final Dio _dio;
   final String _userApi = "/api/customers";
   final String _authApi = '/api/auth';
+  final AuthStorage _authStorage;
 
-  UserApiService(this._dio);
+  UserApiService(this._dio, this._authStorage);
 
   Future<List<User>> getAllUsers() async {
     try {
@@ -52,7 +54,7 @@ class UserApiService {
 
   Future<User> getCurrentUserInformation() async {
     try {
-      final userId = await AuthStorage.getUserId();
+      final userId = await _authStorage .getUserId();
       if (userId == null) {
         throw Exception("No userID in storage");
       }
@@ -124,7 +126,7 @@ class UserApiService {
 
   Future<List<Booking>> getUserActiveRentals() async {
     try {
-      final userId = await AuthStorage.getUserId();
+      final userId = await _authStorage .getUserId();
       if (userId == null) {
         throw Exception("No userID in storage");
       }
@@ -169,7 +171,7 @@ class UserApiService {
 
   Future<List<Booking>> getUserUpcomingRentals() async {
     try {
-      final userId = await AuthStorage.getUserId();
+      final userId = await _authStorage .getUserId();
       if (userId == null) {
         throw Exception("No userID in storage");
       }
@@ -214,7 +216,7 @@ class UserApiService {
 
   Future<List<Booking>> getUserRentalHistory() async {
     try {
-      final userId = await AuthStorage.getUserId();
+      final userId = await _authStorage .getUserId();
       if (userId == null) {
         throw Exception("No userID in storage");
       }

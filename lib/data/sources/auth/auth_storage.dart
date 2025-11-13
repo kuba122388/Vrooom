@@ -8,19 +8,26 @@ class AuthStorage {
 
   static const _tokenKey = 'jwt_token';
   static const _userIdKey = 'user_id';
+  static const _roleKey = 'user_role';
 
-  Future<void> saveLoginData(String token, int userId) async {
+  Future<void> saveLoginData(String token, int userId, String role) async {
     await _secureStorage.write(key: _tokenKey, value: token);
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_userIdKey, userId);
+    await prefs.setString(_roleKey, role);
+  }
+
+  Future<String?> getRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_roleKey);
   }
 
   Future<String?> getToken() async {
     return await _secureStorage.read(key: _tokenKey);
   }
 
-  static Future<int?> getUserId() async {
+  Future<int?> getUserId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(_userIdKey);
   }

@@ -8,8 +8,9 @@ class BookingApiService {
   final Dio _dio;
   final String _bookingApi = "/api/bookings";
   final String _userApi = "/api/customers";
+  final AuthStorage _authStorage;
 
-  BookingApiService(this._dio);
+  BookingApiService(this._dio, this._authStorage);
 
   Future<List<InsuranceModel>> getAllInsurances() async {
     try {
@@ -34,7 +35,7 @@ class BookingApiService {
 
   Future<List<Booking>> getRecentRentalsForUser() async {
     try {
-      final userId = await AuthStorage.getUserId();
+      final userId = await _authStorage.getUserId();
       if (userId == null) {
         throw Exception("No userID in storage");
       }

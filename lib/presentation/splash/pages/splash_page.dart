@@ -6,6 +6,7 @@ import 'package:vrooom/presentation/splash/bloc/splash_cubit.dart';
 import 'package:vrooom/presentation/splash/bloc/splash_state.dart';
 
 import '../../../../core/configs/theme/app_colors.dart';
+import '../../../core/configs/routes/app_routes.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
@@ -22,6 +23,10 @@ class SplashPage extends StatelessWidget {
               transitionDuration: const Duration(milliseconds: 1000),
             ),
           );
+        } else if (state is AuthenticatedUser) {
+          Navigator.pushReplacementNamed(context, AppRoutes.main);
+        } else if (state is AuthenticatedAdmin) {
+          Navigator.pushReplacementNamed(context, AppRoutes.carManagement);
         }
       },
       child: const Scaffold(
