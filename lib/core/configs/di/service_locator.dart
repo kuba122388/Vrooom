@@ -83,7 +83,6 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<LogoutUseCase>(LogoutUseCase(sl()));
   sl.registerSingleton<ChangePasswordUseCase>(ChangePasswordUseCase(sl()));
   sl.registerSingleton<GoogleLoginUseCase>(GoogleLoginUseCase(sl()));
-  sl.registerSingleton<VerifyEmailUseCase>(VerifyEmailUseCase(sl()));
   sl.registerSingleton<FacebookLoginUseCase>(FacebookLoginUseCase(sl()));
   sl.registerSingleton<VerifyEmailUseCase>(VerifyEmailUseCase(sl()));
 

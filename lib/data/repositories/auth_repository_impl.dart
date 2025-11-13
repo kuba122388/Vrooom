@@ -74,7 +74,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await authApiService.verifyEmail(code);
 
-      tokenStorage.saveLoginData(response.jwt, response.user.customerID);
+      tokenStorage.saveLoginData(response.jwt, response.user.customerID,response.user.role.toString());
       return Right(response.user);
     } catch (e) {
       return Left(e.toString());

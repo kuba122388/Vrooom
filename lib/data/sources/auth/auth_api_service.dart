@@ -57,7 +57,7 @@ class AuthApiService {
     }
   }
 
-\  Future<LoginResponseModel> facebookLogin(String token) async {
+  Future<LoginResponseModel> facebookLogin(String token) async {
     try {
       final response = await _dio.post(
         '/api/auth/facebook',
