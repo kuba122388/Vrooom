@@ -14,12 +14,12 @@ import 'package:vrooom/presentation/admin/manage_users/pages/manage_users_page.d
 import 'package:vrooom/presentation/admin/car_management/pages/finalize_rental.dart';
 import 'package:vrooom/presentation/admin/manage_users/pages/user_rental_history_page.dart';
 import 'package:vrooom/presentation/admin/rental_history/pages/rental_history_page.dart';
-import 'package:vrooom/presentation/user/auth/pages/change_password_page.dart';
-import 'package:vrooom/presentation/user/auth/pages/email_verification_page.dart';
-import 'package:vrooom/presentation/user/auth/pages/forgot_password_page.dart';
-import 'package:vrooom/presentation/user/auth/pages/login_page.dart';
-import 'package:vrooom/presentation/user/auth/pages/signup_page.dart';
-import 'package:vrooom/presentation/user/auth/pages/verification_success_page.dart';
+import 'package:vrooom/presentation/auth/pages/change_password_page.dart';
+import 'package:vrooom/presentation/auth/pages/email_verification_page.dart';
+import 'package:vrooom/presentation/auth/pages/forgot_password_page.dart';
+import 'package:vrooom/presentation/auth/pages/login_page.dart';
+import 'package:vrooom/presentation/auth/pages/signup_page.dart';
+import 'package:vrooom/presentation/auth/pages/verification_success_page.dart';
 import 'package:vrooom/core/common/widgets/user_booking_details.dart';
 import 'package:vrooom/presentation/user/listings/pages/booking_details_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/car_details_page.dart';
@@ -28,7 +28,7 @@ import 'package:vrooom/presentation/user/listings/pages/payment_success_page.dar
 import 'package:vrooom/presentation/user/profile/pages/contact_page.dart';
 import 'package:vrooom/presentation/user/profile/pages/edit_profile_details.dart';
 import 'package:vrooom/presentation/user/profile/pages/privacy_policy_page.dart';
-import 'package:vrooom/presentation/user/splash/pages/splash_page.dart';
+import 'package:vrooom/presentation/splash/pages/splash_page.dart';
 
 import '../../../presentation/admin/admin_settings/pages/admin_settings.dart';
 import '../../../presentation/user/main/pages/main_navigation_page.dart';
