@@ -47,7 +47,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const SignupPage());
 
       case AppRoutes.verifyEmail:
-        return MaterialPageRoute(builder: (_) => const EmailVerificationPage());
+        final email = settings.arguments as String?;
+        return MaterialPageRoute(builder: (_) => EmailVerificationPage(email: email ?? "",));
 
       case AppRoutes.main:
         return MaterialPageRoute(builder: (_) => const MainNavigationPage());

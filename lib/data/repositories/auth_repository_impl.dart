@@ -7,6 +7,7 @@ import 'package:vrooom/data/sources/auth/auth_storage.dart';
 import 'package:vrooom/domain/entities/user.dart';
 import 'package:vrooom/domain/repositories/auth_repository.dart';
 
+
 class AuthRepositoryImpl implements AuthRepository {
   final AuthApiService authApiService;
   final AuthStorage tokenStorage;
@@ -69,6 +70,18 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<String,User>> verifyEmail({required String code})async {
+    try {
+      final response = await authApiService.verifyEmail(code);
+
+      tokenStorage.saveLoginData(response.jwt, response.user.customerID,response.user.role.toString());
+      return Right(response.user);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
   Future<Either<String, void>> logout() async {
     try {
       await authApiService.logout();
@@ -80,7 +93,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<String, User>> register({
+  Future<Either<String, String>> register({
     required String name,
     required String surname,
     required String email,
@@ -91,7 +104,6 @@ class AuthRepositoryImpl implements AuthRepository {
     required String postalCode,
     required String country,
   }) async {
-    // NOTE: ZAIMPLEMENTOWAĆ REGISTER
     try {
       final request = RegisterRequestModel(
         name: name,
@@ -105,8 +117,7 @@ class AuthRepositoryImpl implements AuthRepository {
         country: country,
       );
       final response = await authApiService.register(request);
-
-      return Right(response.user);
+      return Right(response);
     } catch (e) {
       return Left(e.toString());
     }

@@ -14,7 +14,10 @@ abstract class AuthRepository {
 
   Future<Either<String, void>> logout();
 
-  Future<Either<String, User>> register({
+
+  Future<Either<String,User>> verifyEmail({required String code});
+
+  Future<Either<String, String>> register({
     required String name,
     required String surname,
     required String email,
