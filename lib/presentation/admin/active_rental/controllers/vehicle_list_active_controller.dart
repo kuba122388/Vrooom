@@ -1,0 +1,122 @@
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+import 'package:vrooom/core/configs/di/service_locator.dart';
+import 'package:vrooom/domain/entities/booking.dart';
+
+import '../../../../core/common/widgets/search_car_module/filter_state.dart';
+import '../../../../domain/usecases/booking/get_full_rental_history_usecase.dart';
+import '../../../../domain/usecases/user/download_user_profile_picture_usecase.dart';
+import '../../../../domain/usecases/user/get_user_id_by_email_usecase.dart';
+
+class VehicleListActiveController extends ChangeNotifier {
+  final GetFullRentalHistoryUseCase _getFullRentalHistoryUseCase = sl();
+  final DownloadUserProfilePictureUseCase _downloadUserProfilePictureUseCase = sl();
+  final GetUserIdByEmailUseCase _getUserIdByEmailUseCase = sl();
+
+  final FilterState filterState;
+
+  VehicleListActiveController({required this.filterState}) {
+    filterState.addListener(_applyFilters);
+    _loadVehicles();
+  }
+
+  bool _isLoading = true;
+  String? _errorMessage;
+  List<Booking> _bookings = [];
+  List<Booking> _filteredHistory = [];
+  String _searchQuery = '';
+  bool _disposed = false;
+  List<Uint8List?> _customerImage = [];
+
+  // Getters
+  bool get isLoading => _isLoading;
+
+  String? get errorMessage => _errorMessage;
+
+  List<Booking> get filteredBookings => _filteredHistory;
+
+  String get searchQuery => _searchQuery;
+
+  // Public methods
+  void onSearchChanged(String query) {
+    _searchQuery = query;
+    _applyFilters();
+  }
+
+  Future<void> _loadVehicles() async {
+    _setLoading(true);
+    final result = await _getFullRentalHistoryUseCase();
+
+    if (_disposed) return;
+    result.fold(
+      (error) {
+        _errorMessage = error;
+      },
+      (vehicleList) {
+        _bookings = vehicleList;
+        print(_bookings);
+        _errorMessage = null;
+        _applyFilters();
+      },
+    );
+
+    final futures = _bookings.map((booking) async {
+      final idResult = await _getUserIdByEmailUseCase(email: booking.customerEmail!);
+      return await idResult.fold(
+        (error) async => null,
+        (userId) async {
+          final picResult = await _downloadUserProfilePictureUseCase(userId: userId as int);
+          return picResult.fold((error) => null, (success) => success);
+        },
+      );
+    }).toList();
+
+    final images = await Future.wait(futures);
+    _setLoading(false);
+    _customerImage.addAll(images);
+  }
+
+  void _applyFilters() {
+    final filtered = _bookings.where((booking) {
+      if (_searchQuery.isNotEmpty) {
+        final searchLower = _searchQuery.toLowerCase();
+        final fullCustomerName = "${booking.customerName} ${booking.customerSurname}".toLowerCase();
+        final customerPhone = booking.customerPhoneNumber ?? "";
+        final emailAddress = booking.customerEmail ?? "";
+        final vehicle = "${booking.vehicleMake} ${booking.vehicleModel}";
+
+        if (!fullCustomerName.contains(searchLower) &&
+            !customerPhone.contains(searchLower) &&
+            !emailAddress.contains(searchLower) &&
+            !vehicle.contains(searchLower)) {
+          return false;
+        }
+      }
+
+      if (filterState.selectedLocation != null &&
+          booking.pickupAddress != filterState.selectedLocation) {
+        return false;
+      }
+
+      return true;
+    }).toList();
+
+    _filteredHistory = filtered;
+    notifyListeners();
+  }
+
+  void _setLoading(bool value) {
+    if (_disposed) return;
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  List<Uint8List?> get customerImage => _customerImage;
+}

@@ -16,16 +16,16 @@ class ListingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => FilterState(
-          getRentalLocationsUseCase: sl(),
-          getVehicleEquipmentUseCase: sl(),
-        )),
+        ChangeNotifierProvider(
+            create: (_) => FilterState(
+                  getRentalLocationsUseCase: sl(),
+                  getVehicleEquipmentUseCase: sl(),
+                )),
         ChangeNotifierProxyProvider<FilterState, VehicleListController>(
           create: (context) => VehicleListController(
             filterState: context.read<FilterState>(),
           ),
-          update: (_, filterState, previous) =>
-          previous!..filterState.loadFilterOptions(),
+          update: (_, filterState, previous) => previous!..filterState.loadFilterOptions(),
         ),
       ],
       child: const _ListingsView(),
@@ -53,9 +53,7 @@ class _ListingsView extends StatelessWidget {
                 filterState: filterState,
               ),
               const SizedBox(height: AppSpacing.xl),
-
-              if (filterState.hasActiveFilters ||
-                  controller.searchQuery.isNotEmpty)
+              if (filterState.hasActiveFilters || controller.searchQuery.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.md),
                   child: Text(
@@ -66,13 +64,11 @@ class _ListingsView extends StatelessWidget {
                     ),
                   ),
                 ),
-
               LoadingWidget(
                 isLoading: controller.isLoading,
                 errorMessage: controller.errorMessage,
                 futureResultObj: controller.filteredVehicles,
-                emptyResultMsg:
-                filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
+                emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
                     ? "No vehicles match your filters."
                     : "No vehicles data found.",
                 futureBuilder: () => _buildVehicles(context, controller),
