@@ -2,8 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:vrooom/data/models/auth/login_response_model.dart';
 import 'package:vrooom/data/models/auth/password_request_model.dart';
 import 'package:vrooom/data/models/auth/register_request_model.dart';
-import 'package:vrooom/data/models/auth/register_response_model.dart';
-import 'package:vrooom/domain/entities/user.dart';
 
 import '../../models/auth/login_request_model.dart';
 
@@ -59,7 +57,7 @@ class AuthApiService {
     }
   }
 
-  Future<LoginResponseModel> facebookLogin(String token) async {
+\  Future<LoginResponseModel> facebookLogin(String token) async {
     try {
       final response = await _dio.post(
         '/api/auth/facebook',

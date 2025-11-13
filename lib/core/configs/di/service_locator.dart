@@ -85,6 +85,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GoogleLoginUseCase>(GoogleLoginUseCase(sl()));
   sl.registerSingleton<VerifyEmailUseCase>(VerifyEmailUseCase(sl()));
   sl.registerSingleton<FacebookLoginUseCase>(FacebookLoginUseCase(sl()));
+  sl.registerSingleton<VerifyEmailUseCase>(VerifyEmailUseCase(sl()));
 
   sl.registerSingleton<VehicleApiService>(VehicleApiService(sl()));
   sl.registerSingleton<VehicleRepository>(VehicleRepositoryImpl(sl()));
