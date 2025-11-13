@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:vrooom/data/models/auth/login_response_model.dart';
 import 'package:vrooom/data/models/auth/password_request_model.dart';
 import 'package:vrooom/data/models/auth/register_request_model.dart';
-
 import '../../models/auth/login_request_model.dart';
 
 class AuthApiService {

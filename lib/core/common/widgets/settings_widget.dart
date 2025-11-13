@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
 import 'package:vrooom/data/sources/auth/auth_api_service.dart';
 import 'package:vrooom/domain/entities/user.dart';
+import 'package:vrooom/domain/usecases/auth/logout_usecase.dart';
 
 import '../../../data/models/user_model.dart';
 import '../../../domain/usecases/auth/change_password_usecase.dart';
@@ -16,8 +17,9 @@ import 'custom_text_field.dart';
 
 class SettingsWidget extends StatefulWidget {
   final bool popScreen;
+  final String? route;
 
-  const SettingsWidget({super.key, required this.popScreen});
+  const SettingsWidget({super.key, required this.popScreen, this.route});
 
   @override
   State<SettingsWidget> createState() => _SettingsWidgetState();
@@ -84,7 +86,41 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         _newPasswordController.text.isNotEmpty ||
         _repeatPasswordController.text.isNotEmpty;
 
-    if (!changed) {
+    if (widget.route != null) {
+      final missingFields = <String>[];
+
+      if (_nameController.text.isEmpty && _user!.name.isEmpty) {
+        missingFields.add("Name");
+      }
+      if (_surnameController.text.isEmpty && _user!.surname.isEmpty) {
+        missingFields.add("Surname");
+      }
+      if (_emailController.text.isEmpty && _user!.email.isEmpty) {
+        missingFields.add("Email");
+      }
+      if (_phoneNumberController.text.isEmpty && _user!.phoneNumber.isEmpty) {
+        missingFields.add("Phone number");
+      }
+      if (_streetAddressController.text.isEmpty && _user!.streetAddress.isEmpty) {
+        missingFields.add("Street address");
+      }
+      if (_cityController.text.isEmpty && _user!.city.isEmpty) {
+        missingFields.add("City");
+      }
+      if (_postalCodeController.text.isEmpty && _user!.postalCode.isEmpty) {
+        missingFields.add("Postal code");
+      }
+      if (_countryCodeController.text.isEmpty && _user!.country.isEmpty) {
+        missingFields.add("Country");
+      }
+
+      if (missingFields.isNotEmpty) {
+        _showError("Please fill all fields: ${missingFields.join(", ")}");
+        return;
+      }
+    }
+
+    if (!changed && widget.route == null) {
       _showError("No changes were made.");
       return;
     }
@@ -134,8 +170,12 @@ class _SettingsWidgetState extends State<SettingsWidget> {
           _isLoading = true;
         });
 
-        final result = await _changePasswordUseCase(oldPassword: _currentPasswordController.text.trim(), newPassword: _newPasswordController.text.trim());
-        bool iserror = false;
+        final result = await _changePasswordUseCase(
+          oldPassword: _currentPasswordController.text.trim(),
+          newPassword: _newPasswordController.text.trim(),
+        );
+
+        bool isError = false;
 
         result.fold(
               (error) {
@@ -143,16 +183,14 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             setState(() {
               _isLoading = false;
             });
-            iserror = true;
+            isError = true;
           },
               (success) {
             _showError("The password has been successfully changed");
           },
         );
 
-        if (iserror) {
-          return;
-        }
+        if (isError) return;
       } catch (e) {
         _showError("Update failed: ${e.toString()}");
       } finally {
@@ -181,6 +219,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       await _editCurrentUserUseCase(request: userToUpdate);
 
       if (!context.mounted) return;
+      if (widget.route != null)  Navigator.pushReplacementNamed(context, widget.route as String);
       if (widget.popScreen) Navigator.pop(context, true);
     } catch (e) {
       _showError("Update failed: ${e.toString()}");
@@ -190,6 +229,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -251,36 +291,40 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               leadingIcon: const AppSvg(asset: AppVectors.mapPin),
               controller: _countryCodeController,
             ),
-            const SizedBox(height: AppSpacing.md),
-            const Text(
-              "Change Password",
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.w600,
+
+            if (widget.route == null) ... [
+              const SizedBox(height: AppSpacing.md),
+              const Text(
+                "Change Password",
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            CustomTextField(
-              hintText: "Current password",
-              label: "Current Password",
-              leadingIcon: const AppSvg(asset: AppVectors.key),
-              isPassword: true,
-              controller: _currentPasswordController,
-            ),
-            CustomTextField(
-              hintText: "New password",
-              label: "New Password",
-              leadingIcon: const AppSvg(asset: AppVectors.key),
-              isPassword: true,
-              controller: _newPasswordController,
-            ),
-            CustomTextField(
-              hintText: "Repeat Password",
-              label: "Repeat Password",
-              leadingIcon: const AppSvg(asset: AppVectors.key),
-              isPassword: true,
-              controller: _repeatPasswordController,
-            ),
+              const SizedBox(height: AppSpacing.sm),
+              CustomTextField(
+                hintText: "Current password",
+                label: "Current Password",
+                leadingIcon: const AppSvg(asset: AppVectors.key),
+                isPassword: true,
+                controller: _currentPasswordController,
+              ),
+              CustomTextField(
+                hintText: "New password",
+                label: "New Password",
+                leadingIcon: const AppSvg(asset: AppVectors.key),
+                isPassword: true,
+                controller: _newPasswordController,
+              ),
+              CustomTextField(
+                hintText: "Repeat Password",
+                label: "Repeat Password",
+                leadingIcon: const AppSvg(asset: AppVectors.key),
+                isPassword: true,
+                controller: _repeatPasswordController,
+              )
+            ],
+
             PrimaryButton(
                 text: "Save",
                 onPressed: _validateAndSave
