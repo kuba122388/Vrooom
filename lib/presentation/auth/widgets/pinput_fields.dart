@@ -8,7 +8,7 @@ import 'package:vrooom/core/configs/theme/app_spacing.dart';
 class PinputFields extends StatefulWidget {
   final TextEditingController controller;
 
-  const PinputFields({Key? key, required this.controller}) : super(key: key);
+  const PinputFields({super.key, required this.controller});
 
 
   @override
@@ -51,79 +51,70 @@ class _PinputFieldsState extends State<PinputFields> {
       ),
     );
 
-    return Padding(
-      padding: const EdgeInsets.all(30.0),
-      child: Form(
-        key: formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Directionality(
-              textDirection: TextDirection.ltr,
-              child: Pinput(
-                enableInteractiveSelection: true,
-                controller: widget.controller,
-                focusNode: focusNode,
-                defaultPinTheme: defaultPinTheme,
-                separatorBuilder: (index) => const SizedBox(width: 8),
-                validator: (value) {
-                  return value == '2222' ? null : 'Pin is incorrect';
-                },
-                hapticFeedbackType: HapticFeedbackType.lightImpact,
-                onCompleted: (pin) {
-                  debugPrint('onCompleted: $pin');
-                  if (pin == '2222') {
-                    Navigator.pushNamed(context, AppRoutes.verifyEmailSuccess);
-                  }
-                  if (pin == '1111') {
-                    Navigator.pushNamed(context, AppRoutes.changePassword);
-                  }
-                },
-                onChanged: (value) {
-                  debugPrint('onChanged: $value');
-                },
-                focusedPinTheme: defaultPinTheme.copyWith(
-                  decoration: defaultPinTheme.decoration!.copyWith(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: focusedBorderColor),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: Pinput(
+                  length: 6,
+                  enableInteractiveSelection: true,
+                  controller: widget.controller,
+                  focusNode: focusNode,
+                  defaultPinTheme: defaultPinTheme,
+                  separatorBuilder: (index) => const SizedBox(width: 8),
+                  hapticFeedbackType: HapticFeedbackType.lightImpact,
+                  onCompleted: (pin) {
+                  
+                  },
+                  onChanged: (value) {
+                    debugPrint('onChanged: $value');
+                  },
+                  focusedPinTheme: defaultPinTheme.copyWith(
+                    decoration: defaultPinTheme.decoration!.copyWith(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: focusedBorderColor),
+                    ),
                   ),
-                ),
-                submittedPinTheme: defaultPinTheme.copyWith(
-                  decoration: defaultPinTheme.decoration!.copyWith(
-                    color: fillColor,
-                    borderRadius: BorderRadius.circular(19),
-                    border: Border.all(color: focusedBorderColor),
+                  submittedPinTheme: defaultPinTheme.copyWith(
+                    decoration: defaultPinTheme.decoration!.copyWith(
+                      color: fillColor,
+                      borderRadius: BorderRadius.circular(19),
+                      border: Border.all(color: focusedBorderColor),
+                    ),
                   ),
-                ),
-                errorPinTheme: defaultPinTheme.copyBorderWith(
-                  border: Border.all(color: Colors.redAccent),
+                  errorPinTheme: defaultPinTheme.copyBorderWith(
+                    border: Border.all(color: Colors.redAccent),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            RichText(
-              text: TextSpan(
-                children: [
-                  const TextSpan(text: "Didn't get a code?  "),
-                  TextSpan(
-                    text: 'Resend: 59 s',
-                    style: TextStyle(color: AppColors.primary.withValues(alpha: 0.5)),
-                  ),
-                ],
+              const SizedBox(height: AppSpacing.lg),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    const TextSpan(text: "Didn't get a code?  "),
+                    TextSpan(
+                      text: 'Resend: 59 s',
+                      style: TextStyle(color: AppColors.primary.withValues(alpha: 0.5)),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            PrimaryButton(
-              onPressed: () {
-                focusNode.unfocus();
-                formKey.currentState!.validate();
-                // if (pinController.text == '2222') {
-                //   Navigator.pushNamed(context, AppRoutes.verifyEmailSuccess);
-                // }
-              },
-              text: 'Submit',
-            ),
-          ],
+              const SizedBox(height: AppSpacing.md),
+              PrimaryButton(
+                onPressed: () {
+                  focusNode.unfocus();
+                  formKey.currentState!.validate();
+                },
+                text: 'Submit',
+              ),
+            ],
+          ),
         ),
       ),
     );

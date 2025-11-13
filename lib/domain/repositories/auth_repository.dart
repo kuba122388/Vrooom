@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 
-import '../../data/models/auth/login_response_model.dart';
 import '../entities/user.dart';
 
 abstract class AuthRepository {
@@ -18,7 +17,7 @@ abstract class AuthRepository {
 
   Future<Either<String,User>> verifyEmail({required String code});
 
-  Future<Either<String, User>> register({
+  Future<Either<String, String>> register({
     required String name,
     required String surname,
     required String email,

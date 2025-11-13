@@ -5,16 +5,14 @@ import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 
-// Załóżmy, że masz ten Usecase (musisz go stworzyć i dodać do service_locator.dart)
-// Będzie on wywoływał authRepository.verifyEmail(code: code)
 import 'package:vrooom/domain/usecases/auth/verify_email_usecase.dart';
 import 'package:vrooom/core/configs/di/service_locator.dart';
-import 'package:vrooom/domain/entities/role.dart'; // Potrzebne do nawigacji
+import 'package:vrooom/domain/entities/role.dart';
 
 import '../widgets/pinput_fields.dart';
 
 class EmailVerificationPage extends StatefulWidget {
-  final String email; // Odbierz e-mail z argumentów nawigacji
+  final String email;
 
   const EmailVerificationPage({super.key, required this.email});
 
@@ -33,7 +31,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
     if (code.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Kod musi mieć 6 cyfr."),
+          content: Text("Code is too short, it must have 6 digits"),
           backgroundColor: Colors.red,
         ),
       );
@@ -97,16 +95,14 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
-                  "Enter code we've sent to your inbox\n${widget.email}", // Użyj dynamicznego e-maila
+                  "Enter code we've sent to your inbox\n${widget.email}",
                   textAlign: TextAlign.center,
                   style:
                   TextStyle(height: 1.6, color: AppColors.text.neutral400),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                // Przekaż kontroler do Pinput
                 PinputFields(controller: _pinputController),
                 const SizedBox(height: AppSpacing.lg),
-                // Dodaj przycisk do wysłania
                 PrimaryButton(
                   text: _isLoading ? "Verifying..." : "Verify",
                   onPressed: _isLoading ? null : _handleVerify,
