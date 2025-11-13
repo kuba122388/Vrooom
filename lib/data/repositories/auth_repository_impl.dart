@@ -30,6 +30,18 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<String, User>> googleLogin({required String token}) async{
+    try {
+      final response = await authApiService.googleLogin(token);
+
+      tokenStorage.saveLoginData(response.jwt, response.user.customerID);
+      return Right(response.user);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
   Future<Either<String, void>> changePassword({
     required String oldPassword,
     required String newPassword

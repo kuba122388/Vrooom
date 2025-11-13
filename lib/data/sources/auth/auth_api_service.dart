@@ -3,6 +3,7 @@ import 'package:vrooom/data/models/auth/login_response_model.dart';
 import 'package:vrooom/data/models/auth/password_request_model.dart';
 import 'package:vrooom/data/models/auth/register_request_model.dart';
 import 'package:vrooom/data/models/auth/register_response_model.dart';
+import 'package:vrooom/domain/entities/user.dart';
 
 import '../../models/auth/login_request_model.dart';
 
@@ -28,6 +29,31 @@ class AuthApiService {
         throw Exception("Invalid email or password");
       }
       throw Exception("Network error ${e.message}");
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
+  Future<LoginResponseModel> googleLogin(String token) async {
+    try {
+      final response = await _dio.post(
+        '/api/auth/google',
+        data: {'token': token},
+      );
+
+      if (response.statusCode == 200) {
+        return LoginResponseModel.fromJson(response.data);
+      } else {
+        throw Exception("Google Login failed with status code ${response.statusCode}");
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw Exception("Invalid Google token");
+      }
+      if (e.response?.statusCode == 500) {
+        throw Exception("Server error during Google login. Check backend logs.");
+      }
+      throw Exception("Network error: ${e.message}");
     } catch (e) {
       throw Exception('Unexpected error: $e');
     }
