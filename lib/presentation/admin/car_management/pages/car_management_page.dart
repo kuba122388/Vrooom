@@ -11,7 +11,6 @@ import '../../../../core/common/widgets/loading_widget.dart';
 import '../../../../core/common/widgets/search_car_module/filter_state.dart';
 import '../../../../core/common/widgets/search_car_module/search_filter_module.dart';
 import '../../../../core/configs/di/service_locator.dart';
-import '../../widgets/search_car_module/widget/search_filter_module_admin.dart';
 import '../controllers/vehicle_list_management_controller.dart';
 
 class CarManagementPage extends StatefulWidget {

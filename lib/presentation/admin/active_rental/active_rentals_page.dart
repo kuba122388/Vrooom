@@ -1,25 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vrooom/domain/usecases/vehicle/get_rental_locations_usecase.dart';
-import 'package:vrooom/domain/usecases/vehicle/get_vehicle_equipment_usecase.dart';
-import 'package:vrooom/domain/usecases/booking/get_active_rentals_usecase.dart';
 import 'package:vrooom/presentation/admin/active_rental/widgets/search_filter_module_active.dart';
-import 'dart:typed_data';
 import 'package:vrooom/presentation/admin/rental_history/widgets/rental_history_car_entry.dart';
 
 import '../../../core/common/widgets/loading_widget.dart';
 import '../../../core/common/widgets/search_car_module/filter_state.dart';
-import '../../../core/common/widgets/search_car_module/search_filter_module.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
 import '../../../core/common/widgets/primary_button.dart';
 import '../../../core/configs/di/service_locator.dart';
 import '../../../core/configs/routes/app_routes.dart';
-import '../../../core/configs/theme/app_colors.dart';
 import '../../../core/configs/theme/app_text_styles.dart';
 import '../../../core/enums/rental_status.dart';
 import '../../../domain/entities/booking.dart';
-import '../../../domain/usecases/user/download_user_profile_picture_usecase.dart';
-import '../../../domain/usecases/user/get_user_id_by_email_usecase.dart';
 import '../widgets/admin_app_bar.dart';
 import '../widgets/admin_drawer.dart';
 import 'controllers/vehicle_list_active_controller.dart';
