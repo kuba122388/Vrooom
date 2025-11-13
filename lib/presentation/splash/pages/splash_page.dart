@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vrooom/core/common/widgets/splash_hero.dart';
-import 'package:vrooom/presentation/user/auth/pages/login_page.dart';
-import 'package:vrooom/presentation/user/splash/bloc/splash_cubit.dart';
-import 'package:vrooom/presentation/user/splash/bloc/splash_state.dart';
+import 'package:vrooom/presentation/auth/pages/login_page.dart';
+import 'package:vrooom/presentation/splash/bloc/splash_cubit.dart';
+import 'package:vrooom/presentation/splash/bloc/splash_state.dart';
 
 import '../../../../core/configs/theme/app_colors.dart';
 
