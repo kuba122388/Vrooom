@@ -2,8 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:vrooom/data/models/auth/login_response_model.dart';
 import 'package:vrooom/data/models/auth/password_request_model.dart';
 import 'package:vrooom/data/models/auth/register_request_model.dart';
-import 'package:vrooom/data/models/auth/register_response_model.dart';
-import 'package:vrooom/domain/entities/user.dart';
 
 import '../../models/auth/login_request_model.dart';
 
@@ -59,7 +57,7 @@ class AuthApiService {
     }
   }
 
-  Future<RegisterResponseModel> register(RegisterRequestModel request) async {
+  Future<String> register(RegisterRequestModel request) async {
     try {
       final response = await _dio.post(
         '/api/auth/register',
@@ -67,18 +65,27 @@ class AuthApiService {
       );
 
       if (response.statusCode == 200) {
-        return RegisterResponseModel.fromJson(response.data);
+        if (response.statusCode == 200) {
+          final message = response.data['message'] ?? "Registration successful";
+          return message;
+        }
       } else {
-        throw Exception("Registration failed");
+        throw Exception("Registration failed with status code: ${response.statusCode}");
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 409) {
-        throw Exception("User with provided email already exists.");
+        final message = e.response?.data?['message'] ?? "User with this email already exists.";
+        throw Exception(message);
       }
-      throw Exception("Network error ${e.message}");
+      if (e.response?.statusCode == 500) {
+        final message = e.response?.data?['message'] ?? "Error sending verification email.";
+        throw Exception(message);
+      }
+      throw Exception("Network error: ${e.message}");
     } catch (e) {
       throw Exception('Unexpected error: $e');
     }
+    return "";
   }
 
   Future<void> logout() async {
@@ -97,13 +104,13 @@ class AuthApiService {
       );
 
       if (response.statusCode == 200) {
-       return LoginResponseModel.fromJson(response.data);
+        return LoginResponseModel.fromJson(response.data);
       } else {
         throw Exception("Verification failed");
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 400) {
-      throw Exception(e.response?.data['message'] ?? 'Invalid code');
+        throw Exception(e.response?.data['message'] ?? 'Invalid code');
       }
       throw Exception("Network error ${e.message}");
     } catch (e) {

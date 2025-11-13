@@ -81,7 +81,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<String, User>> register({
+  Future<Either<String, String>> register({
     required String name,
     required String surname,
     required String email,
@@ -105,8 +105,7 @@ class AuthRepositoryImpl implements AuthRepository {
         country: country,
       );
       final response = await authApiService.register(request);
-
-      return Right(response.user);
+      return Right(response);
     } catch (e) {
       return Left(e.toString());
     }

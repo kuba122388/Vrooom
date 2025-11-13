@@ -116,7 +116,7 @@ class _SignupPageState extends State<SignupPage> {
           SnackBar(content: Text(error)),
         );
       },
-      (user) {
+      (message) {
         Navigator.pushNamedAndRemoveUntil(
           context,
           AppRoutes.verifyEmail,
