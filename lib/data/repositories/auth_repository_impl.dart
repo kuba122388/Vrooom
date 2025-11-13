@@ -35,7 +35,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await authApiService.googleLogin(token);
 
-      tokenStorage.saveLoginData(response.jwt, response.user.customerID, response.user.role.toString());
+      await tokenStorage.saveLoginData(response.jwt, response.user.customerID, response.user.role.toString());
       return Right(response.user);
     } catch (e) {
       return Left(e.toString());
@@ -47,7 +47,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await authApiService.facebookLogin(token);
 
-      tokenStorage.saveLoginData(response.jwt, response.user.customerID, response.user.role.toString());
+      await tokenStorage.saveLoginData(response.jwt, response.user.customerID, response.user.role.toString());
       return Right(response.user);
     } catch (e) {
       return Left(e.toString());

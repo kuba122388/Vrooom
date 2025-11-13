@@ -76,20 +76,40 @@ class _LoginPageState extends State<LoginPage> {
           },
               (user) {
             if (!mounted) return;
-            if (user.role == Role.admin) {
-              if (!mounted) return;
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                AppRoutes.carManagement,
+            if (user.email.isEmpty || user.phoneNumber.isEmpty || user.city.isEmpty) {
+              if (user.role == Role.admin) {
+                if (!mounted) return;
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.loginEditDetails,
+                  arguments: AppRoutes.carManagement,
                     (route) => false,
-              );
+                );
+              } else {
+                if (!mounted) return;
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.loginEditDetails,
+                  arguments: AppRoutes.main,
+                      (route) => false,
+                );
+              }
             } else {
-              if (!mounted) return;
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                AppRoutes.main,
-                    (route) => false,
-              );
+              if (user.role == Role.admin) {
+                if (!mounted) return;
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.carManagement,
+                      (route) => false,
+                );
+              } else {
+                if (!mounted) return;
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.main,
+                      (route) => false,
+                );
+              }
             }
           },
         );
@@ -138,21 +158,42 @@ class _LoginPageState extends State<LoginPage> {
           );
         },
             (user) {
-          if (user.role == Role.admin) {
-            if (!mounted) return;
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              AppRoutes.carManagement,
-                  (route) => false,
-            );
-          } else {
-            if (!mounted) return;
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              AppRoutes.main,
-                  (route) => false,
-            );
-          }
+              if (!mounted) return;
+              if (user.email.isEmpty || user.phoneNumber.isEmpty || user.city.isEmpty) {
+                if (user.role == Role.admin) {
+                  if (!mounted) return;
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.loginEditDetails,
+                    arguments: AppRoutes.carManagement,
+                        (route) => false,
+                  );
+                } else {
+                  if (!mounted) return;
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.loginEditDetails,
+                    arguments: AppRoutes.main,
+                        (route) => false,
+                  );
+                }
+              } else {
+                if (user.role == Role.admin) {
+                  if (!mounted) return;
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.carManagement,
+                        (route) => false,
+                  );
+                } else {
+                  if (!mounted) return;
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.main,
+                        (route) => false,
+                  );
+                }
+              }
         },
       );
     } catch (error) {
