@@ -10,6 +10,8 @@ abstract class AuthRepository {
 
   Future<Either<String, User>> googleLogin({required String token});
 
+  Future<Either<String, User>> facebookLogin({required String token});
+
   Future<Either<String, void>> logout();
 
   Future<Either<String, User>> register({

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="facebook_app_id">1546793666664638</string>
+    <string name="fb_login_protocol_scheme">fb1546793666664638</string>
+    <string name="facebook_client_token">50ce2253cc8d311a48051bf12ff2d1fd</string>
+    <string name="app_name">Vrooom</string>
+</resources>
