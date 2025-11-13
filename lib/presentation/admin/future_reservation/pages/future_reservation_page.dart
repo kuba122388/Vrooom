@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:vrooom/core/common/widgets/search_car_module/search_filter_module.dart';
-import 'dart:typed_data';
-import 'package:vrooom/domain/usecases/booking/get_upcoming_rentals_usecase.dart';
-import 'package:vrooom/domain/usecases/user/download_user_profile_picture_usecase.dart';
-import 'package:vrooom/domain/usecases/user/get_user_id_by_email_usecase.dart';
+import 'package:provider/provider.dart';
+import 'package:vrooom/core/common/widgets/loading_widget.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
 import 'package:vrooom/presentation/admin/widgets/rental_information_entry.dart';
 
 import '../../../../core/common/widgets/search_car_module/filter_state.dart';
-import '../../../../core/configs/assets/app_images.dart';
 import '../../../../core/configs/di/service_locator.dart';
-import '../../../../core/configs/theme/app_colors.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
 import '../../../../core/enums/rental_status.dart';
-import '../../../../domain/entities/booking.dart';
-import '../../../../domain/usecases/vehicle/get_rental_locations_usecase.dart';
-import '../../../../domain/usecases/vehicle/get_vehicle_equipment_usecase.dart';
+import '../controllers/vehicle_list_future_controller.dart';
+import '../widgets/search_filter_module_future.dart';
 
 class FutureReservation extends StatefulWidget {
   const FutureReservation({super.key});
@@ -26,58 +20,35 @@ class FutureReservation extends StatefulWidget {
 }
 
 class _FutureReservationState extends State<FutureReservation> {
-  final GetUpcomingRentalsUseCase _getUpcomingRentalsUseCase = sl();
-  final GetUserIdByEmailUseCase _getUserIdByEmailUseCase = sl();
-  final DownloadUserProfilePictureUseCase _downloadUserProfilePictureUseCase = sl();
-  final FilterState _filterState = FilterState(
-    getRentalLocationsUseCase: sl<GetRentalLocationsUseCase>(),
-    getVehicleEquipmentUseCase: sl<GetVehicleEquipmentUseCase>(),
-  );
-
-  bool _isLoading = false;
-  List<Booking> _upcomingRentals = [];
-  final List<Uint8List?> _customerImage = [];
-
   @override
-  void initState() {
-    super.initState();
-    _load();
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (_) => FilterState(
+                  getRentalLocationsUseCase: sl(),
+                  getVehicleEquipmentUseCase: sl(),
+                )),
+        ChangeNotifierProxyProvider<FilterState, VehicleListFutureController>(
+          create: (context) => VehicleListFutureController(
+            filterState: context.read<FilterState>(),
+          ),
+          update: (_, filterState, previous) => previous!..filterState.loadFilterOptions(),
+        ),
+      ],
+      child: const _FutureReservationView(),
+    );
   }
+}
 
-  Future<void> _load() async {
-    setState(() => _isLoading = true);
-
-    try {
-      final result = await _getUpcomingRentalsUseCase();
-      result.fold(
-        (error) {},
-        (vehicleList) {
-          _upcomingRentals = vehicleList;
-        },
-      );
-
-      _customerImage.clear();
-
-      final futures = _upcomingRentals.map((booking) async {
-        final idResult = await _getUserIdByEmailUseCase(email: booking.customerEmail!);
-        return await idResult.fold(
-          (error) async => null,
-          (userId) async {
-            final picResult = await _downloadUserProfilePictureUseCase(userId: userId as int);
-            return picResult.fold((error) => null, (success) => success);
-          },
-        );
-      }).toList();
-
-      final images = await Future.wait(futures);
-      _customerImage.addAll(images);
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
+class _FutureReservationView extends StatelessWidget {
+  const _FutureReservationView();
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<VehicleListFutureController>();
+    final filterState = context.watch<FilterState>();
+
     return Scaffold(
       appBar: const AdminAppBar(title: "Future Reservations"),
       drawer: const AdminDrawer(),
@@ -87,8 +58,9 @@ class _FutureReservationState extends State<FutureReservation> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SearchFilterModule(
-                filterState: _filterState,
+              SearchFilterModuleFuture(
+                onSearchChanged: controller.onSearchChanged,
+                filterState: filterState,
               ),
               const SizedBox(height: AppSpacing.sm),
               const Text(
@@ -100,38 +72,46 @@ class _FutureReservationState extends State<FutureReservation> {
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
-              if (_isLoading) ...[
-                const SizedBox(height: AppSpacing.xl),
-                const Center(child: CircularProgressIndicator(color: AppColors.primary))
-              ] else ...[
-                ..._upcomingRentals.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final item = entry.value;
-
-                  return Column(
-                    children: [
-                      RentalInformationEntry(
-                          profileImage: _customerImage[index],
-                          firstName: item.customerName as String,
-                          surname: item.customerSurname as String,
-                          reservationID: item.bookingID.toString(),
-                          pickupDate: DateTime(
-                              item.startDate!.year, item.startDate!.month, item.startDate!.day),
-                          returnDate:
-                              DateTime(item.endDate!.year, item.endDate!.month, item.endDate!.day),
-                          rentalStatus: RentalStatus.pending,
-                          carImage: item.vehicleImage as String,
-                          model: "${item.vehicleMake} ${item.vehicleModel}",
-                          productionYear: item.vehicleProductionYear as int),
-                      const SizedBox(height: AppSpacing.sm)
-                    ],
-                  );
-                })
-              ]
+              LoadingWidget(
+                isLoading: controller.isLoading,
+                errorMessage: controller.errorMessage,
+                emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
+                    ? "No future entries match your filters."
+                    : "No future reservation data found.",
+                futureResultObj: controller.filteredBookings,
+                futureBuilder: () => _buildBookings(context, controller),
+              )
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildBookings(BuildContext context, VehicleListFutureController controller) {
+    return Column(
+      children: controller.filteredBookings.asMap().entries.map((entry) {
+        final item = entry.value;
+        final index = entry.key;
+
+        return Column(
+          children: [
+            RentalInformationEntry(
+                profileImage: controller.customerImage[index],
+                firstName: item.customerName as String,
+                surname: item.customerSurname as String,
+                reservationID: item.bookingID.toString(),
+                pickupDate:
+                    DateTime(item.startDate!.year, item.startDate!.month, item.startDate!.day),
+                returnDate: DateTime(item.endDate!.year, item.endDate!.month, item.endDate!.day),
+                rentalStatus: RentalStatus.pending,
+                carImage: item.vehicleImage as String,
+                model: "${item.vehicleMake} ${item.vehicleModel}",
+                productionYear: item.vehicleProductionYear as int),
+            const SizedBox(height: AppSpacing.sm)
+          ],
+        );
+      }).toList(),
     );
   }
 }
