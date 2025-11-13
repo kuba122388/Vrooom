@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
-import 'package:vrooom/core/common/widgets/search_car_module/search_filter_module.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
@@ -12,6 +11,7 @@ import '../../../../core/common/widgets/loading_widget.dart';
 import '../../../../core/common/widgets/search_car_module/filter_state.dart';
 import '../../../../core/configs/di/service_locator.dart';
 import '../controllers/vehicle_list_management_controller.dart';
+import '../widgets/search_filter_module_future.dart';
 
 class CarManagementPage extends StatefulWidget {
   const CarManagementPage({super.key});
@@ -61,7 +61,7 @@ class _CarManagementView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SearchFilterModule(
+              SearchFilterModuleManagement(
                 onSearchChanged: controller.onSearchChanged,
                 filterState: filterState,
               ),
