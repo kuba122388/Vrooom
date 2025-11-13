@@ -59,6 +59,31 @@ class AuthApiService {
     }
   }
 
+  Future<LoginResponseModel> facebookLogin(String token) async {
+    try {
+      final response = await _dio.post(
+        '/api/auth/facebook',
+        data: {'token': token},
+      );
+
+      if (response.statusCode == 200) {
+        return LoginResponseModel.fromJson(response.data);
+      } else {
+        throw Exception("Facebook login failed with status code ${response.statusCode}");
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw Exception("Invalid Facebook token");
+      }
+      if (e.response?.statusCode == 500) {
+        throw Exception("Server error during Facebook login. Check backend logs.");
+      }
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
   Future<RegisterResponseModel> register(RegisterRequestModel request) async {
     try {
       final response = await _dio.post(

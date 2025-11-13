@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:vrooom/core/common/widgets/custom_app_bar.dart';
 import 'package:vrooom/core/common/widgets/pressable_text.dart';
@@ -11,6 +12,7 @@ import 'package:vrooom/domain/usecases/auth/google_login_usecase.dart';
 
 import '../../../../core/configs/di/service_locator.dart';
 import '../../../../domain/entities/role.dart';
+import '../../../../domain/usecases/auth/facebook_login_usecase.dart';
 import '../../../../domain/usecases/auth/login_usecase.dart';
 import '../widgets/divider_with_text.dart';
 import '../../../../core/common/widgets/custom_text_field.dart';
@@ -27,6 +29,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final LoginUseCase _loginUseCase = sl();
   final GoogleLoginUseCase _googleLoginUseCase = sl();
+  final FacebookLoginUseCase _facebookLoginUseCase = sl();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -49,8 +52,67 @@ class _LoginPageState extends State<LoginPage> {
       print('Error initializing Google Sign-In: $error');
     }
   }
+  Future<void> handleFacebookSignIn() async {
+    setState(() => _isLoading = true);
+    try {
 
-  Future<void> handleSignIn() async {
+      final LoginResult result = await FacebookAuth.instance.login(
+        permissions: ['email', 'public_profile'],
+      );
+
+      if (result.status == LoginStatus.success) {
+        final AccessToken accessToken = result.accessToken!;
+        final String token = accessToken.tokenString;
+
+        final useCaseResult = await _facebookLoginUseCase.call(token: token);
+
+        setState(() => _isLoading = false);
+
+        useCaseResult.fold(
+              (error) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(error)),
+            );
+          },
+              (user) {
+            if (!mounted) return;
+            if (user.role == Role.admin) {
+              if (!mounted) return;
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.carManagement,
+                    (route) => false,
+              );
+            } else {
+              if (!mounted) return;
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.main,
+                    (route) => false,
+              );
+            }
+          },
+        );
+      } else {
+        if (result.status != LoginStatus.cancelled) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result.message ?? 'Login failed.')),
+          );
+        }
+        setState(() => _isLoading = false);
+      }
+    } catch (error) {
+      print('Error logging facebook user in: $error');
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error logging in with Facebook: ${error.toString()}')),
+      );
+    }
+  }
+
+
+  Future<void> handleGoogleSignIn() async {
     setState(() => _isLoading = true);
     try {
       final GoogleSignInAccount account = await _googleSignIn.authenticate(
@@ -207,9 +269,9 @@ class _LoginPageState extends State<LoginPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SocialButton(text: "Facebook"),
+            SocialButton(text: "Facebook",onTap: handleFacebookSignIn),
             const SizedBox(width: AppSpacing.md),
-            SocialButton(text: "Google", onTap: handleSignIn),
+            SocialButton(text: "Google", onTap: handleGoogleSignIn),
           ],
         ),
         const SizedBox(height: AppSpacing.md),

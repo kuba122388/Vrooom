@@ -17,6 +17,7 @@ import 'package:vrooom/domain/repositories/discount_code_repository.dart';
 import 'package:vrooom/domain/repositories/payment_repository.dart';
 import 'package:vrooom/domain/repositories/user_repository.dart';
 import 'package:vrooom/domain/usecases/auth/change_password_usecase.dart';
+import 'package:vrooom/domain/usecases/auth/facebook_login_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/google_login_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/login_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/logout_usecase.dart';
@@ -81,6 +82,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<LogoutUseCase>(LogoutUseCase(sl()));
   sl.registerSingleton<ChangePasswordUseCase>(ChangePasswordUseCase(sl()));
   sl.registerSingleton<GoogleLoginUseCase>(GoogleLoginUseCase(sl()));
+  sl.registerSingleton<FacebookLoginUseCase>(FacebookLoginUseCase(sl()));
 
   sl.registerSingleton<VehicleApiService>(VehicleApiService(sl()));
   sl.registerSingleton<VehicleRepository>(VehicleRepositoryImpl(sl()));
