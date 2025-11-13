@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
+import 'package:vrooom/data/sources/auth/auth_api_service.dart';
 import 'package:vrooom/domain/entities/user.dart';
 
 import '../../../data/models/user_model.dart';
@@ -115,10 +116,14 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         _showError("Enter your current password to change it.");
         return;
       }
-      if (_newPasswordController.text.length < 6) {
-        _showError("The new password must be at least 6 characters long.");
+
+      final errors = AuthApiService.validatePassword(_newPasswordController.text);
+
+      if (errors.isNotEmpty) {
+        _showError(errors.join("\n"));
         return;
       }
+
       if (_newPasswordController.text != _repeatPasswordController.text) {
         _showError("New passwords must be identical.");
         return;

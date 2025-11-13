@@ -162,4 +162,26 @@ class AuthApiService {
       throw Exception('Unexpected error: $e');
     }
   }
+
+  static List<String> validatePassword(String password) {
+    List<String> errors = [];
+
+    if (password.length < 8) {
+      errors.add("Hasło musi mieć co najmniej 8 znaków");
+    }
+    if (!password.contains(RegExp(r'[A-Z]'))) {
+      errors.add("Hasło musi zawierać przynajmniej jedną wielką literę");
+    }
+    if (!password.contains(RegExp(r'[a-z]'))) {
+      errors.add("Hasło musi zawierać przynajmniej jedną małą literę");
+    }
+    if (!password.contains(RegExp(r'\d'))) {
+      errors.add("Hasło musi zawierać przynajmniej jedną cyfrę");
+    }
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      errors.add("Hasło musi zawierać przynajmniej jeden znak specjalny");
+    }
+
+    return errors;
+  }
 }
