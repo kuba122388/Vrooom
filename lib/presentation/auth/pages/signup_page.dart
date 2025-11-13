@@ -120,7 +120,8 @@ class _SignupPageState extends State<SignupPage> {
         Navigator.pushNamedAndRemoveUntil(
           context,
           AppRoutes.verifyEmail,
-          (newPage) => false,
+              (newPage) => false,
+          arguments: _emailController.text.trim(),
         );
       },
     );

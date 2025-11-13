@@ -114,6 +114,28 @@ class AuthApiService {
     }
   }
 
+  Future<LoginResponseModel> verifyEmail(String code) async {
+    try {
+      final response = await _dio.post(
+        '/api/auth/verify',
+        data: {'code': code},
+      );
+
+      if (response.statusCode == 200) {
+       return LoginResponseModel.fromJson(response.data);
+      } else {
+        throw Exception("Verification failed");
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 400) {
+      throw Exception(e.response?.data['message'] ?? 'Invalid code');
+      }
+      throw Exception("Network error ${e.message}");
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
   Future<void> changePassword(PasswordRequestModel request) async {
     try {
       final response = await _dio.post(

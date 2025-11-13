@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 
+import '../../data/models/auth/login_response_model.dart';
 import '../entities/user.dart';
 
 abstract class AuthRepository {
@@ -13,6 +14,9 @@ abstract class AuthRepository {
   Future<Either<String, User>> facebookLogin({required String token});
 
   Future<Either<String, void>> logout();
+
+
+  Future<Either<String,User>> verifyEmail({required String code});
 
   Future<Either<String, User>> register({
     required String name,

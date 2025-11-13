@@ -6,14 +6,16 @@ import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 
 class PinputFields extends StatefulWidget {
-  const PinputFields({Key? key}) : super(key: key);
+  final TextEditingController controller;
+
+  const PinputFields({Key? key, required this.controller}) : super(key: key);
+
 
   @override
   State<PinputFields> createState() => _PinputFieldsState();
 }
 
 class _PinputFieldsState extends State<PinputFields> {
-  late final TextEditingController pinController;
   late final FocusNode focusNode;
   late final GlobalKey<FormState> formKey;
 
@@ -21,13 +23,11 @@ class _PinputFieldsState extends State<PinputFields> {
   void initState() {
     super.initState();
     formKey = GlobalKey<FormState>();
-    pinController = TextEditingController();
     focusNode = FocusNode();
   }
 
   @override
   void dispose() {
-    pinController.dispose();
     focusNode.dispose();
     super.dispose();
   }
@@ -62,7 +62,7 @@ class _PinputFieldsState extends State<PinputFields> {
               textDirection: TextDirection.ltr,
               child: Pinput(
                 enableInteractiveSelection: true,
-                controller: pinController,
+                controller: widget.controller,
                 focusNode: focusNode,
                 defaultPinTheme: defaultPinTheme,
                 separatorBuilder: (index) => const SizedBox(width: 8),
@@ -117,9 +117,9 @@ class _PinputFieldsState extends State<PinputFields> {
               onPressed: () {
                 focusNode.unfocus();
                 formKey.currentState!.validate();
-                if (pinController.text == '2222') {
-                  Navigator.pushNamed(context, AppRoutes.verifyEmailSuccess);
-                }
+                // if (pinController.text == '2222') {
+                //   Navigator.pushNamed(context, AppRoutes.verifyEmailSuccess);
+                // }
               },
               text: 'Submit',
             ),
