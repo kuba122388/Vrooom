@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:vrooom/domain/usecases/vehicle/get_rental_locations_usecase.dart';
-import 'package:vrooom/domain/usecases/vehicle/get_vehicle_equipment_usecase.dart';
-import 'package:vrooom/domain/usecases/booking/get_active_rentals_usecase.dart';
-import 'dart:typed_data';
+import 'package:provider/provider.dart';
+import 'package:vrooom/presentation/admin/active_rental/widgets/search_filter_module_active.dart';
 import 'package:vrooom/presentation/admin/rental_history/widgets/rental_history_car_entry.dart';
 
+import '../../../core/common/widgets/loading_widget.dart';
 import '../../../core/common/widgets/search_car_module/filter_state.dart';
-import '../../../core/common/widgets/search_car_module/search_filter_module.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
 import '../../../core/common/widgets/primary_button.dart';
 import '../../../core/configs/di/service_locator.dart';
 import '../../../core/configs/routes/app_routes.dart';
-import '../../../core/configs/theme/app_colors.dart';
 import '../../../core/configs/theme/app_text_styles.dart';
 import '../../../core/enums/rental_status.dart';
 import '../../../domain/entities/booking.dart';
-import '../../../domain/usecases/user/download_user_profile_picture_usecase.dart';
-import '../../../domain/usecases/user/get_user_id_by_email_usecase.dart';
 import '../widgets/admin_app_bar.dart';
 import '../widgets/admin_drawer.dart';
-
+import 'controllers/vehicle_list_active_controller.dart';
 
 class ActiveRentalsPage extends StatefulWidget {
   const ActiveRentalsPage({super.key});
@@ -29,71 +24,35 @@ class ActiveRentalsPage extends StatefulWidget {
 }
 
 class _ActiveRentalsPageState extends State<ActiveRentalsPage> {
-  final GetActiveRentalsUseCase _getActiveRentalsUseCase = sl();
-  final GetUserIdByEmailUseCase _getUserIdByEmailUseCase = sl();
-  final DownloadUserProfilePictureUseCase _downloadUserProfilePictureUseCase = sl();
-
-  final FilterState _filterState = FilterState(
-    getRentalLocationsUseCase: sl<GetRentalLocationsUseCase>(),
-    getVehicleEquipmentUseCase: sl<GetVehicleEquipmentUseCase>(),
-  );
-
-
-  bool _isLoading = false;
-  final List<Uint8List?> _customerImage = [];
-  List<Booking> _activeRentals = [];
-
   @override
-  void initState() {
-    super.initState();
-    _load();
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (_) => FilterState(
+                  getRentalLocationsUseCase: sl(),
+                  getVehicleEquipmentUseCase: sl(),
+                )),
+        ChangeNotifierProxyProvider<FilterState, VehicleListActiveController>(
+          create: (context) => VehicleListActiveController(
+            filterState: context.read<FilterState>(),
+          ),
+          update: (_, filterState, previous) => previous!..filterState.loadFilterOptions(),
+        ),
+      ],
+      child: const _ActiveRentalsView(),
+    );
   }
+}
 
-  Future<void> _load() async {
-    setState(() => _isLoading = true);
-
-    try {
-      final result = await _getActiveRentalsUseCase();
-      result.fold(
-            (error) {},
-            (vehicleList) {
-          _activeRentals = vehicleList;
-        },
-      );
-
-      _customerImage.clear();
-
-      final futures = _activeRentals.map((booking) async {
-        final idResult = await _getUserIdByEmailUseCase(email: booking.customerEmail!);
-        return await idResult.fold(
-              (error) async => null,
-              (userId) async {
-            final picResult = await _downloadUserProfilePictureUseCase(userId: userId as int);
-            return picResult.fold((error) => null, (success) => success);
-          },
-        );
-      }).toList();
-
-      final images = await Future.wait(futures);
-      _customerImage.addAll(images);
-
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  RentalStatus _getRentalStatus(Booking booking) {
-    if (booking.bookingStatus == "Pending" && booking.endDate!.isBefore(DateTime.now())) {
-      return RentalStatus.overdue;
-    } else if (booking.bookingStatus == "Pending") {
-      return RentalStatus.pending;
-    }
-
-    return RentalStatus.completed;
-  }
+class _ActiveRentalsView extends StatelessWidget {
+  const _ActiveRentalsView();
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<VehicleListActiveController>();
+    final filterState = context.watch<FilterState>();
+
     return Scaffold(
       appBar: const AdminAppBar(
         title: "Active Rentals",
@@ -105,8 +64,9 @@ class _ActiveRentalsPageState extends State<ActiveRentalsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SearchFilterModule(
-                filterState: _filterState,
+              SearchFilterModuleActive(
+                onSearchChanged: controller.onSearchChanged,
+                filterState: filterState,
               ),
               const SizedBox(height: AppSpacing.sm),
               const Text(
@@ -118,61 +78,91 @@ class _ActiveRentalsPageState extends State<ActiveRentalsPage> {
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
-
-              if (_isLoading) ... [
-                const SizedBox(height: AppSpacing.xl),
-                const Center(child: CircularProgressIndicator(color: AppColors.primary))
-              ] else ... [
-                ..._activeRentals.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final item = entry.value;
-
-                  return Column(
-                    children: [
-                      if (_getRentalStatus(item) == RentalStatus.pending) ... [
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Opacity(
-                              opacity: 0.5,
-                              child: RentalHistoryCarEntry(
-                                  customerPictureSize: 30,
-                                  vehicleImageSize: 100,
-                                  booking: item,
-                                  customerPicture: _customerImage[index]
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: PrimaryButton(
-                                text: "FINALIZE RENTAL",
-                                width: 180,
-                                textStyle: AppTextStyles.smallButton,
-                                backgroundOpacity: 0.75,
-                                onPressed: () => Navigator.pushNamed(context, AppRoutes.finalizeRental),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ] else ... [
-                        RentalHistoryCarEntry(
-                          customerPictureSize: 30,
-                          vehicleImageSize: 100,
-                          onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: {'booking' : item, 'title' : '${item.customerName} ${item.customerSurname}'}),
-                          booking: item,
-                          customerPicture: _customerImage[index]
-                        ),
-                      ],
-
-                      const SizedBox(height: AppSpacing.sm)
-                    ],
-                  );
-                })
-              ]
+              if (filterState.hasActiveFilters || controller.searchQuery.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                  child: Text(
+                    '${controller.filteredBookings.length} vehicles found',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              LoadingWidget(
+                isLoading: controller.isLoading,
+                errorMessage: controller.errorMessage,
+                futureResultObj: controller.filteredBookings,
+                emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
+                    ? "No history entries match your filters."
+                    : "No history data found.",
+                futureBuilder: () => _buildBookings(context, controller),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildBookings(BuildContext context, VehicleListActiveController controller) {
+    return Column(
+      children: controller.filteredBookings.asMap().entries.map((entry) {
+        final index = entry.key;
+        final item = entry.value;
+
+        return Column(
+          children: [
+            if (_getRentalStatus(item) == RentalStatus.pending) ...[
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Opacity(
+                    opacity: 0.5,
+                    child: RentalHistoryCarEntry(
+                        customerPictureSize: 30,
+                        vehicleImageSize: 100,
+                        booking: item,
+                        customerPicture: controller.customerImage[index]),
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: PrimaryButton(
+                      text: "FINALIZE RENTAL",
+                      width: 180,
+                      textStyle: AppTextStyles.smallButton,
+                      backgroundOpacity: 0.75,
+                      onPressed: () => Navigator.pushNamed(context, AppRoutes.finalizeRental),
+                    ),
+                  ),
+                ],
+              ),
+            ] else ...[
+              RentalHistoryCarEntry(
+                  customerPictureSize: 30,
+                  vehicleImageSize: 100,
+                  onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails,
+                          arguments: {
+                            'booking': item,
+                            'title': '${item.customerName} ${item.customerSurname}'
+                          }),
+                  booking: item,
+                  customerPicture: controller.customerImage[index]),
+            ],
+            const SizedBox(height: AppSpacing.sm)
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  RentalStatus _getRentalStatus(Booking booking) {
+    if (booking.bookingStatus == "Pending" && booking.endDate!.isBefore(DateTime.now())) {
+      return RentalStatus.overdue;
+    } else if (booking.bookingStatus == "Pending") {
+      return RentalStatus.pending;
+    }
+
+    return RentalStatus.completed;
   }
 }

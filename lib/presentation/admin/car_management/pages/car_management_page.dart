@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/common/widgets/primary_button.dart';
 import 'package:vrooom/core/common/widgets/search_car_module/search_filter_module.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
-import 'package:vrooom/domain/entities/vehicle.dart';
-import 'package:vrooom/domain/usecases/vehicle/get_all_vehicles_with_details_usecase.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_drawer.dart';
 import 'package:vrooom/presentation/admin/widgets/car_inventory_entry.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../core/common/widgets/loading_widget.dart';
 import '../../../../core/common/widgets/search_car_module/filter_state.dart';
 import '../../../../core/configs/di/service_locator.dart';
-import '../../../../domain/usecases/vehicle/get_rental_locations_usecase.dart';
-import '../../../../domain/usecases/vehicle/get_vehicle_equipment_usecase.dart';
-
-import '../../../../core/configs/theme/app_colors.dart';
+import '../controllers/vehicle_list_management_controller.dart';
 
 class CarManagementPage extends StatefulWidget {
   const CarManagementPage({super.key});
@@ -23,14 +21,120 @@ class CarManagementPage extends StatefulWidget {
 }
 
 class _CarManagementPageState extends State<CarManagementPage> {
-  final GetAllVehiclesWithDetailsUseCase _getAllVehiclesWithDetailsUseCase = sl();
-  final FilterState _filterState = FilterState(
-    getRentalLocationsUseCase: sl<GetRentalLocationsUseCase>(),
-    getVehicleEquipmentUseCase: sl<GetVehicleEquipmentUseCase>(),
-  );
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (_) => FilterState(
+                  getRentalLocationsUseCase: sl(),
+                  getVehicleEquipmentUseCase: sl(),
+                )),
+        ChangeNotifierProxyProvider<FilterState, VehicleListManagementController>(
+          create: (context) => VehicleListManagementController(
+            filterState: context.read<FilterState>(),
+          ),
+          update: (_, filterState, previous) => previous!..filterState.loadFilterOptions(),
+        ),
+      ],
+      child: const _CarManagementView(),
+    );
+  }
+}
 
-  bool _isLoading = false;
-  List<Vehicle> _vehicles = [];
+class _CarManagementView extends StatelessWidget {
+  const _CarManagementView();
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = context.watch<VehicleListManagementController>();
+    final filterState = context.watch<FilterState>();
+
+    return Scaffold(
+      appBar: const AdminAppBar(
+        title: "Manage cars",
+      ),
+      drawer: const AdminDrawer(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SearchFilterModule(
+                onSearchChanged: controller.onSearchChanged,
+                filterState: filterState,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              const Text(
+                "Car Inventory",
+                style: TextStyle(
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              if (filterState.hasActiveFilters || controller.searchQuery.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                  child: Text(
+                    '${controller.filteredVehicles.length} vehicles found',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              LoadingWidget(
+                isLoading: controller.isLoading,
+                errorMessage: controller.errorMessage,
+                futureResultObj: controller.filteredVehicles,
+                emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
+                    ? "No vehicles match your filters."
+                    : "No vehicles data found.",
+                futureBuilder: () => _buildVehicles(context, controller),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              PrimaryButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AppRoutes.addNewCar);
+                },
+                text: "Add New Car",
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVehicles(BuildContext context, VehicleListManagementController controller) {
+    return Column(
+      children: controller.filteredVehicles.map((vehicle) {
+        return Column(
+          children: [
+            CarInventoryEntry(
+              carImage: vehicle.vehicleImage,
+              carName: "${vehicle.make} ${vehicle.model}",
+              carStatus: _getCarStatus(vehicle.availabilityStatus),
+              fuel: vehicle.fuelType,
+              mileage: vehicle.mileage,
+              seats: vehicle.numberOfSeats,
+              transmission: vehicle.gearShift,
+              price: vehicle.pricePerDay,
+              onTap: () => Navigator.pushNamed(
+                context,
+                AppRoutes.carManagementDetail,
+                arguments: vehicle,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
+        );
+      }).toList(),
+    );
+  }
 
   CarStatus _getCarStatus(String status) {
     switch (status) {
@@ -43,101 +147,5 @@ class _CarManagementPageState extends State<CarManagementPage> {
       default:
         return CarStatus.archived;
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadVehicles();
-  }
-
-  Future<void> _loadVehicles() async {
-    setState(() => _isLoading = true);
-
-    try {
-      final result = await _getAllVehiclesWithDetailsUseCase();
-      result.fold(
-        (error) {},
-        (vehicleList) {
-          setState(() => _vehicles = vehicleList);
-        },
-      );
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const AdminAppBar(
-        title: "Manage cars",
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: SizedBox(
-        width: 180,
-        child: FloatingActionButton(
-          onPressed: () => Navigator.of(context).pushNamed(AppRoutes.addNewCar),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          child: const Text(
-            "Add New Car",
-            style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.5, fontSize: 20),
-          ),
-        ),
-      ),
-      drawer: const AdminDrawer(),
-      body: SingleChildScrollView(
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              SearchFilterModule(
-                filterState: _filterState,
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              const Text(
-                "Car Inventory",
-                style: TextStyle(
-                  fontSize: 22.0,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              if (_isLoading) ...[
-                const SizedBox(height: AppSpacing.xl),
-                const Center(child: CircularProgressIndicator(color: AppColors.primary)),
-              ] else ...[
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 60),
-                  child: Column(
-                    children: [
-                      ..._vehicles.map((entry) {
-                        return CarInventoryEntry(
-                          carImage: entry.vehicleImage,
-                          carName: "${entry.make} ${entry.model}",
-                          carStatus: _getCarStatus(entry.availabilityStatus),
-                          fuel: entry.fuelType,
-                          mileage: entry.mileage,
-                          seats: entry.numberOfSeats,
-                          transmission: entry.gearShift,
-                          price: entry.pricePerDay,
-                          onTap: () => Navigator.pushNamed(
-                            context,
-                            AppRoutes.carManagementDetail,
-                            arguments: entry,
-                          ),
-                        );
-                      }).expand(
-                        (widget) => [widget, const SizedBox(height: AppSpacing.sm)],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ])),
-      ),
-    );
   }
 }
