@@ -137,7 +137,7 @@ class SearchFilterModule extends StatelessWidget {
                       ],
                     ),
                   ),
-                  hintText: "Search cars, locations...",
+                  hintText: "Search cars...",
                   hintStyle: const TextStyle(letterSpacing: -0.5),
                 ),
               ),

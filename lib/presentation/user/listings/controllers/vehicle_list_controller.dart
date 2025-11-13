@@ -7,8 +7,7 @@ import '../../../../core/common/widgets/search_car_module/filter_state.dart';
 
 class VehicleListController extends ChangeNotifier {
   final GetAllVehiclesUseCase _getAllVehiclesUseCase = sl();
-  final GetAvailableVehiclesBetweenDatesUseCase
-  _getAvailableVehiclesBetweenDatesUseCase = sl();
+  final GetAvailableVehiclesBetweenDatesUseCase _getAvailableVehiclesBetweenDatesUseCase = sl();
 
   final FilterState filterState;
 
@@ -23,11 +22,15 @@ class VehicleListController extends ChangeNotifier {
   List<VehicleSummary> _filteredVehicles = [];
   DateTimeRange? _currentDateRangeLoaded;
   String _searchQuery = '';
+  bool _disposed = false;
 
   // Getters
   bool get isLoading => _isLoading;
+
   String? get errorMessage => _errorMessage;
+
   List<VehicleSummary> get filteredVehicles => _filteredVehicles;
+
   String get searchQuery => _searchQuery;
 
   // Public methods
@@ -39,12 +42,14 @@ class VehicleListController extends ChangeNotifier {
   Future<void> _loadVehicles() async {
     _setLoading(true);
     final result = await _getAllVehiclesUseCase();
+
+    if (_disposed) return;
     result.fold(
-          (error) {
+      (error) {
         _errorMessage = error;
         _setLoading(false);
       },
-          (vehicleList) {
+      (vehicleList) {
         _vehicles = vehicleList;
         _currentDateRangeLoaded = null;
         _errorMessage = null;
@@ -66,12 +71,15 @@ class VehicleListController extends ChangeNotifier {
     _setLoading(true);
 
     final result = await _getAvailableVehiclesBetweenDatesUseCase(range);
+
+    if (_disposed) return;
+
     result.fold(
-          (error) {
+      (error) {
         _errorMessage = error;
         _setLoading(false);
       },
-          (vehicleList) {
+      (vehicleList) {
         _vehicles = vehicleList;
         _currentDateRangeLoaded = range;
         _errorMessage = null;
@@ -106,8 +114,7 @@ class VehicleListController extends ChangeNotifier {
 
       // Car type filter
       if (filterState.selectedCarType != null &&
-          vehicle.type.toLowerCase() !=
-              filterState.selectedCarType!.toLowerCase()) {
+          vehicle.type.toLowerCase() != filterState.selectedCarType!.toLowerCase()) {
         return false;
       }
 
@@ -119,11 +126,8 @@ class VehicleListController extends ChangeNotifier {
 
       // Equipment
       if (filterState.selectedEquipment.isNotEmpty) {
-        final vehicleEquipment = vehicle.equipmentList
-            .map((entry) => entry.equipmentName)
-            .toList();
-        if (!filterState.selectedEquipment
-            .every(vehicleEquipment.contains)) return false;
+        final vehicleEquipment = vehicle.equipmentList.map((entry) => entry.equipmentName).toList();
+        if (!filterState.selectedEquipment.every(vehicleEquipment.contains)) return false;
       }
 
       return true;
@@ -134,12 +138,14 @@ class VehicleListController extends ChangeNotifier {
   }
 
   void _setLoading(bool value) {
+    if (_disposed) return;
     _isLoading = value;
     notifyListeners();
   }
 
   @override
   void dispose() {
+    _disposed = true;
     filterState.removeListener(_onFilterChanged);
     super.dispose();
   }
