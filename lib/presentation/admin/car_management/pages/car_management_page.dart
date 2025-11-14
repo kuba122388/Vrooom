@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/common/widgets/loading_widget.dart';
 import '../../../../core/common/widgets/search_car_module/filter_state.dart';
 import '../../../../core/configs/di/service_locator.dart';
+import '../../../../core/enums/car_status.dart';
 import '../controllers/vehicle_list_management_controller.dart';
 import '../widgets/search_filter_module_future.dart';
 
@@ -117,7 +118,7 @@ class _CarManagementView extends StatelessWidget {
             CarInventoryEntry(
               carImage: vehicle.vehicleImage,
               carName: "${vehicle.make} ${vehicle.model}",
-              carStatus: _getCarStatus(vehicle.availabilityStatus),
+              carStatus: CarStatus.fromString(vehicle.availabilityStatus),
               fuel: vehicle.fuelType,
               mileage: vehicle.mileage,
               seats: vehicle.numberOfSeats,
@@ -134,18 +135,5 @@ class _CarManagementView extends StatelessWidget {
         );
       }).toList(),
     );
-  }
-
-  CarStatus _getCarStatus(String status) {
-    switch (status) {
-      case "Available":
-        return CarStatus.available;
-      case "Not Available":
-        return CarStatus.unavailable;
-      case "Maintenance":
-        return CarStatus.maintenance;
-      default:
-        return CarStatus.archived;
-    }
   }
 }

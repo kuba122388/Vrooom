@@ -6,8 +6,7 @@ import 'package:vrooom/presentation/admin/widgets/car_card.dart';
 import '../../../core/common/widgets/app_svg.dart';
 import '../../../core/configs/assets/app_vectors.dart';
 import '../../../core/configs/theme/app_spacing.dart';
-
-enum CarStatus { available, maintenance, booked, rented, unavailable, archived }
+import '../../../core/enums/car_status.dart';
 
 class CarInventoryEntry extends StatelessWidget {
   final String carImage;

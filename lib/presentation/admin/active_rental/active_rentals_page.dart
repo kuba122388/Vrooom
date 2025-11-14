@@ -113,7 +113,7 @@ class _ActiveRentalsView extends StatelessWidget {
 
         return Column(
           children: [
-            if (_getRentalStatus(item) == RentalStatus.pending) ...[
+            if (RentalStatus.getRentalStatus(item.bookingStatus as String) == RentalStatus.pending) ...[
               Stack(
                 alignment: Alignment.center,
                 children: [
@@ -154,15 +154,5 @@ class _ActiveRentalsView extends StatelessWidget {
         );
       }).toList(),
     );
-  }
-
-  RentalStatus _getRentalStatus(Booking booking) {
-    if (booking.bookingStatus == "Pending" && booking.endDate!.isBefore(DateTime.now())) {
-      return RentalStatus.overdue;
-    } else if (booking.bookingStatus == "Pending") {
-      return RentalStatus.pending;
-    }
-
-    return RentalStatus.completed;
   }
 }

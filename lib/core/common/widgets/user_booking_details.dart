@@ -23,20 +23,9 @@ class UserBookingDetails extends StatefulWidget {
 }
 
 class _UserBookingDetailsState extends State<UserBookingDetails> {
-  RentalStatus _getRentalStatus(Booking booking) {
-    switch (booking.bookingStatus) {
-      case "Pending":
-        return RentalStatus.pending;
-      case "Cancelled":
-        return RentalStatus.cancelled;
-      default:
-        return RentalStatus.completed;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final status = _getRentalStatus(widget.booking);
+    final status = RentalStatus.getRentalStatus(widget.booking.bookingStatus as String);
 
     List<InfoRow> data = [
       InfoRow(title: "Pickup Location", icon: AppVectors.mapPin, text: widget.booking.pickupAddress?.split(", ").last as String),

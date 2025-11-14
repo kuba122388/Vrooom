@@ -104,7 +104,7 @@ class _FutureReservationView extends StatelessWidget {
                 pickupDate:
                     DateTime(item.startDate!.year, item.startDate!.month, item.startDate!.day),
                 returnDate: DateTime(item.endDate!.year, item.endDate!.month, item.endDate!.day),
-                rentalStatus: RentalStatus.pending,
+                rentalStatus: RentalStatus.getRentalStatus(item.bookingStatus as String),
                 carImage: item.vehicleImage as String,
                 model: "${item.vehicleMake} ${item.vehicleModel}",
                 productionYear: item.vehicleProductionYear as int),

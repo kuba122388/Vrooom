@@ -82,17 +82,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  RentalStatus _getRentalStatus(Booking booking) {
-    switch (booking.bookingStatus) {
-      case "Pending":
-        return RentalStatus.pending;
-      case "Cancelled":
-        return RentalStatus.cancelled;
-      default:
-        return RentalStatus.completed;
-    }
-  }
-
   void _showError(String message) {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -290,7 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: _bookings.isNotEmpty
                 ? Column(
                   children: _bookings
-                      .map((booking) => CarStatusRow(carName: "${booking.vehicleMake} ${booking.vehicleModel}", status: _getRentalStatus(booking)))
+                      .map((booking) => CarStatusRow(carName: "${booking.vehicleMake} ${booking.vehicleModel}", status: RentalStatus.getRentalStatus(booking.bookingStatus as String)))
                       .toList(),
                 )
                 : const Center(
