@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/common/widgets/animated_button_wrapper.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/presentation/admin/widgets/car_card.dart';
 
@@ -68,8 +69,9 @@ class CarInventoryEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return AnimatedButtonWrapper(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(10.0),
       child: CarCard(
         carName: carName,
         carImage: carImage,
