@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:vrooom/core/common/widgets/animated_button_wrapper.dart';
 import 'dart:typed_data';
 
 import '../../../../core/configs/assets/app_images.dart';
@@ -63,7 +64,8 @@ class RentalHistoryCarEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     final rentalStatus = _getRentalStatus(booking);
 
-    return GestureDetector(
+    return AnimatedButtonWrapper(
+      borderRadius: BorderRadius.circular(10.0),
       onTap: onTap,
       child: CarCard(
         carImageSize: vehicleImageSize,
