@@ -49,20 +49,9 @@ class RentalHistoryCarEntry extends StatelessWidget {
     );
   }
 
-  RentalStatus _getRentalStatus(Booking booking) {
-    switch (booking.bookingStatus) {
-      case "Pending":
-        return RentalStatus.pending;
-      case "Cancelled":
-        return RentalStatus.cancelled;
-      default:
-        return RentalStatus.completed;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final rentalStatus = _getRentalStatus(booking);
+    final rentalStatus = RentalStatus.getRentalStatus(booking.bookingStatus as String);
 
     return AnimatedButtonWrapper(
       borderRadius: BorderRadius.circular(10.0),
