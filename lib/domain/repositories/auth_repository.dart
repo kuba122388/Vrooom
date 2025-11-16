@@ -34,4 +34,6 @@ abstract class AuthRepository {
 
   Future<Either<String, void>> changePassword(
       {required String oldPassword, required String newPassword});
+
+  Future<Either<String, String>> resendVerificationCode({required String email});
 }

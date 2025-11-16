@@ -205,4 +205,28 @@ class AuthApiService {
 
     return errors;
   }
+
+
+  Future<String> resendVerificationCode(String email) async {
+    try {
+      final response = await _dio.post(
+        '/api/auth/resend-code',
+        data: {'email': email},
+      );
+
+      if (response.statusCode == 200) {
+        return response.data['message'] ?? "New verification code sent.";
+      } else {
+        throw Exception(response.data['message'] ?? "Failed to resend code.");
+      }
+    } on DioException catch (e) {
+      if (e.response?.data != null && e.response?.data['message'] != null) {
+        throw Exception(e.response!.data['message']);
+      }
+      throw Exception("Network error ${e.message}");
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
 }

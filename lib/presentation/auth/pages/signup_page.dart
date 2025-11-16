@@ -90,6 +90,10 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future<void> _handleRegister() async {
+    if(_isLoading){
+      return;
+    }
+    setState(() => _isLoading = true);
     final validationError = _validateInputs();
     if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
