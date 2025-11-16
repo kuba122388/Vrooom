@@ -70,6 +70,17 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<String, String>> resetPassword({required String email}) async {
+    try {
+      final result = await authApiService.resetPassword(email);
+
+      return Right(result);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
   Future<Either<String,User>> verifyEmail({required String code})async {
     try {
       final response = await authApiService.verifyEmail(code);
