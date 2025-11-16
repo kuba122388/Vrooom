@@ -133,4 +133,14 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(e.toString());
     }
   }
+
+  @override
+  Future<Either<String, String>> resendVerificationCode({required String email}) async {
+    try {
+      final message = await authApiService.resendVerificationCode(email);
+      return Right(message);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
 }
