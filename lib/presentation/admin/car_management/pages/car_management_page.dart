@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
@@ -10,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/common/widgets/loading_widget.dart';
 import '../../../../core/common/widgets/search_car_module/filter_state.dart';
 import '../../../../core/configs/di/service_locator.dart';
+import '../../../../core/configs/theme/app_colors.dart';
 import '../../../../core/enums/car_status.dart';
 import '../controllers/vehicle_list_management_controller.dart';
 import '../widgets/search_filter_module_future.dart';
@@ -96,17 +98,21 @@ class _CarManagementView extends StatelessWidget {
                     : "No vehicles data found.",
                 futureBuilder: () => _buildVehicles(context, controller),
               ),
-              const SizedBox(height: AppSpacing.md),
-              PrimaryButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(AppRoutes.addNewCar);
-                },
-                text: "Add New Car",
-              ),
+              const SizedBox(height: 80),
             ],
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(onPressed:  (){
+          Navigator.of(context).pushNamed(AppRoutes.addNewCar);
+        },
+        backgroundColor: AppColors.primary,label: const Text("Add New Car",style: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        color:Colors.white,
+      ),),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
