@@ -103,14 +103,17 @@ class _CarManagementView extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(onPressed:  (){
-          Navigator.of(context).pushNamed(AppRoutes.addNewCar);
-        },
-        backgroundColor: AppColors.primary,label: const Text("Add New Car",style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-        color:Colors.white,
-      ),),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 10.0),
+        child: FloatingActionButton.extended(onPressed:  (){
+            Navigator.of(context).pushNamed(AppRoutes.addNewCar);
+          },
+          backgroundColor: AppColors.primary,label: const Text("Add New Car",style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color:Colors.white,
+        ),),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
