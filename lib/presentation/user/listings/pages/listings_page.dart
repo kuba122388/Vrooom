@@ -71,7 +71,8 @@ class _ListingsView extends StatelessWidget {
                 emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
                     ? "No vehicles match your filters."
                     : "No vehicles data found.",
-                futureBuilder: () => _buildVehicles(context, controller),
+                futureBuilder: () =>
+                    _buildVehicles(context, controller, filterState.selectedDateRange),
               ),
               const SizedBox(width: AppSpacing.sm),
             ],
@@ -81,7 +82,8 @@ class _ListingsView extends StatelessWidget {
     );
   }
 
-  Widget _buildVehicles(BuildContext context, VehicleListController controller) {
+  Widget _buildVehicles(
+      BuildContext context, VehicleListController controller, DateTimeRange? dateTimeRange) {
     return Column(
       children: controller.filteredVehicles.map((vehicle) {
         return Column(
@@ -96,7 +98,7 @@ class _ListingsView extends StatelessWidget {
                 Navigator.pushNamed(
                   context,
                   AppRoutes.carDetails,
-                  arguments: {"vehicleId": vehicle.vehicleID},
+                  arguments: {"vehicleId": vehicle.vehicleID, "dateTimeRange": dateTimeRange},
                 );
               },
             ),
