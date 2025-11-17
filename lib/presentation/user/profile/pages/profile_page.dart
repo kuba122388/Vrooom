@@ -82,17 +82,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  RentalStatus _getRentalStatus(Booking booking) {
-    switch (booking.bookingStatus) {
-      case "Pending":
-        return RentalStatus.pending;
-      case "Cancelled":
-        return RentalStatus.cancelled;
-      default:
-        return RentalStatus.completed;
-    }
-  }
-
   void _showError(String message) {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -210,135 +199,140 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-      ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-      : SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            InfoSectionCard(
-              child: Row(
+        ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+        : SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
                 children: [
-                  SizedBox(
-                    height: 60.0,
-                    width: 60.0,
-                    child: Stack(
+                  InfoSectionCard(
+                    child: Row(
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(30.0),
-                          child: _profilePic == null
-                            ? Image.asset(
-                                AppImages.person,
-                                fit: BoxFit.cover,
-                                width: 60,
-                                height: 60,
-                              )
-                            : Image.memory(
-                                _profilePic!,
-                                fit: BoxFit.cover,
-                                width: 60,
-                                height: 60,
-                              )
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: InkWell(
-                            onTap: _updateProfilePicture,
-                            child: Container(
-                              padding: const EdgeInsets.all(4.0),
-                              decoration: const BoxDecoration(
-                                color: AppColors.primary,
-                                shape: BoxShape.circle,
+                        SizedBox(
+                          height: 60.0,
+                          width: 60.0,
+                          child: Stack(
+                            children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  child: _profilePic == null
+                                      ? Image.asset(
+                                          AppImages.person,
+                                          fit: BoxFit.cover,
+                                          width: 60,
+                                          height: 60,
+                                        )
+                                      : Image.memory(
+                                          _profilePic!,
+                                          fit: BoxFit.cover,
+                                          width: 60,
+                                          height: 60,
+                                        )),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: InkWell(
+                                  onTap: _updateProfilePicture,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4.0),
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primary,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
                               ),
-                              child: const Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                                size: 16,
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "${_user?.name} ${_user?.surname}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20.0,
                               ),
                             ),
-                          ),
+                            Text(
+                              _user!.email,
+                              style: TextStyle(
+                                color: AppColors.text.neutral400,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${_user?.name} ${_user?.surname}",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20.0,
-                        ),
-                      ),
-                      Text(
-                        _user!.email,
-                        style: TextStyle(
-                          color: AppColors.text.neutral400,
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: AppSpacing.md),
+                  InfoSectionCard(
+                    title: "Rental History",
+                    child: _bookings.isNotEmpty
+                        ? Column(
+                            children: _bookings
+                                .map(
+                                  (booking) => CarStatusRow(
+                                    carName: "${booking.vehicleMake} ${booking.vehicleModel}",
+                                    status: RentalStatus.fromString(booking.bookingStatus!),
+                                  ),
+                                )
+                                .toList(),
+                          )
+                        : const Center(
+                            child: Text(
+                              "You don't have rental history",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14.0,
+                              ),
+                            ),
+                          ),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            InfoSectionCard(
-              title: "Rental History",
-              child: _bookings.isNotEmpty
-                ? Column(
-                  children: _bookings
-                      .map((booking) => CarStatusRow(carName: "${booking.vehicleMake} ${booking.vehicleModel}", status: _getRentalStatus(booking)))
-                      .toList(),
-                )
-                : const Center(
-                  child: Text(
-                    "You don't have rental history",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.0,
+                  const SizedBox(height: AppSpacing.md),
+                  InfoSectionCard(
+                    title: "Settings",
+                    child: Column(
+                      children: [
+                        SettingsTile(
+                          icon: const AppSvg(asset: AppVectors.settings),
+                          label: "Edit profile details",
+                          onTap: () async {
+                            final updated =
+                                await Navigator.pushNamed(context, AppRoutes.editProfileDetails);
+                            if (updated == true) {
+                              _load();
+                            }
+                          },
+                        ),
+                        SettingsTile(
+                          icon: const AppSvg(asset: AppVectors.privacyPolicy),
+                          label: "Privacy Policy",
+                          onTap: () => Navigator.pushNamed(context, AppRoutes.privacyPolicy),
+                        ),
+                        SettingsTile(
+                          icon: const AppSvg(asset: AppVectors.contact),
+                          label: "Contact",
+                          onTap: () => Navigator.pushNamed(context, AppRoutes.contact),
+                        ),
+                      ],
                     ),
-                  )
-                ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            InfoSectionCard(
-              title: "Settings",
-              child: Column(
-                children: [
-                  SettingsTile(
-                    icon: const AppSvg(asset: AppVectors.settings),
-                    label: "Edit profile details",
-                    onTap: () async {
-                      final updated = await Navigator.pushNamed(context, AppRoutes.editProfileDetails);
-                      if (updated == true) {
-                        _load();
-                      }
-                    },
                   ),
-                  SettingsTile(
-                    icon: const AppSvg(asset: AppVectors.privacyPolicy),
-                    label: "Privacy Policy",
-                    onTap: () => Navigator.pushNamed(context, AppRoutes.privacyPolicy),
-                  ),
-                  SettingsTile(
-                    icon: const AppSvg(asset: AppVectors.contact),
-                    label: "Contact",
-                    onTap: () => Navigator.pushNamed(context, AppRoutes.contact),
+                  const SizedBox(height: AppSpacing.md),
+                  PrimaryButton(
+                    text: "Log Out",
+                    onPressed: () => _showLogoutConfirmation(),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
-            PrimaryButton(
-              text: "Log Out",
-              onPressed: () => _showLogoutConfirmation(),
-            ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 }

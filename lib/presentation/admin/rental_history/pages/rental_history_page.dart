@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
-import 'dart:typed_data';
 
-import 'package:vrooom/domain/entities/booking.dart';
 import 'package:vrooom/presentation/admin/rental_history/widgets/rental_history_car_entry.dart';
 import 'package:provider/provider.dart';
 
@@ -11,7 +9,6 @@ import '../../../../core/common/widgets/search_car_module/filter_state.dart';
 import '../../../../core/configs/di/service_locator.dart';
 
 import '../../../../core/configs/theme/app_spacing.dart';
-import '../../../../core/enums/rental_status.dart';
 
 import '../../widgets/admin_app_bar.dart';
 import '../../widgets/admin_drawer.dart';
@@ -127,16 +124,5 @@ class _RentalHistoryView extends StatelessWidget {
         );
       }).toList(),
     );
-  }
-
-  RentalStatus _getRentalStatus(Booking booking) {
-    switch (booking.bookingStatus) {
-      case "Pending":
-        return RentalStatus.pending;
-      case "Cancelled":
-        return RentalStatus.cancelled;
-      default:
-        return RentalStatus.completed;
-    }
   }
 }

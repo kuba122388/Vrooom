@@ -58,4 +58,31 @@ enum RentalStatus {
         return "Overdue";
     }
   }
+
+  static RentalStatus fromString(String status) {
+    final normalizedStatus = status.toLowerCase().trim();
+
+    switch (normalizedStatus) {
+      case "active":
+        return RentalStatus.active;
+      case "pending":
+        return RentalStatus.pending;
+      case "completed":
+        return RentalStatus.completed;
+      case "cancelled":
+        return RentalStatus.cancelled;
+      case "confirmed":
+        return RentalStatus.confirmed;
+      case "finished":
+        return RentalStatus.finished;
+      case "overdue":
+        return RentalStatus.overdue;
+      case "in progress":
+        return RentalStatus.inProgress;
+      case "penalty":
+        return RentalStatus.penalty;
+      default:
+        return RentalStatus.pending;
+    }
+  }
 }
