@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:vrooom/data/models/boooking/booked_date_model.dart';
 import 'package:vrooom/data/models/boooking/booking_model.dart';
+import 'package:vrooom/data/models/boooking/booking_request_model.dart';
+import 'package:vrooom/domain/entities/booked_date.dart';
 import 'package:vrooom/domain/entities/booking.dart';
 import '../../models/vehicle/insurance_model.dart';
 import '../auth/auth_storage.dart';
@@ -125,5 +128,127 @@ class BookingApiService {
       throw Exception("Unexpected error: $e");
     }
   }
-}
 
+  Future<List<BookedDate>> getBookedDatesForVehicle(int vehicleId) async {
+    try {
+      final response = await _dio.get("$_bookingApi/vehicle/$vehicleId/booked-dates");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data is List) {
+          return data.map((json) => BookedDateModel.fromJson(json)).toList();
+        }
+
+        throw Exception("Invalid response format - expected a list. ");
+      } else {
+        throw Exception("There was a problem with fetching data.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+
+  Future<String> createBooking(BookingRequestModel booking) async {
+    try {
+      final response = await _dio.post("$_bookingApi/confirm", data: booking.toJson());
+
+      if (response.statusCode == 200) {
+        return "Reservation completed!";
+      } else {
+        throw Exception("There was a problem with fetching data.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+
+  Future<bool> cancelBooking(int bookingId) async {
+    try {
+      final response =
+          await _dio.post("$_bookingApi/cancel", queryParameters: {"bookingId": bookingId});
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception("There was a problem with fetching data.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+
+  Future<bool> acceptBooking(int bookingId) async {
+    try {
+      final response =
+          await _dio.post("$_bookingApi/accept", queryParameters: {"bookingId": bookingId});
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception("There was a problem with fetching data.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+
+  Future<bool> finishBooking(int bookingId) async {
+    try {
+      final response =
+          await _dio.post("$_bookingApi/finish", queryParameters: {"bookingId": bookingId});
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception("There was a problem with fetching data.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+
+  Future<bool> finalizeBooking(BookingModel booking, int endMileage) async {
+    try {
+      final response = await _dio.post("$_bookingApi/finalize",
+          data: booking.toJson(), queryParameters: {"endMileage": endMileage});
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception("There was a problem with fetching data.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+
+  Future<bool> payPenalty(int bookingId) async {
+    try {
+      final response =
+          await _dio.post("$_bookingApi/penalty", queryParameters: {"bookingId": bookingId});
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception("There was a problem with fetching data.");
+      }
+    } on DioException catch (e) {
+      throw Exception("Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+}

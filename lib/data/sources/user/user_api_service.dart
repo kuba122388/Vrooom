@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:vrooom/data/models/user_model.dart';
 import 'package:vrooom/data/sources/auth/auth_storage.dart';
 import 'package:vrooom/domain/entities/booking.dart';
@@ -54,7 +53,7 @@ class UserApiService {
 
   Future<User> getCurrentUserInformation() async {
     try {
-      final userId = await _authStorage .getUserId();
+      final userId = await _authStorage.getUserId();
       if (userId == null) {
         throw Exception("No userID in storage");
       }
@@ -92,10 +91,8 @@ class UserApiService {
 
   Future<void> uploadUserProfilePicture(int userId, File imageFile) async {
     try {
-      FormData formData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(
-            imageFile.path, filename: 'avatar.jpg')
-      });
+      FormData formData = FormData.fromMap(
+          {"file": await MultipartFile.fromFile(imageFile.path, filename: 'avatar.jpg')});
 
       await _dio.post(
         "$_userApi/$userId/avatar",
@@ -126,7 +123,7 @@ class UserApiService {
 
   Future<List<Booking>> getUserActiveRentals() async {
     try {
-      final userId = await _authStorage .getUserId();
+      final userId = await _authStorage.getUserId();
       if (userId == null) {
         throw Exception("No userID in storage");
       }
@@ -171,7 +168,7 @@ class UserApiService {
 
   Future<List<Booking>> getUserUpcomingRentals() async {
     try {
-      final userId = await _authStorage .getUserId();
+      final userId = await _authStorage.getUserId();
       if (userId == null) {
         throw Exception("No userID in storage");
       }
@@ -216,7 +213,7 @@ class UserApiService {
 
   Future<List<Booking>> getUserRentalHistory() async {
     try {
-      final userId = await _authStorage .getUserId();
+      final userId = await _authStorage.getUserId();
       if (userId == null) {
         throw Exception("No userID in storage");
       }
@@ -261,10 +258,7 @@ class UserApiService {
 
   Future<int?> getUserIdByEmail(String email) async {
     try {
-      final response = await _dio.get(
-        "$_userApi/user/id",
-        queryParameters: {"email": email}
-      );
+      final response = await _dio.get("$_userApi/user/id", queryParameters: {"email": email});
 
       if (response.statusCode == 200) {
         return int.parse(response.data.toString());
