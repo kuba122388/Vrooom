@@ -11,7 +11,6 @@ import '../../../core/configs/di/service_locator.dart';
 import '../../../core/configs/routes/app_routes.dart';
 import '../../../core/configs/theme/app_text_styles.dart';
 import '../../../core/enums/rental_status.dart';
-import '../../../domain/entities/booking.dart';
 import '../widgets/admin_app_bar.dart';
 import '../widgets/admin_drawer.dart';
 import 'controllers/vehicle_list_active_controller.dart';
@@ -113,7 +112,7 @@ class _ActiveRentalsView extends StatelessWidget {
 
         return Column(
           children: [
-            if (_getRentalStatus(item) == RentalStatus.pending) ...[
+            if (RentalStatus.fromString(item.bookingStatus!) == RentalStatus.finished) ...[
               Stack(
                 alignment: Alignment.center,
                 children: [
@@ -132,7 +131,12 @@ class _ActiveRentalsView extends StatelessWidget {
                       width: 180,
                       textStyle: AppTextStyles.smallButton,
                       backgroundOpacity: 0.75,
-                      onPressed: () => Navigator.pushNamed(context, AppRoutes.finalizeRental),
+                      onPressed: () => Navigator.pushNamed(context, AppRoutes.finalizeRental,
+                          arguments: {"booking": item}).then((value) {
+                        if (value == 'refresh') {
+                          controller.refreshBookings();
+                        }
+                      }),
                     ),
                   ),
                 ],
@@ -154,15 +158,5 @@ class _ActiveRentalsView extends StatelessWidget {
         );
       }).toList(),
     );
-  }
-
-  RentalStatus _getRentalStatus(Booking booking) {
-    if (booking.bookingStatus == "Pending" && booking.endDate!.isBefore(DateTime.now())) {
-      return RentalStatus.overdue;
-    } else if (booking.bookingStatus == "Pending") {
-      return RentalStatus.pending;
-    }
-
-    return RentalStatus.completed;
   }
 }

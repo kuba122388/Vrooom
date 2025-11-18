@@ -97,17 +97,20 @@ class _FutureReservationView extends StatelessWidget {
         return Column(
           children: [
             RentalInformationEntry(
-                profileImage: controller.customerImage[index],
-                firstName: item.customerName as String,
-                surname: item.customerSurname as String,
-                reservationID: item.bookingID.toString(),
-                pickupDate:
-                    DateTime(item.startDate!.year, item.startDate!.month, item.startDate!.day),
-                returnDate: DateTime(item.endDate!.year, item.endDate!.month, item.endDate!.day),
-                rentalStatus: RentalStatus.pending,
-                carImage: item.vehicleImage as String,
-                model: "${item.vehicleMake} ${item.vehicleModel}",
-                productionYear: item.vehicleProductionYear as int),
+              profileImage: controller.customerImage[index],
+              firstName: item.customerName as String,
+              surname: item.customerSurname as String,
+              reservationID: item.bookingID!,
+              pickupDate:
+                  DateTime(item.startDate!.year, item.startDate!.month, item.startDate!.day),
+              returnDate: DateTime(item.endDate!.year, item.endDate!.month, item.endDate!.day),
+              rentalStatus: RentalStatus.fromString(item.bookingStatus!),
+              carImage: item.vehicleImage as String,
+              model: "${item.vehicleMake} ${item.vehicleModel}",
+              productionYear: item.vehicleProductionYear as int,
+              phoneNumber: item.customerPhoneNumber!,
+              onBookingChanged: () => controller.refreshBookings(),
+            ),
             const SizedBox(height: AppSpacing.sm)
           ],
         );

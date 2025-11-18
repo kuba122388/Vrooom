@@ -49,15 +49,13 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
     final result = await _getAllDiscountCodesUsecase();
 
     result.fold(
-          (error) {
-        print("=== ERROR OCCURED === $error");
+      (error) {
         setState(() {
           _errorMessage = error;
           _isLoading = false;
         });
       },
-          (codesList) {
-        print("=== DISCOUNT CODES LOADED ===");
+      (codesList) {
         setState(() {
           _allCodesList = codesList;
           _filterCodes();
@@ -122,15 +120,15 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                     },
                     style: _activeCode
                         ? ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0))
+                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0))
                         : ElevatedButton.styleFrom(
-                        foregroundColor: AppColors.text.neutral400,
-                        backgroundColor: AppColors.container.neutral900,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)),
+                            foregroundColor: AppColors.text.neutral400,
+                            backgroundColor: AppColors.container.neutral900,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)),
                     child: const Text(
                       "Active Codes",
                       style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.5),
@@ -148,15 +146,15 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                     },
                     style: !_activeCode
                         ? ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0))
+                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0))
                         : ElevatedButton.styleFrom(
-                        foregroundColor: AppColors.text.neutral400,
-                        backgroundColor: AppColors.container.neutral900,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)),
+                            foregroundColor: AppColors.text.neutral400,
+                            backgroundColor: AppColors.container.neutral900,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)),
                     child: const Text(
                       "Expired Codes",
                       style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.5),
@@ -216,14 +214,18 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                 final result = await _deleteDiscountCodeUseCase(code.id!);
                 Navigator.pop(context);
                 result.fold(
-                      (error) {
+                  (error) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Error deleting code: $error"), backgroundColor: Colors.red),
+                      SnackBar(
+                          content: Text("Error deleting code: $error"),
+                          backgroundColor: Colors.red),
                     );
                   },
-                      (_) {
+                  (_) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Code deleted successfully!"), backgroundColor: Colors.green),
+                      const SnackBar(
+                          content: Text("Code deleted successfully!"),
+                          backgroundColor: Colors.green),
                     );
                     _loadDiscountCodes();
                   },
@@ -351,43 +353,45 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
                         onPressed: isDialogLoading
                             ? null
                             : () async {
-                          if (formKey.currentState!.validate()) {
-                            setDialogState(() {
-                              isDialogLoading = true;
-                              dialogErrorMessage = null;
-                            });
+                                if (formKey.currentState!.validate()) {
+                                  setDialogState(() {
+                                    isDialogLoading = true;
+                                    dialogErrorMessage = null;
+                                  });
 
-                            final finalCode = DiscountCode(
-                              id: codeToEdit?.id,
-                              code: codeController.text,
-                              value: double.tryParse(valueController.text) ?? 0.0,
-                              percentage: isPercentage,
-                              active: isActive,
-                            );
+                                  final finalCode = DiscountCode(
+                                    id: codeToEdit?.id,
+                                    code: codeController.text,
+                                    value: double.tryParse(valueController.text) ?? 0.0,
+                                    percentage: isPercentage,
+                                    active: isActive,
+                                  );
 
-                            final result = isEditing
-                                ? await _updateDiscountCodeUseCase(finalCode)
-                                : await _addDiscountCodeUseCase(finalCode);
+                                  final result = isEditing
+                                      ? await _updateDiscountCodeUseCase(finalCode)
+                                      : await _addDiscountCodeUseCase(finalCode);
 
-                            result.fold(
-                                  (error) {
-                                setDialogState(() {
-                                  isDialogLoading = false;
-                                  dialogErrorMessage = error;
-                                });
+                                  result.fold(
+                                    (error) {
+                                      setDialogState(() {
+                                        isDialogLoading = false;
+                                        dialogErrorMessage = error;
+                                      });
+                                    },
+                                    (success) {
+                                      Navigator.pop(context);
+                                      _loadDiscountCodes();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(isEditing
+                                                ? "Code updated successfully!"
+                                                : "Code added successfully!"),
+                                            backgroundColor: Colors.green),
+                                      );
+                                    },
+                                  );
+                                }
                               },
-                                  (success) {
-                                Navigator.pop(context);
-                                _loadDiscountCodes();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(isEditing ? "Code updated successfully!" : "Code added successfully!"),
-                                      backgroundColor: Colors.green),
-                                );
-                              },
-                            );
-                          }
-                        },
                       ),
                     ),
                   ],

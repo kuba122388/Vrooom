@@ -50,6 +50,40 @@ class Booking {
     required this.insuranceType,
     required this.insuranceCost,
     required this.insuranceDescription,
-    required this.vehicleID
+    required this.vehicleID,
   });
+
+  Booking copyWith({
+    double? penalty,
+    String? notes,
+    DateTime? actualReturnDate,
+  }) {
+    return Booking(
+      bookingID: bookingID,
+      customerName: customerName,
+      vehicleMake: vehicleMake,
+      vehicleModel: vehicleModel,
+      vehicleProductionYear: vehicleProductionYear,
+      startDate: startDate,
+      endDate: endDate,
+      pickupAddress: pickupAddress,
+      dropOffAddress: dropOffAddress,
+      totalAmount: totalAmount,
+      vehicleImage: vehicleImage,
+      customerSurname: customerSurname,
+      customerEmail: customerEmail,
+      customerPhoneNumber: customerPhoneNumber,
+      actualReturnDate: actualReturnDate ?? this.actualReturnDate,
+      penalty: penalty ?? this.penalty,
+      notes: notes ?? this.notes,
+      bookingStatus: bookingStatus,
+      verified: verified,
+      pricePerDay: pricePerDay,
+      deposit: deposit,
+      insuranceType: insuranceType,
+      insuranceCost: insuranceCost,
+      insuranceDescription: insuranceDescription,
+      vehicleID: vehicleID,
+    );
+  }
 }

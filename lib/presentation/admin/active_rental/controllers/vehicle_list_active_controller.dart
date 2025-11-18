@@ -3,14 +3,14 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:vrooom/core/configs/di/service_locator.dart';
 import 'package:vrooom/domain/entities/booking.dart';
+import 'package:vrooom/domain/usecases/booking/get_active_rentals_usecase.dart';
 
 import '../../../../core/common/widgets/search_car_module/filter_state.dart';
-import '../../../../domain/usecases/booking/get_full_rental_history_usecase.dart';
 import '../../../../domain/usecases/user/download_user_profile_picture_usecase.dart';
 import '../../../../domain/usecases/user/get_user_id_by_email_usecase.dart';
 
 class VehicleListActiveController extends ChangeNotifier {
-  final GetFullRentalHistoryUseCase _getFullRentalHistoryUseCase = sl();
+  final GetActiveRentalsUseCase _getActiveRentalsUseCase = sl();
   final DownloadUserProfilePictureUseCase _downloadUserProfilePictureUseCase = sl();
   final GetUserIdByEmailUseCase _getUserIdByEmailUseCase = sl();
 
@@ -44,9 +44,14 @@ class VehicleListActiveController extends ChangeNotifier {
     _applyFilters();
   }
 
+  Future<void> refreshBookings() async {
+    _customerImage.clear();
+    await _loadVehicles();
+  }
+
   Future<void> _loadVehicles() async {
     _setLoading(true);
-    final result = await _getFullRentalHistoryUseCase();
+    final result = await _getActiveRentalsUseCase();
 
     if (_disposed) return;
     result.fold(
