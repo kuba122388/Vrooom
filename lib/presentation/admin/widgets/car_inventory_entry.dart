@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/common/widgets/animated_button_wrapper.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/presentation/admin/widgets/car_card.dart';
 
 import '../../../core/common/widgets/app_svg.dart';
 import '../../../core/configs/assets/app_vectors.dart';
 import '../../../core/configs/theme/app_spacing.dart';
-
-enum CarStatus { available, maintenance, booked, rented, unavailable, archived }
+import '../../../core/enums/car_status.dart';
 
 class CarInventoryEntry extends StatelessWidget {
   final String carImage;
@@ -68,8 +68,9 @@ class CarInventoryEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return AnimatedButtonWrapper(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(10.0),
       child: CarCard(
         carName: carName,
         carImage: carImage,

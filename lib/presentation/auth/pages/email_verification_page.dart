@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/custom_app_bar.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
@@ -9,6 +10,7 @@ import 'package:vrooom/domain/usecases/auth/verify_email_usecase.dart';
 import 'package:vrooom/core/configs/di/service_locator.dart';
 import 'package:vrooom/domain/entities/role.dart';
 
+import '../../../domain/usecases/auth/resent_verification_code_usecase.dart';
 import '../widgets/pinput_fields.dart';
 
 class EmailVerificationPage extends StatefulWidget {
@@ -21,10 +23,75 @@ class EmailVerificationPage extends StatefulWidget {
 }
 
 class _EmailVerificationPageState extends State<EmailVerificationPage> {
+  // Use Cases
   final VerifyEmailUseCase _verifyEmailUseCase = sl();
+  final ResendVerificationCodeUseCase _resendCodeUseCase = sl();
 
   final TextEditingController _pinputController = TextEditingController();
   bool _isLoading = false;
+  bool _isLoadingResent = false;
+
+  late Timer _timer;
+  int _secondsRemaining = 60;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _secondsRemaining = 60;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          if (_secondsRemaining > 0) {
+            _secondsRemaining--;
+          } else {
+            _timer.cancel();
+          }
+        });
+      }
+    });
+  }
+
+  Future<void> _handleResendCode() async {
+    if(_isLoadingResent == true){
+      return;
+    }
+    setState(() => _isLoadingResent = true);
+
+    if (_secondsRemaining > 0) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+
+    final result = await _resendCodeUseCase(email: widget.email);
+
+    setState(() => _isLoadingResent = false);
+
+    result.fold(
+          (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Resend failed: $error"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      },
+          (successMessage) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(successMessage),
+            backgroundColor: Colors.green
+          ),
+        );
+        _startTimer();
+      },
+    );
+  }
 
   Future<void> _handleVerify() async {
     final code = _pinputController.text;
@@ -74,6 +141,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
   @override
   void dispose() {
     _pinputController.dispose();
+    _timer.cancel();
     super.dispose();
   }
 
@@ -86,28 +154,34 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
         body: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Verify your email",
-                  style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Text(
-                  "Enter code we've sent to your inbox\n${widget.email}",
-                  textAlign: TextAlign.center,
-                  style:
-                  TextStyle(height: 1.6, color: AppColors.text.neutral400),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                PinputFields(controller: _pinputController),
-                const SizedBox(height: AppSpacing.lg),
-                PrimaryButton(
-                  text: _isLoading ? "Verifying..." : "Verify",
-                  onPressed: _isLoading ? null : _handleVerify,
-                ),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Verify your email",
+                    style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    "Enter code we've sent to your inbox\n${widget.email}",
+                    textAlign: TextAlign.center,
+                    style:
+                    TextStyle(height: 1.6, color: AppColors.text.neutral400),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  PinputFields(
+                    controller: _pinputController,
+                    secondsRemaining: _secondsRemaining,
+                    onResend: _handleResendCode,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  PrimaryButton(
+                    text: _isLoading ? "Verifying..." : "Verify",
+                    onPressed: _isLoading ? null : _handleVerify,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

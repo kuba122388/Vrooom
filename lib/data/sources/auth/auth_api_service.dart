@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:vrooom/data/models/auth/login_response_model.dart';
 import 'package:vrooom/data/models/auth/password_request_model.dart';
 import 'package:vrooom/data/models/auth/register_request_model.dart';
-
 import '../../models/auth/login_request_model.dart';
 
 class AuthApiService {
@@ -143,6 +142,28 @@ class AuthApiService {
     }
   }
 
+  Future<String>resetPassword(String email)async {
+    try{
+    final response = await _dio.post(
+      '/api/auth/forgot-password',
+      data: {'email': email},
+    );
+
+    if (response.statusCode == 200) {
+      return response.toString();
+    } else {
+      throw Exception("Verification failed");
+    }
+  } on DioException catch (e) {
+  if (e.response?.statusCode == 400) {
+  throw Exception(e.response?.data['message'] ?? 'Invalid code');
+  }
+  throw Exception("Network error ${e.message}");
+  } catch (e) {
+  throw Exception('Unexpected error: $e');
+  }
+  }
+
   Future<void> changePassword(PasswordRequestModel request) async {
     try {
       final response = await _dio.post(
@@ -162,4 +183,50 @@ class AuthApiService {
       throw Exception('Unexpected error: $e');
     }
   }
+
+  static List<String> validatePassword(String password) {
+    List<String> errors = [];
+
+    if (password.length < 8) {
+      errors.add("Hasło musi mieć co najmniej 8 znaków");
+    }
+    if (!password.contains(RegExp(r'[A-Z]'))) {
+      errors.add("Hasło musi zawierać przynajmniej jedną wielką literę");
+    }
+    if (!password.contains(RegExp(r'[a-z]'))) {
+      errors.add("Hasło musi zawierać przynajmniej jedną małą literę");
+    }
+    if (!password.contains(RegExp(r'\d'))) {
+      errors.add("Hasło musi zawierać przynajmniej jedną cyfrę");
+    }
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      errors.add("Hasło musi zawierać przynajmniej jeden znak specjalny");
+    }
+
+    return errors;
+  }
+
+
+  Future<String> resendVerificationCode(String email) async {
+    try {
+      final response = await _dio.post(
+        '/api/auth/resend-code',
+        data: {'email': email},
+      );
+
+      if (response.statusCode == 200) {
+        return response.data['message'] ?? "New verification code sent.";
+      } else {
+        throw Exception(response.data['message'] ?? "Failed to resend code.");
+      }
+    } on DioException catch (e) {
+      if (e.response?.data != null && e.response?.data['message'] != null) {
+        throw Exception(e.response!.data['message']);
+      }
+      throw Exception("Network error ${e.message}");
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
 }

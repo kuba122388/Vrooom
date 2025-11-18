@@ -22,6 +22,8 @@ import 'package:vrooom/domain/usecases/auth/google_login_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/login_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/logout_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/register_usecase.dart';
+import 'package:vrooom/domain/usecases/auth/resent_verification_code_usecase.dart';
+import 'package:vrooom/domain/usecases/auth/reset_password_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/verify_email_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/accept_booking_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/cancel_booking_usecase.dart';
@@ -100,6 +102,9 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GoogleLoginUseCase>(GoogleLoginUseCase(sl()));
   sl.registerSingleton<FacebookLoginUseCase>(FacebookLoginUseCase(sl()));
   sl.registerSingleton<VerifyEmailUseCase>(VerifyEmailUseCase(sl()));
+  sl.registerSingleton<ResetPasswordUseCase>(ResetPasswordUseCase(sl()));
+  sl.registerSingleton<ResendVerificationCodeUseCase>(ResendVerificationCodeUseCase(sl()));
+
 
   sl.registerSingleton<VehicleApiService>(VehicleApiService(sl()));
   sl.registerSingleton<VehicleRepository>(VehicleRepositoryImpl(sl()));

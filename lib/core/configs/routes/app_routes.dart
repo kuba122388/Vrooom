@@ -29,5 +29,5 @@ class AppRoutes {
   static const String paymentSuccess = '/paymentSuccess';
   static const String forgotPassword = '/forgotPassword';
   static const String changePassword = '/changePassword';
-  static const String settingsWidget = '/settingsWidget';
+  static const String loginEditDetails = '/loginEditDetails';
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vrooom/core/common/widgets/settings_widget.dart';
 import 'package:vrooom/domain/entities/booking.dart';
 import 'package:vrooom/domain/entities/user.dart';
 import 'package:vrooom/domain/entities/vehicle.dart';
@@ -17,6 +16,7 @@ import 'package:vrooom/presentation/admin/rental_history/pages/rental_history_pa
 import 'package:vrooom/presentation/auth/pages/change_password_page.dart';
 import 'package:vrooom/presentation/auth/pages/email_verification_page.dart';
 import 'package:vrooom/presentation/auth/pages/forgot_password_page.dart';
+import 'package:vrooom/presentation/auth/pages/login_edit_details.dart';
 import 'package:vrooom/presentation/auth/pages/login_page.dart';
 import 'package:vrooom/presentation/auth/pages/signup_page.dart';
 import 'package:vrooom/presentation/auth/pages/verification_success_page.dart';
@@ -151,9 +151,9 @@ class AppRouter {
       case AppRoutes.adminSettings:
         return MaterialPageRoute(builder: (_) => const AdminSettingsPage());
 
-      case AppRoutes.settingsWidget:
-        final popScreen = settings.arguments as bool;
-        return MaterialPageRoute(builder: (_) => SettingsWidget(popScreen: popScreen));
+      case AppRoutes.loginEditDetails:
+        final route = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) => LoginEditDetails(route: route));
 
       case AppRoutes.discountCodes:
         return MaterialPageRoute(builder: (_) => const DiscountCodesPage());

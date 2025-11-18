@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:vrooom/core/common/widgets/animated_button_wrapper.dart';
 import 'package:vrooom/core/common/widgets/app_svg.dart';
 import 'package:vrooom/core/common/widgets/custom_container.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
@@ -20,7 +21,7 @@ class BookingCarTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return AnimatedButtonWrapper(
       onTap: onTap,
       child: CustomContainer(
         child: IntrinsicHeight(

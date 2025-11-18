@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
-import 'package:vrooom/core/common/widgets/primary_button.dart';
-import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 
 class PinputFields extends StatefulWidget {
   final TextEditingController controller;
+  final int secondsRemaining;
+  final VoidCallback onResend;
 
-  const PinputFields({super.key, required this.controller});
+  const PinputFields({
+    super.key,
+    required this.controller,
+    required this.secondsRemaining,
+    required this.onResend,
+  });
 
 
   @override
@@ -51,6 +56,8 @@ class _PinputFieldsState extends State<PinputFields> {
       ),
     );
 
+    final bool canResend = widget.secondsRemaining == 0;
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(30.0),
@@ -70,7 +77,7 @@ class _PinputFieldsState extends State<PinputFields> {
                   separatorBuilder: (index) => const SizedBox(width: 8),
                   hapticFeedbackType: HapticFeedbackType.lightImpact,
                   onCompleted: (pin) {
-                  
+
                   },
                   onChanged: (value) {
                     debugPrint('onChanged: $value');
@@ -94,25 +101,35 @@ class _PinputFieldsState extends State<PinputFields> {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    const TextSpan(text: "Didn't get a code?  "),
-                    TextSpan(
-                      text: 'Resend: 59 s',
-                      style: TextStyle(color: AppColors.primary.withValues(alpha: 0.5)),
+
+              GestureDetector(
+                onTap: canResend ? widget.onResend : null,
+                child: RichText(
+                  text: TextSpan(
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.text.neutral400,
                     ),
-                  ],
+                    children: [
+                      const TextSpan(text: "Didn't get a code?  "),
+                      TextSpan(
+                        text: canResend
+                            ? 'Resend Code'
+                            : 'Resend: ${widget.secondsRemaining} s',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: canResend
+                              ? AppColors.primary
+                              : AppColors.text.neutral400.withValues(alpha: 0.5),
+                          decoration: canResend ? TextDecoration.underline : TextDecoration.none,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
+
               const SizedBox(height: AppSpacing.md),
-              PrimaryButton(
-                onPressed: () {
-                  focusNode.unfocus();
-                  formKey.currentState!.validate();
-                },
-                text: 'Submit',
-              ),
             ],
           ),
         ),

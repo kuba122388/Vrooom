@@ -52,6 +52,7 @@ class _LoginPageState extends State<LoginPage> {
       print('Error initializing Google Sign-In: $error');
     }
   }
+
   Future<void> handleFacebookSignIn() async {
     setState(() => _isLoading = true);
     try {
@@ -66,8 +67,6 @@ class _LoginPageState extends State<LoginPage> {
 
         final useCaseResult = await _facebookLoginUseCase.call(token: token);
 
-        setState(() => _isLoading = false);
-
         useCaseResult.fold(
               (error) {
             if (!mounted) return;
@@ -77,20 +76,40 @@ class _LoginPageState extends State<LoginPage> {
           },
               (user) {
             if (!mounted) return;
-            if (user.role == Role.admin) {
-              if (!mounted) return;
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                AppRoutes.carManagement,
+            if (user.email.isEmpty || user.phoneNumber.isEmpty || user.city.isEmpty) {
+              if (user.role == Role.admin) {
+                if (!mounted) return;
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.loginEditDetails,
+                  arguments: AppRoutes.carManagement,
                     (route) => false,
-              );
+                );
+              } else {
+                if (!mounted) return;
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.loginEditDetails,
+                  arguments: AppRoutes.main,
+                      (route) => false,
+                );
+              }
             } else {
-              if (!mounted) return;
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                AppRoutes.main,
-                    (route) => false,
-              );
+              if (user.role == Role.admin) {
+                if (!mounted) return;
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.carManagement,
+                      (route) => false,
+                );
+              } else {
+                if (!mounted) return;
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.main,
+                      (route) => false,
+                );
+              }
             }
           },
         );
@@ -100,17 +119,16 @@ class _LoginPageState extends State<LoginPage> {
             SnackBar(content: Text(result.message ?? 'Login failed.')),
           );
         }
-        setState(() => _isLoading = false);
       }
     } catch (error) {
       print('Error logging facebook user in: $error');
-      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error logging in with Facebook: ${error.toString()}')),
       );
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
-
 
   Future<void> handleGoogleSignIn() async {
     setState(() => _isLoading = true);
@@ -133,6 +151,67 @@ class _LoginPageState extends State<LoginPage> {
 
       final result  = await _googleLoginUseCase.call(token: idToken);
 
+      result.fold(
+            (error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(error)),
+          );
+        },
+            (user) {
+              if (!mounted) return;
+              if (user.email.isEmpty || user.phoneNumber.isEmpty || user.city.isEmpty) {
+                if (user.role == Role.admin) {
+                  if (!mounted) return;
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.loginEditDetails,
+                    arguments: AppRoutes.carManagement,
+                        (route) => false,
+                  );
+                } else {
+                  if (!mounted) return;
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.loginEditDetails,
+                    arguments: AppRoutes.main,
+                        (route) => false,
+                  );
+                }
+              } else {
+                if (user.role == Role.admin) {
+                  if (!mounted) return;
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.carManagement,
+                        (route) => false,
+                  );
+                } else {
+                  if (!mounted) return;
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.main,
+                        (route) => false,
+                  );
+                }
+              }
+        },
+      );
+    } catch (error) {
+      print('Error logging google user in: $error');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _handleLogin() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final result = await _loginUseCase(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
       setState(() => _isLoading = false);
 
       result.fold(
@@ -143,14 +222,12 @@ class _LoginPageState extends State<LoginPage> {
         },
             (user) {
           if (user.role == Role.admin) {
-            if (!mounted) return;
             Navigator.pushNamedAndRemoveUntil(
               context,
               AppRoutes.carManagement,
                   (route) => false,
             );
           } else {
-            if (!mounted) return;
             Navigator.pushNamedAndRemoveUntil(
               context,
               AppRoutes.main,
@@ -159,43 +236,10 @@ class _LoginPageState extends State<LoginPage> {
           }
         },
       );
-    } catch (error) {
-      print('Error logging google user in: $error');
+    } catch (e) {}
+    finally {
+      setState(() => _isLoading = false);
     }
-  }
-
-  Future<void> _handleLogin() async {
-    setState(() => _isLoading = true);
-
-    final result = await _loginUseCase(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-    );
-
-    setState(() => _isLoading = false);
-
-    result.fold(
-      (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error)),
-        );
-      },
-      (user) {
-        if (user.role == Role.admin) {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            AppRoutes.carManagement,
-            (route) => false,
-          );
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            AppRoutes.main,
-            (route) => false,
-          );
-        }
-      },
-    );
   }
 
   @override

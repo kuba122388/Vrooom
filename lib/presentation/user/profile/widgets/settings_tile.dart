@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/common/widgets/animated_button_wrapper.dart';
 import 'package:vrooom/core/common/widgets/app_svg.dart';
 import 'package:vrooom/core/configs/assets/app_vectors.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
@@ -21,10 +22,11 @@ class SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20.0),
-          child: InkWell(
-            onTap: onTap,
+        AnimatedButtonWrapper(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(10),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10),
             child: Row(
               children: [
                 icon,

@@ -7,6 +7,7 @@ import 'package:vrooom/domain/usecases/auth/register_usecase.dart';
 
 import '../../../../core/configs/di/service_locator.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
+import '../../../data/sources/auth/auth_api_service.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -63,9 +64,13 @@ class _SignupPageState extends State<SignupPage> {
     if (_passwordController.text.isEmpty) {
       return 'Password is required';
     }
-    if (_passwordController.text.length < 8) {
-      return 'Password must be at least 8 characters';
+
+    final errors = AuthApiService.validatePassword(_passwordController.text);
+
+    if (errors.isNotEmpty) {
+      return errors.join("'n");
     }
+
     if (_passwordController.text != _confirmPasswordController.text) {
       return 'Passwords do not match';
     }
@@ -85,6 +90,10 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future<void> _handleRegister() async {
+    if(_isLoading){
+      return;
+    }
+    setState(() => _isLoading = true);
     final validationError = _validateInputs();
     if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
