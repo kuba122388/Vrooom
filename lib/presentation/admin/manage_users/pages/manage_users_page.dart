@@ -37,13 +37,11 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
     final result = await _getAllUsersUsecase();
 
     result.fold((error) {
-      print("=== ERROR OCCURED === $error");
       setState(() {
         _errorMessage = error;
         _isLoading = false;
       });
     }, (usersList) {
-      print("=== USERS LOADED ===");
       setState(() {
         _usersList = usersList;
         _filteredUsersList = usersList;

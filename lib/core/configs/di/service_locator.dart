@@ -25,11 +25,18 @@ import 'package:vrooom/domain/usecases/auth/register_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/resent_verification_code_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/reset_password_usecase.dart';
 import 'package:vrooom/domain/usecases/auth/verify_email_usecase.dart';
+import 'package:vrooom/domain/usecases/booking/accept_booking_usecase.dart';
+import 'package:vrooom/domain/usecases/booking/cancel_booking_usecase.dart';
+import 'package:vrooom/domain/usecases/booking/create_booking_usecase.dart';
+import 'package:vrooom/domain/usecases/booking/finalize_booking_usecase.dart';
+import 'package:vrooom/domain/usecases/booking/finish_booking_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/get_active_rentals_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/get_all_insurances_usecase.dart';
+import 'package:vrooom/domain/usecases/booking/get_booked_dates_for_vehicle_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/get_full_rental_history_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/get_recent_rentals_for_user_usecase.dart';
 import 'package:vrooom/domain/usecases/booking/get_upcoming_rentals_usecase.dart';
+import 'package:vrooom/domain/usecases/booking/pay_penalty_usecase.dart';
 import 'package:vrooom/domain/usecases/discount_codes/delete_discount_code_usecase.dart';
 import 'package:vrooom/domain/usecases/discount_codes/update_discount_code_usecase.dart';
 import 'package:vrooom/domain/usecases/payment/create_stripe_session_usecase.dart';
@@ -51,6 +58,7 @@ import 'package:vrooom/domain/usecases/vehicle/get_all_vehicles_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_available_vehicles_between_dates_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_all_vehicles_with_details_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_rental_locations_usecase.dart';
+import 'package:vrooom/domain/usecases/vehicle/get_vehicle_by_id_usecase.dart';
 import 'package:vrooom/domain/usecases/vehicle/get_vehicle_details_usecase.dart';
 import 'package:vrooom/data/repositories/booking_repository_impl.dart';
 import 'package:vrooom/data/sources/booking/booking_api_service.dart';
@@ -75,10 +83,17 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<AuthStorage>(AuthStorage(sl()));
   sl.registerSingleton<Dio>(DioClient.createDio(sl()));
   sl.registerSingleton<AuthApiService>(AuthApiService(sl()));
-  sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(),sl()));
+  sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
 
   sl.registerSingleton<BookingApiService>(BookingApiService(sl<Dio>(), sl<AuthStorage>()));
   sl.registerSingleton<BookingRepository>(BookingRepositoryImpl(sl()));
+  sl.registerSingleton<GetBookedDatesForVehicleUseCase>(GetBookedDatesForVehicleUseCase(sl()));
+  sl.registerSingleton<CreateBookingUseCase>(CreateBookingUseCase(sl()));
+  sl.registerSingleton<CancelBookingUseCase>(CancelBookingUseCase(sl()));
+  sl.registerSingleton<AcceptBookingUseCase>(AcceptBookingUseCase(sl()));
+  sl.registerSingleton<FinishBookingUseCase>(FinishBookingUseCase(sl()));
+  sl.registerSingleton<FinalizeBookingUseCase>(FinalizeBookingUseCase(sl()));
+  sl.registerSingleton<PayPenaltyUsecase>(PayPenaltyUsecase(sl()));
 
   sl.registerSingleton<LoginUseCase>(LoginUseCase(sl()));
   sl.registerSingleton<RegisterUseCase>(RegisterUseCase(sl()));
@@ -96,9 +111,11 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GetAllVehiclesUseCase>(GetAllVehiclesUseCase(sl()));
   sl.registerSingleton<GetVehicleDetailsUseCase>(GetVehicleDetailsUseCase(sl()));
   sl.registerSingleton<GetRentalLocationsUseCase>(GetRentalLocationsUseCase(sl()));
+  sl.registerSingleton<GetVehicleByIdUseCase>(GetVehicleByIdUseCase(sl()));
 
   sl.registerSingleton<GetVehicleEquipmentUseCase>(GetVehicleEquipmentUseCase(sl()));
-  sl.registerSingleton<GetAvailableVehiclesBetweenDatesUseCase>(GetAvailableVehiclesBetweenDatesUseCase(sl()));
+  sl.registerSingleton<GetAvailableVehiclesBetweenDatesUseCase>(
+      GetAvailableVehiclesBetweenDatesUseCase(sl()));
 
   sl.registerSingleton<GetAllVehiclesWithDetailsUseCase>(GetAllVehiclesWithDetailsUseCase(sl()));
   sl.registerSingleton<UpdateVehicleUseCase>(UpdateVehicleUseCase(sl()));

@@ -17,14 +17,13 @@ class RentalHistoryCarEntry extends StatelessWidget {
   final double customerPictureSize;
   final double vehicleImageSize;
 
-  const RentalHistoryCarEntry({
-    super.key,
-    this.onTap,
-    required this.booking,
-    required this.customerPicture,
-    this.customerPictureSize = 60,
-    this.vehicleImageSize = 120
-  });
+  const RentalHistoryCarEntry(
+      {super.key,
+      this.onTap,
+      required this.booking,
+      required this.customerPicture,
+      this.customerPictureSize = 60,
+      this.vehicleImageSize = 120});
 
   TableRow _buildRow(String label, String value) {
     return TableRow(
@@ -51,7 +50,7 @@ class RentalHistoryCarEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rentalStatus = RentalStatus.getRentalStatus(booking.bookingStatus as String);
+    final rentalStatus = RentalStatus.fromString(booking.bookingStatus!);
 
     return AnimatedButtonWrapper(
       borderRadius: BorderRadius.circular(10.0),
@@ -76,21 +75,20 @@ class RentalHistoryCarEntry extends StatelessWidget {
           child: Row(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(50.0),
-                child: customerPicture == null
-                    ? Image.asset(
-                  AppImages.person,
-                  fit: BoxFit.cover,
-                  width: customerPictureSize,
-                  height: customerPictureSize,
-                )
-                    : Image.memory(
-                  customerPicture!,
-                  fit: BoxFit.cover,
-                  width: customerPictureSize,
-                  height: customerPictureSize,
-                )
-              ),
+                  borderRadius: BorderRadius.circular(50.0),
+                  child: customerPicture == null
+                      ? Image.asset(
+                          AppImages.person,
+                          fit: BoxFit.cover,
+                          width: customerPictureSize,
+                          height: customerPictureSize,
+                        )
+                      : Image.memory(
+                          customerPicture!,
+                          fit: BoxFit.cover,
+                          width: customerPictureSize,
+                          height: customerPictureSize,
+                        )),
               const SizedBox(width: AppSpacing.xs),
               Text("${booking.customerName} ${booking.customerSurname}"),
               const Spacer(),

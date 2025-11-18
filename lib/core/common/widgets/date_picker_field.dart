@@ -4,12 +4,16 @@ import 'package:vrooom/core/common/widgets/app_svg.dart';
 import 'package:vrooom/core/configs/assets/app_vectors.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
+import '../../../domain/entities/booked_date.dart';
 
 class DatePickerField extends StatefulWidget {
   final String label;
   final String hintText;
   final ValueChanged<DateTime>? onDateSelected;
-  final DateTime? initialDate; // ← Add this
+  final DateTime? initialDate;
+  final List<BookedDate> bookedDates;
+  final bool isEndDate;
+  final DateTime? startDate;
 
   const DatePickerField({
     super.key,
@@ -17,6 +21,9 @@ class DatePickerField extends StatefulWidget {
     this.onDateSelected,
     required this.label,
     this.initialDate,
+    this.bookedDates = const [],
+    this.isEndDate = false,
+    this.startDate,
   });
 
   @override
@@ -42,12 +49,115 @@ class _DatePickerFieldState extends State<DatePickerField> {
     }
   }
 
+  DateTime? _findNearestBookedDateAfter(DateTime date) {
+    DateTime? nearestBookedStart;
+    for (final booked in widget.bookedDates) {
+      if (booked.startDate.isAfter(date)) {
+        if (nearestBookedStart == null || booked.startDate.isBefore(nearestBookedStart)) {
+          nearestBookedStart = booked.startDate;
+        }
+      }
+    }
+    return nearestBookedStart;
+  }
+
+  bool _isDateSelectable(DateTime day) {
+    final normalizedDay = DateTime(day.year, day.month, day.day);
+
+    if (widget.isEndDate && widget.startDate != null) {
+      final normalizedStartDate = DateTime(
+        widget.startDate!.year,
+        widget.startDate!.month,
+        widget.startDate!.day,
+      );
+
+      if (normalizedDay.isBefore(normalizedStartDate)) {
+        return false;
+      }
+      for (final booked in widget.bookedDates) {
+        final normalizedBookedStart = DateTime(
+          booked.startDate.year,
+          booked.startDate.month,
+          booked.startDate.day,
+        );
+        final normalizedBookedEnd = DateTime(
+          booked.endDate.year,
+          booked.endDate.month,
+          booked.endDate.day,
+        );
+
+        if (normalizedDay.isAfter(normalizedBookedStart.subtract(const Duration(days: 1))) &&
+            normalizedDay.isBefore(normalizedBookedEnd.add(const Duration(days: 1)))) {
+          return false;
+        }
+      }
+      final nearestBooked = _findNearestBookedDateAfter(normalizedStartDate);
+      if (nearestBooked != null && !normalizedDay.isBefore(nearestBooked)) {
+        return false;
+      }
+    } else {
+      for (final booked in widget.bookedDates) {
+        final normalizedBookedStart = DateTime(
+          booked.startDate.year,
+          booked.startDate.month,
+          booked.startDate.day,
+        );
+        final normalizedBookedEnd = DateTime(
+          booked.endDate.year,
+          booked.endDate.month,
+          booked.endDate.day,
+        );
+
+        if (normalizedDay.isAfter(normalizedBookedStart.subtract(const Duration(days: 1))) &&
+            normalizedDay.isBefore(normalizedBookedEnd.add(const Duration(days: 1)))) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  DateTime _findValidInitialDate() {
+    if (selectedDate != null && _isDateSelectable(selectedDate!)) {
+      return selectedDate!;
+    }
+
+    if (widget.isEndDate && widget.startDate != null && _isDateSelectable(widget.startDate!)) {
+      return widget.startDate!;
+    }
+
+    DateTime checkDate =
+        widget.isEndDate && widget.startDate != null ? widget.startDate! : DateTime.now();
+
+    final maxDate = DateTime.now().add(const Duration(days: 365));
+
+    while (checkDate.isBefore(maxDate)) {
+      if (_isDateSelectable(checkDate)) {
+        return checkDate;
+      }
+      checkDate = checkDate.add(const Duration(days: 1));
+    }
+
+    return DateTime.now();
+  }
+
   Future<void> _pickDate() async {
+    DateTime? maxSelectableDate;
+    if (widget.isEndDate && widget.startDate != null) {
+      final nearestBooked = _findNearestBookedDateAfter(widget.startDate!);
+      if (nearestBooked != null) {
+        maxSelectableDate = nearestBooked.subtract(const Duration(days: 1));
+      }
+    }
+
+    final validInitialDate = _findValidInitialDate();
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
+      initialDate: validInitialDate,
+      firstDate: widget.isEndDate && widget.startDate != null ? widget.startDate! : DateTime.now(),
+      lastDate: maxSelectableDate ?? DateTime.now().add(const Duration(days: 365)),
+      selectableDayPredicate: _isDateSelectable,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(

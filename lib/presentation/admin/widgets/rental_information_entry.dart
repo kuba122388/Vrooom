@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:typed_data';
 import 'package:vrooom/core/common/widgets/app_svg.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
+import 'package:vrooom/domain/usecases/booking/accept_booking_usecase.dart';
+import 'package:vrooom/domain/usecases/booking/cancel_booking_usecase.dart';
 
 import '../../../core/configs/assets/app_images.dart';
 import '../../../core/configs/assets/app_vectors.dart';
+import '../../../core/configs/di/service_locator.dart';
 import '../../../core/configs/theme/app_spacing.dart';
 import '../../../core/enums/rental_status.dart';
 
@@ -12,26 +16,45 @@ class RentalInformationEntry extends StatelessWidget {
   final Uint8List? profileImage;
   final String firstName;
   final String surname;
-  final String reservationID;
+  final int reservationID;
   final DateTime pickupDate;
   final DateTime returnDate;
   final RentalStatus rentalStatus;
   final String carImage;
   final String model;
   final int productionYear;
+  final String phoneNumber;
+  final VoidCallback? onBookingChanged;
 
-  const RentalInformationEntry(
-      {super.key,
-      required this.profileImage,
-      required this.firstName,
-      required this.surname,
-      required this.reservationID,
-      required this.pickupDate,
-      required this.returnDate,
-      required this.rentalStatus,
-      required this.carImage,
-      required this.model,
-      required this.productionYear});
+  RentalInformationEntry({
+    super.key,
+    required this.profileImage,
+    required this.firstName,
+    required this.surname,
+    required this.reservationID,
+    required this.pickupDate,
+    required this.returnDate,
+    required this.rentalStatus,
+    required this.carImage,
+    required this.model,
+    required this.productionYear,
+    required this.phoneNumber,
+    this.onBookingChanged,
+  });
+
+  final CancelBookingUseCase _cancelBookingUseCase = sl();
+  final AcceptBookingUseCase _acceptBookingUseCase = sl();
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,17 +72,17 @@ class RentalInformationEntry extends StatelessWidget {
                   borderRadius: BorderRadius.circular(128.0),
                   child: profileImage == null
                       ? Image.asset(
-                    AppImages.person,
-                    fit: BoxFit.cover,
-                    width: 60,
-                    height: 60,
-                  )
+                          AppImages.person,
+                          fit: BoxFit.cover,
+                          width: 60,
+                          height: 60,
+                        )
                       : Image.memory(
-                    profileImage!,
-                    fit: BoxFit.cover,
-                    width: 60,
-                    height: 60,
-                  )
+                          profileImage!,
+                          fit: BoxFit.cover,
+                          width: 60,
+                          height: 60,
+                        ),
                 ),
                 const SizedBox(width: 10.0),
                 Flexible(
@@ -78,10 +101,16 @@ class RentalInformationEntry extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: AppSpacing.xs),
-                          const AppSvg(
-                            asset: AppVectors.phone,
-                            color: AppColors.primary,
-                            width: 20.0,
+                          InkWell(
+                            onTap: () => _makePhoneCall(phoneNumber),
+                            child: const Padding(
+                              padding: EdgeInsets.all(4.0),
+                              child: AppSvg(
+                                asset: AppVectors.phone,
+                                color: AppColors.primary,
+                                width: 20.0,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -115,7 +144,7 @@ class RentalInformationEntry extends StatelessWidget {
                             style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
                           ),
                           Text(
-                            reservationID,
+                            reservationID.toString(),
                             style:
                                 const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
                           ),
@@ -192,7 +221,7 @@ class RentalInformationEntry extends StatelessWidget {
                 ),
                 const Spacer(),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => _showCancelDialog(context),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
@@ -205,7 +234,7 @@ class RentalInformationEntry extends StatelessWidget {
                 ),
                 const SizedBox(width: AppSpacing.xs),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => _showConfirmDialog(context),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.container.progress200,
                       foregroundColor: Colors.white,
@@ -221,6 +250,88 @@ class RentalInformationEntry extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showCancelDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            "Cancel Reservation",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            "Are you sure you want to cancel the reservation for $firstName $surname\n(ID: $reservationID)?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                "No, Go Back",
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                await _cancelBookingUseCase(reservationID);
+                Navigator.of(context).pop();
+                onBookingChanged?.call();
+              },
+              child: const Text(
+                "Yes, Cancel",
+                style: TextStyle(color: AppColors.primary),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showConfirmDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            "Confirm Reservation",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            "Are you sure you want to confirm the reservation for $firstName $surname\n(ID: $reservationID)?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                "Not Yet",
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                await _acceptBookingUseCase(reservationID);
+                Navigator.of(context).pop();
+                onBookingChanged?.call();
+              },
+              child: const Text(
+                "Yes, Confirm",
+                style: TextStyle(color: AppColors.primary),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

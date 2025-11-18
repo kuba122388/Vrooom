@@ -18,8 +18,9 @@ import '../../../../domain/entities/vehicle.dart';
 
 class CarDetailsPage extends StatefulWidget {
   final int vehicleId;
+  final DateTimeRange? dateTimeRange;
 
-  const CarDetailsPage({super.key, required this.vehicleId});
+  const CarDetailsPage({super.key, required this.vehicleId, this.dateTimeRange});
 
   @override
   State<CarDetailsPage> createState() => _CarDetailsPageState();
@@ -35,14 +36,11 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     final result = await _getVehicleDetailsUseCase(widget.vehicleId);
 
     result.fold((error) {
-      print("=== ERROR OCCURED === $error");
       setState(() {
         _errorMessage = error;
         _isLoading = false;
       });
     }, (vehicle) {
-      print("=== VEHICLE LOADED ===");
-      print(vehicle);
       setState(() {
         _vehicle = vehicle;
         _isLoading = false;
@@ -56,9 +54,9 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     _loadVehicle();
   }
 
-  _calculatePrice() {
+  _calculatePrice(int days) {
     Vehicle vehicle = _vehicle!;
-    return (vehicle.deposit + vehicle.pricePerDay * 3).toStringAsFixed(2);
+    return (vehicle.deposit + vehicle.pricePerDay * days).toStringAsFixed(2);
   }
 
   @override
@@ -79,11 +77,16 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
 
   Widget _buildVehicleDetails() {
     final Vehicle vehicle = _vehicle!;
+    int days = ((widget.dateTimeRange?.duration.inDays) ?? 0) + 1;
 
     final List<CarSpecRow> generalInfo = [
       CarSpecRow(iconPath: AppVectors.car, label: "Car Type", value: vehicle.type),
-      CarSpecRow(iconPath: AppVectors.odometer, label: "Mileage", value: vehicle.mileage.toString() ),
-      CarSpecRow(iconPath: AppVectors.calendar, label: "Production Year", value: vehicle.productionYear.toString()),
+      CarSpecRow(
+          iconPath: AppVectors.odometer, label: "Mileage", value: vehicle.mileage.toString()),
+      CarSpecRow(
+          iconPath: AppVectors.calendar,
+          label: "Production Year",
+          value: vehicle.productionYear.toString()),
       CarSpecRow(
           iconPath: AppVectors.seats, label: "Seats", value: "${vehicle.numberOfSeats} seats"),
       CarSpecRow(
@@ -156,9 +159,9 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 InfoSectionCard(
-                  title: "Location",
-                  child: CarSpecRow(iconPath: AppVectors.mapPin, label: vehicle.vehicleLocation, value: "")
-                ),
+                    title: "Location",
+                    child: CarSpecRow(
+                        iconPath: AppVectors.mapPin, label: vehicle.vehicleLocation, value: "")),
                 const SizedBox(height: AppSpacing.md),
                 InfoSectionCard(
                   title: "General",
@@ -229,17 +232,18 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                       const SizedBox(
                         height: AppSpacing.xxs,
                       ),
-                      const InfoRow(
-                        label: "Rental days",
-                        value: "3 days",
-                      ),
+                      if (widget.dateTimeRange != null)
+                        InfoRow(
+                          label: "Rental days",
+                          value: days.toString(),
+                        ),
                       const SizedBox(
                         height: AppSpacing.xxs,
                       ),
                       const Divider(),
                       InfoRow(
                         label: "Estimated Total",
-                        value: "\$${_calculatePrice()}",
+                        value: "\$${_calculatePrice(days)}",
                         fontSize: 20.0,
                       ),
                     ],
@@ -248,7 +252,14 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 const SizedBox(height: AppSpacing.md),
                 PrimaryButton(
                   text: "Rent Now",
-                  onPressed: () => Navigator.pushNamed(context, AppRoutes.bookingDetails),
+                  onPressed: () =>
+                      Navigator.pushNamed(context, AppRoutes.bookingDetails, arguments: {
+                    "dateTimeRange": widget.dateTimeRange,
+                    "location": vehicle.vehicleLocation,
+                    "deposit": vehicle.deposit,
+                    "dailyRate": vehicle.pricePerDay,
+                    "vehicleId": vehicle.vehicleID,
+                  }),
                 ),
               ],
             ),

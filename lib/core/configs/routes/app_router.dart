@@ -48,7 +48,11 @@ class AppRouter {
 
       case AppRoutes.verifyEmail:
         final email = settings.arguments as String?;
-        return MaterialPageRoute(builder: (_) => EmailVerificationPage(email: email ?? "",));
+        return MaterialPageRoute(
+          builder: (_) => EmailVerificationPage(
+            email: email ?? "",
+          ),
+        );
 
       case AppRoutes.main:
         return MaterialPageRoute(builder: (_) => const MainNavigationPage());
@@ -62,8 +66,9 @@ class AppRouter {
       case AppRoutes.carDetails:
         final args = settings.arguments as Map<String, dynamic>?;
         final vehicleId = args?["vehicleId"] as int?;
+        final dateTimeRange = args?["dateTimeRange"] as DateTimeRange?;
 
-        if(vehicleId == null || vehicleId <=0){
+        if (vehicleId == null || vehicleId <= 0) {
           return MaterialPageRoute(
             builder: (_) => const Scaffold(
               body: Center(child: Text('Invalid car ID')),
@@ -71,7 +76,12 @@ class AppRouter {
           );
         }
 
-        return MaterialPageRoute(builder: (_) => CarDetailsPage(vehicleId: vehicleId));
+        return MaterialPageRoute(
+          builder: (_) => CarDetailsPage(
+            vehicleId: vehicleId,
+            dateTimeRange: dateTimeRange,
+          ),
+        );
 
       case AppRoutes.forgotPassword:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
@@ -83,7 +93,8 @@ class AppRouter {
         final args = settings.arguments as Map<String, dynamic>;
         final booking = args['booking'] as Booking;
         final title = args['title'] as String;
-        return MaterialPageRoute(builder: (_) => UserBookingDetails(booking: booking, title: title));
+        return MaterialPageRoute(
+            builder: (_) => UserBookingDetails(booking: booking, title: title));
 
       case AppRoutes.userRentalHistory:
         final user = settings.arguments as User;
@@ -98,7 +109,22 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => EditCarPage(vehicle: vehicle));
 
       case AppRoutes.bookingDetails:
-        return MaterialPageRoute(builder: (_) => const BookingDetailsPage());
+        final args = settings.arguments as Map<String, dynamic>;
+        final location = args['location'] as String;
+        final deposit = args['deposit'] as int;
+        final pricePerDay = args['dailyRate'] as double;
+        final dateTimeRange = args['dateTimeRange'] as DateTimeRange?;
+        final vehicleId = args['vehicleId'] as int;
+
+        return MaterialPageRoute(
+          builder: (_) => BookingDetailsPage(
+            dateTimeRange: dateTimeRange,
+            location: location,
+            deposit: deposit,
+            pricePerDay: pricePerDay,
+            vehicleId: vehicleId,
+          ),
+        );
 
       case AppRoutes.editProfileDetails:
         return MaterialPageRoute(builder: (_) => const EditProfileDetails());
@@ -107,7 +133,14 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const CarManagementPage());
 
       case AppRoutes.finalizeRental:
-        return MaterialPageRoute(builder: (_) => const FinalizeRentalPage());
+        final args = settings.arguments as Map<String, dynamic>;
+        final booking = args['booking'] as Booking;
+
+        return MaterialPageRoute(
+          builder: (_) => FinalizeRentalPage(
+            booking: booking,
+          ),
+        );
 
       case AppRoutes.futureReservation:
         return MaterialPageRoute(builder: (_) => const FutureReservation());
@@ -140,7 +173,6 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const PrivacyPolicyPage());
       case AppRoutes.paymentSuccess:
         return MaterialPageRoute(builder: (_) => const PaymentSuccessPage());
-
 
       default:
         return MaterialPageRoute(

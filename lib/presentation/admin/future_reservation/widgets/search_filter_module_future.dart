@@ -69,7 +69,7 @@ class SearchFilterModuleFuture extends StatelessWidget {
                       ],
                     ),
                   ),
-                  hintText: "Search cars...",
+                  hintText: "Search bookings...",
                   hintStyle: const TextStyle(letterSpacing: -0.5),
                 ),
               ),
