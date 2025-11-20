@@ -51,6 +51,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _load() async {
     final userResult = await _getCurrentUserInformationUseCase();
+    if (!mounted) return;
+
     userResult.fold(
       (error) {},
       (user) {
@@ -61,6 +63,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     final profileResult = await _downloadUserProfilePictureUseCase(userId: _user!.customerID);
+    if (!mounted) return;
+
     profileResult.fold(
       (error) {},
       (profilePic) {
@@ -71,6 +75,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     final bookingResult = await _getRecentRentalsForUserUseCase();
+    if (!mounted) return;
+
     bookingResult.fold(
       (error) {},
       (bookingList) {
@@ -95,7 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
       if (image == null) return;
 
-      setState(() => _isLoading = true);
+      if (mounted) setState(() => _isLoading = true);
 
       final uploadResult = await _uploadUserProfilePictureUseCase(
         userId: _user!.customerID,
@@ -105,7 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
       final uploadError = uploadResult.fold((error) => error, (_) => null);
       if (uploadError != null) {
         _showError("Upload failed: $uploadError");
-        setState(() => _isLoading = false);
+        if (mounted) setState(() => _isLoading = false);
         return;
       }
 
@@ -118,9 +124,11 @@ class _ProfilePageState extends State<ProfilePage> {
           _showError("Failed to load profile picture: $error");
         },
         (imageFile) {
-          setState(() {
-            _profilePic = imageFile;
-          });
+          if (mounted) {
+            setState(() {
+              _profilePic = imageFile;
+            });
+          }
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Profile picture updated successfully")),

@@ -27,7 +27,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     super.dispose();
   }
 
-
   Future<void> _handleResetPassword() async {
     final email = _emailController.text.trim();
 
@@ -44,11 +43,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     setState(() => _isLoading = true);
 
     final result = await _resetPasswordUseCase(email: email);
+    if (!mounted) return;
 
     setState(() => _isLoading = false);
 
     result.fold(
-          (error) {
+      (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(error),
@@ -56,7 +56,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           ),
         );
       },
-          (successMessage) {
+      (successMessage) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(successMessage),
@@ -81,17 +81,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 "Enter email",
                 style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.w600),
               ),
-
               const SizedBox(height: AppSpacing.md),
-
               Text(
                 "Enter your email address\nwe’ll send a password reset code to it",
                 textAlign: TextAlign.center,
                 style: TextStyle(height: 1.6, color: AppColors.text.neutral400),
               ),
-
               const SizedBox(height: AppSpacing.md),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 35),
                 child: CustomTextField(
@@ -100,9 +96,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   keyboardType: TextInputType.emailAddress,
                 ),
               ),
-
               const SizedBox(height: AppSpacing.xs),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 35),
                 child: PrimaryButton(

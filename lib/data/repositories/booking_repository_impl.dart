@@ -73,7 +73,7 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
-  Future<Either<String, String>> createBooking(BookingRequest booking) async {
+  Future<Either<String, bool>> createBooking(BookingRequest booking) async {
     try {
       final requestModel = BookingRequestModel.fromEntity(booking);
 

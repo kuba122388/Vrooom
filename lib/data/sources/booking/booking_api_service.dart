@@ -151,12 +151,12 @@ class BookingApiService {
     }
   }
 
-  Future<String> createBooking(BookingRequestModel booking) async {
+  Future<bool> createBooking(BookingRequestModel booking) async {
     try {
       final response = await _dio.post("$_bookingApi/confirm", data: booking.toJson());
 
       if (response.statusCode == 200) {
-        return "Reservation completed!";
+        return true;
       } else {
         throw Exception("There was a problem with fetching data.");
       }

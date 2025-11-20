@@ -35,6 +35,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
       _isLoading = true;
     });
     final result = await _getAllUsersUsecase();
+    if (!mounted) return;
 
     result.fold((error) {
       setState(() {

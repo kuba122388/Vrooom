@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
 import 'package:vrooom/data/sources/auth/auth_api_service.dart';
 import 'package:vrooom/domain/entities/user.dart';
-import 'package:vrooom/domain/usecases/auth/logout_usecase.dart';
 
 import '../../../data/models/user_model.dart';
 import '../../../domain/usecases/auth/change_password_usecase.dart';
@@ -51,13 +50,30 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     _loadUser();
   }
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _surnameController.dispose();
+    _emailController.dispose();
+    _phoneNumberController.dispose();
+    _streetAddressController.dispose();
+    _cityController.dispose();
+    _postalCodeController.dispose();
+    _countryCodeController.dispose();
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _repeatPasswordController.dispose();
+
+    super.dispose();
+  }
+
   Future<void> _loadUser() async {
     final result = await _getCurrentUserInformationUseCase();
     result.fold(
-          (error) {
+      (error) {
         _showError(error);
       },
-          (user) {
+      (user) {
         setState(() {
           _user = user;
           _isLoading = false;
@@ -178,14 +194,14 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         bool isError = false;
 
         result.fold(
-              (error) {
+          (error) {
             _showError(error.substring(11));
             setState(() {
               _isLoading = false;
             });
             isError = true;
           },
-              (success) {
+          (success) {
             _showError("The password has been successfully changed");
           },
         );
@@ -205,11 +221,19 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       name: _nameController.text.isNotEmpty ? _nameController.text.trim() : _user!.name,
       surname: _surnameController.text.isNotEmpty ? _surnameController.text.trim() : _user!.surname,
       email: _emailController.text.isNotEmpty ? _emailController.text.trim() : _user!.email,
-      phoneNumber: _phoneNumberController.text.isNotEmpty ? _phoneNumberController.text.trim() : _user!.phoneNumber,
-      streetAddress: _streetAddressController.text.isNotEmpty ? _streetAddressController.text.trim() : _user!.streetAddress,
+      phoneNumber: _phoneNumberController.text.isNotEmpty
+          ? _phoneNumberController.text.trim()
+          : _user!.phoneNumber,
+      streetAddress: _streetAddressController.text.isNotEmpty
+          ? _streetAddressController.text.trim()
+          : _user!.streetAddress,
       city: _cityController.text.isNotEmpty ? _cityController.text.trim() : _user!.city,
-      postalCode: _postalCodeController.text.isNotEmpty ? _postalCodeController.text.trim() : _user!.postalCode,
-      country: _countryCodeController.text.isNotEmpty ? _countryCodeController.text.trim() : _user!.country,
+      postalCode: _postalCodeController.text.isNotEmpty
+          ? _postalCodeController.text.trim()
+          : _user!.postalCode,
+      country: _countryCodeController.text.isNotEmpty
+          ? _countryCodeController.text.trim()
+          : _user!.country,
       role: _user!.role,
     );
 
@@ -219,7 +243,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       await _editCurrentUserUseCase(request: userToUpdate);
 
       if (!context.mounted) return;
-      if (widget.route != null)  Navigator.pushReplacementNamed(context, widget.route as String);
+      if (widget.route != null) Navigator.pushReplacementNamed(context, widget.route as String);
       if (widget.popScreen) Navigator.pop(context, true);
     } catch (e) {
       _showError("Update failed: ${e.toString()}");
@@ -229,7 +253,6 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -291,8 +314,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               leadingIcon: const AppSvg(asset: AppVectors.mapPin),
               controller: _countryCodeController,
             ),
-
-            if (widget.route == null) ... [
+            if (widget.route == null) ...[
               const SizedBox(height: AppSpacing.md),
               const Text(
                 "Change Password",
@@ -324,11 +346,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 controller: _repeatPasswordController,
               )
             ],
-
-            PrimaryButton(
-                text: "Save",
-                onPressed: _validateAndSave
-            ),
+            PrimaryButton(text: "Save", onPressed: _validateAndSave),
           ],
         ),
       ),

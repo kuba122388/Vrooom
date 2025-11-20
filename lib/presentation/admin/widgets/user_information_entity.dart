@@ -43,6 +43,7 @@ class _UserInformationEntityState extends State<UserInformationEntity> {
 
     try {
       final result = await _downloadUserProfilePictureUseCase(userId: widget.user.customerID);
+      if (!mounted) return;
 
       result.fold(
         (error) {},
@@ -69,191 +70,194 @@ class _UserInformationEntityState extends State<UserInformationEntity> {
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: _isLoading
-        ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-        : Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(30.0),
-                  child: _profilePic == null
-                    ? Image.asset(
-                        AppImages.person,
-                        fit: BoxFit.cover,
-                        width: 50,
-                        height: 50,
-                      )
-                    : Image.memory(
-                        _profilePic!,
-                        fit: BoxFit.cover,
-                        width: 50,
-                        height: 50,
-                      )
-                ),
-                const SizedBox(width: 10.0),
-                Expanded(
-                  child: Text(
-                    "${widget.user.name} ${widget.user.surname}",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: () => EmailLauncher.open(widget.user.email),
-                    style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: AppColors.container.neutral750,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                        padding: EdgeInsets.zero),
-                    child: const Icon(
-                      Icons.chat_bubble_outline_sharp,
-                      size: 17,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  "Confirmation",
-                                  style: TextStyle(fontWeight: FontWeight.w600),
-                                ),
-                                GestureDetector(
-                                  onTap: () => Navigator.of(context).pop(),
-                                  child: const AppSvg(
-                                    asset: AppVectors.close,
-                                    color: AppColors.primary,
-                                  ),
-                                )
-                              ],
-                            ),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "Do you really want to delete:",
-                                  style: TextStyle(fontSize: 16.0),
-                                ),
-                                const SizedBox(height: AppSpacing.xs),
-                                Text(
-                                  "${widget.user.name} ${widget.user.surname}",
-                                  style:
-                                      const TextStyle(fontWeight: FontWeight.w700, fontSize: 16.0),
-                                ),
-                              ],
-                            ),
-                            actions: [
-                              ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Text(
-                                  "Cancel",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  await _deleteUserByIdUseCase(widget.user.customerID);
-                                  widget.callback();
-                                  Navigator.of(context).pop();
-                                },
-                                style: ButtonStyle(
-                                  backgroundColor: WidgetStateProperty.all(AppColors.primary),
-                                ),
-                                child: const Text(
-                                  "Delete",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              )
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                        padding: EdgeInsets.zero),
-                    child: const Icon(
-                      Icons.person_remove_outlined,
-                      size: 17,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Table(
-                    columnWidths: const {0: FixedColumnWidth(60), 1: FlexColumnWidth()},
+            ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      TableRow(
-                        children: [
-                          Text(
-                            "Email:",
-                            style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
+                      ClipRRect(
+                          borderRadius: BorderRadius.circular(30.0),
+                          child: _profilePic == null
+                              ? Image.asset(
+                                  AppImages.person,
+                                  fit: BoxFit.cover,
+                                  width: 50,
+                                  height: 50,
+                                )
+                              : Image.memory(
+                                  _profilePic!,
+                                  fit: BoxFit.cover,
+                                  width: 50,
+                                  height: 50,
+                                )),
+                      const SizedBox(width: 10.0),
+                      Expanded(
+                        child: Text(
+                          "${widget.user.name} ${widget.user.surname}",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: -0.5,
                           ),
-                          Text(
-                            widget.user.email,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style:
-                                const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
-                          ),
-                        ],
+                        ),
                       ),
-                      _singleRow("Phone: ", widget.user.phoneNumber),
-                      _singleRow("Street: ", widget.user.streetAddress),
-                      _singleRow("Postal: ", widget.user.postalCode),
-                      _singleRow("City: ", widget.user.city),
+                      SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: ElevatedButton(
+                          onPressed: () => EmailLauncher.open(widget.user.email),
+                          style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: AppColors.container.neutral750,
+                              shape:
+                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                              padding: EdgeInsets.zero),
+                          child: const Icon(
+                            Icons.chat_bubble_outline_sharp,
+                            size: 17,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "Confirmation",
+                                        style: TextStyle(fontWeight: FontWeight.w600),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () => Navigator.of(context).pop(),
+                                        child: const AppSvg(
+                                          asset: AppVectors.close,
+                                          color: AppColors.primary,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        "Do you really want to delete:",
+                                        style: TextStyle(fontSize: 16.0),
+                                      ),
+                                      const SizedBox(height: AppSpacing.xs),
+                                      Text(
+                                        "${widget.user.name} ${widget.user.surname}",
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w700, fontSize: 16.0),
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    ElevatedButton(
+                                      onPressed: () => Navigator.of(context).pop(),
+                                      child: const Text(
+                                        "Cancel",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        await _deleteUserByIdUseCase(widget.user.customerID);
+                                        widget.callback();
+                                        Navigator.of(context).pop();
+                                      },
+                                      style: ButtonStyle(
+                                        backgroundColor: WidgetStateProperty.all(AppColors.primary),
+                                      ),
+                                      child: const Text(
+                                        "Delete",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: AppColors.primary,
+                              shape:
+                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                              padding: EdgeInsets.zero),
+                          child: const Icon(
+                            Icons.person_remove_outlined,
+                            size: 17,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                ElevatedButton(
-                  onPressed: () => Navigator.pushNamed(context, AppRoutes.userRentalHistory, arguments: widget.user),
-                  style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: AppColors.container.neutral900,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)),
-                  child: const Text(
-                    "View History",
-                    style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.5),
+                  const SizedBox(height: AppSpacing.sm),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Table(
+                          columnWidths: const {0: FixedColumnWidth(60), 1: FlexColumnWidth()},
+                          children: [
+                            TableRow(
+                              children: [
+                                Text(
+                                  "Email:",
+                                  style: TextStyle(
+                                      letterSpacing: -0.5, color: AppColors.text.neutral400),
+                                ),
+                                Text(
+                                  widget.user.email,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      letterSpacing: -0.5, fontWeight: FontWeight.w600),
+                                ),
+                              ],
+                            ),
+                            _singleRow("Phone: ", widget.user.phoneNumber),
+                            _singleRow("Street: ", widget.user.streetAddress),
+                            _singleRow("Postal: ", widget.user.postalCode),
+                            _singleRow("City: ", widget.user.city),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pushNamed(context, AppRoutes.userRentalHistory,
+                            arguments: widget.user),
+                        style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.container.neutral900,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0)),
+                        child: const Text(
+                          "View History",
+                          style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.5),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
+                ],
+              ),
       ),
     );
   }
