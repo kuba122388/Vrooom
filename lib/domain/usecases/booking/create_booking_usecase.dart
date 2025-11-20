@@ -7,7 +7,7 @@ class CreateBookingUseCase {
 
   CreateBookingUseCase(this.bookingRepository);
 
-  Future<Either<String, String>> call(BookingRequest booking) async {
+  Future<Either<String, bool>> call(BookingRequest booking) async {
     return bookingRepository.createBooking(booking);
   }
 }

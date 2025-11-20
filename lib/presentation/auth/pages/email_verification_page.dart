@@ -56,7 +56,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
   }
 
   Future<void> _handleResendCode() async {
-    if(_isLoadingResent == true){
+    if (_isLoadingResent == true) {
       return;
     }
     setState(() => _isLoadingResent = true);
@@ -67,13 +67,13 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
 
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-
     final result = await _resendCodeUseCase(email: widget.email);
+    if (!mounted) return;
 
     setState(() => _isLoadingResent = false);
 
     result.fold(
-          (error) {
+      (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Resend failed: $error"),
@@ -81,12 +81,9 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
           ),
         );
       },
-          (successMessage) {
+      (successMessage) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(successMessage),
-            backgroundColor: Colors.green
-          ),
+          SnackBar(content: Text(successMessage), backgroundColor: Colors.green),
         );
         _startTimer();
       },
@@ -108,11 +105,12 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
     setState(() => _isLoading = true);
 
     final result = await _verifyEmailUseCase(code: code);
+    if (!mounted) return;
 
     setState(() => _isLoading = false);
 
     result.fold(
-          (error) {
+      (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(error),
@@ -120,18 +118,18 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
           ),
         );
       },
-          (user) {
+      (user) {
         if (user.role == Role.admin) {
           Navigator.pushNamedAndRemoveUntil(
             context,
             AppRoutes.carManagement,
-                (route) => false,
+            (route) => false,
           );
         } else {
           Navigator.pushNamedAndRemoveUntil(
             context,
             AppRoutes.main,
-                (route) => false,
+            (route) => false,
           );
         }
       },
@@ -166,8 +164,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                   Text(
                     "Enter code we've sent to your inbox\n${widget.email}",
                     textAlign: TextAlign.center,
-                    style:
-                    TextStyle(height: 1.6, color: AppColors.text.neutral400),
+                    style: TextStyle(height: 1.6, color: AppColors.text.neutral400),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   PinputFields(

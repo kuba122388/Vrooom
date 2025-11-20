@@ -201,10 +201,10 @@ class _UserBookingDetailsState extends State<UserBookingDetails> {
                               Row(
                                 children: [
                                   Text(
-                                    "Penalty: \$${widget.booking.penalty}",
+                                    "Penalty: \$${widget.booking.penalty!.toStringAsFixed(2)}",
                                     style: const TextStyle(
                                       fontFamily: 'Roboto',
-                                      fontSize: 20.0,
+                                      fontSize: 18.0,
                                       fontWeight: FontWeight.w600,
                                       color: AppColors.primary,
                                     ),

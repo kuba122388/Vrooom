@@ -17,7 +17,7 @@ abstract class BookingRepository {
 
   Future<Either<String, List<BookedDate>>> getBookedDatesForVehicle(int vehicleId);
 
-  Future<Either<String, String>> createBooking(BookingRequest booking);
+  Future<Either<String, bool>> createBooking(BookingRequest booking);
 
   Future<Either<String, bool>> cancelBooking(int bookingId);
 

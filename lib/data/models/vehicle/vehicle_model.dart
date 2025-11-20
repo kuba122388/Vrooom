@@ -76,12 +76,10 @@ class VehicleModel extends Vehicle {
       productionYear: json["productionYear"] as int,
       description: json["description"] as String,
       mileage: json["mileage"] as int,
-      vehicleImage:
-          "${NetworkConfig.vehicleImages}/${json["vehicleImage"] as String}",
+      vehicleImage: "${NetworkConfig.vehicleImages}/${json["vehicleImage"] as String}",
       availabilityStatus: json["availabilityStatus"] as String,
-      equipmentList: (json["equipmentList"] as List<dynamic>)
-          .map((e) => EquipmentModel.fromJson(e))
-          .toList(),
+      equipmentList:
+          (json["equipmentList"] as List<dynamic>).map((e) => EquipmentModel.fromJson(e)).toList(),
       vehicleLocation: json["carLocation"] as String,
     );
   }
@@ -107,9 +105,8 @@ class VehicleModel extends Vehicle {
       "description": description,
       "mileage": mileage,
       "vehicleImage": vehicleImage,
-      "equipmentList": equipmentList
-          .map((e) => EquipmentModel.fromEntity(e).toJson())
-          .toList(),
+      "availabilityStatus": availabilityStatus,
+      "equipmentList": equipmentList.map((e) => EquipmentModel.fromEntity(e).toJson()).toList(),
       "carLocation": vehicleLocation
     };
   }

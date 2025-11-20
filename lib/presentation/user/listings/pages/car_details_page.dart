@@ -34,6 +34,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
 
   Future<void> _loadVehicle() async {
     final result = await _getVehicleDetailsUseCase(widget.vehicleId);
+    if (!mounted) return;
 
     result.fold((error) {
       setState(() {

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vrooom/core/common/widgets/custom_bottom_bar.dart';
 import 'package:vrooom/presentation/user/bookings/pages/booking_page.dart';
 import 'package:vrooom/presentation/user/listings/pages/listings_page.dart';
 
+import '../../../../core/common/widgets/app_svg.dart';
 import '../../../../core/common/widgets/custom_app_bar.dart';
+import '../../../../core/configs/assets/app_vectors.dart';
 import '../../profile/pages/profile_page.dart';
 
 class MainNavigationPage extends StatefulWidget {
@@ -15,6 +18,7 @@ class MainNavigationPage extends StatefulWidget {
 
 class _MainNavigationPageState extends State<MainNavigationPage> {
   int _currentIndex = 0;
+  bool _hasActiveRentals = false;
 
   final List<Widget> _pages = [
     const ListingsPage(),
@@ -43,6 +47,17 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     });
   }
 
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,12 +65,32 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         title: _tabs[_currentIndex].title,
         showBackButton: false,
       ),
-      body: _pages[_currentIndex],
+      body: _buildPage(_currentIndex),
+      floatingActionButton: _currentIndex == 1 && _hasActiveRentals
+          ? FloatingActionButton(
+              onPressed: () async {
+                await _makePhoneCall("+48 123 456 789");
+              },
+              backgroundColor: Colors.blue,
+              child: const AppSvg(asset: AppVectors.phone),
+            )
+          : null,
       bottomNavigationBar: CustomBottomBar(
         currentIndex: _currentIndex,
         onTap: _onTabChanged,
       ),
     );
+  }
+
+  Widget _buildPage(int index) {
+    if (index == 1) {
+      return BookingsPage(
+        onActiveRentalsLoaded: (hasActive) {
+          setState(() => _hasActiveRentals = hasActive);
+        },
+      );
+    }
+    return _pages[index];
   }
 }
 

@@ -187,7 +187,7 @@ class VehicleApiService {
 
   Future<List<Vehicle>> getAllVehiclesWithDetails() async {
     try {
-      final response = await _dio.get(_vehicleApi);
+      final response = await _dio.get("$_vehicleApi/vehiclesAdmin");
 
       if (response.statusCode == 200) {
         final data = response.data;
