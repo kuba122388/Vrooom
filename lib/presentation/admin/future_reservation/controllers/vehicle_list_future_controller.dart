@@ -6,7 +6,6 @@ import 'package:vrooom/domain/entities/booking.dart';
 import 'package:vrooom/domain/usecases/booking/get_upcoming_rentals_usecase.dart';
 
 import '../../../../core/common/widgets/search_car_module/filter_state.dart';
-import '../../../../core/enums/rental_status.dart';
 import '../../../../domain/usecases/user/download_user_profile_picture_usecase.dart';
 import '../../../../domain/usecases/user/get_user_id_by_email_usecase.dart';
 
@@ -21,12 +20,6 @@ class VehicleListFutureController extends ChangeNotifier {
     filterState.addListener(_applyFilters);
     _loadVehicles();
   }
-
-  final statusOrder = {
-    RentalStatus.pending: 1,
-    RentalStatus.confirmed: 2,
-    RentalStatus.cancelled: 2,
-  };
 
   bool _isLoading = true;
   String? _errorMessage;
@@ -64,15 +57,7 @@ class VehicleListFutureController extends ChangeNotifier {
     result.fold(
       (error) => _errorMessage = error,
       (vehicleList) {
-        vehicleList.sort((a, b) {
-          final statusA = statusOrder[RentalStatus.fromString(a.bookingStatus!)];
-          final statusB = statusOrder[RentalStatus.fromString(b.bookingStatus!)];
-
-          final statusComparison = statusA!.compareTo(statusB!);
-          if (statusComparison != 0) return statusComparison;
-
-          return a.startDate!.compareTo(b.startDate!);
-        });
+        vehicleList.sort((a, b) => a.startDate!.day.compareTo(b.startDate!.day));
         _bookings = vehicleList;
         _errorMessage = null;
         _applyFilters();
