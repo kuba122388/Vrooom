@@ -47,6 +47,7 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
     });
 
     final result = await _getAllDiscountCodesUsecase();
+    if (!mounted) return;
 
     result.fold(
       (error) {
@@ -401,6 +402,10 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
           },
         );
       },
-    );
+    ).then((_) {
+      codeController.dispose();
+      valueController.dispose();
+    });
+    ;
   }
 }

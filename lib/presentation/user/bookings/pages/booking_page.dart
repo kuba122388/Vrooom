@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vrooom/core/common/widgets/title_widget.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
+import 'package:vrooom/core/enums/rental_status.dart';
 import 'package:vrooom/domain/entities/booking.dart';
 import 'package:vrooom/domain/usecases/user/get_user_active_rentals_usecase.dart';
 import 'package:vrooom/domain/usecases/user/get_user_rental_history_usecase.dart';
@@ -12,7 +13,9 @@ import '../../../../core/configs/theme/app_spacing.dart';
 import '../../../../core/common/widgets/booking_car_tile.dart';
 
 class BookingsPage extends StatefulWidget {
-  const BookingsPage({super.key});
+  final Function(bool hasActiveRentals)? onActiveRentalsLoaded;
+
+  const BookingsPage({super.key, this.onActiveRentalsLoaded});
 
   @override
   State<BookingsPage> createState() => _BookingsPageState();
@@ -42,22 +45,34 @@ class _BookingsPageState extends State<BookingsPage> {
 
     try {
       final activeResult = await _getUserActiveRentalsUseCase();
+      if (!mounted) return;
+
       activeResult.fold((error) {}, (activeRentals) {
+        if (!mounted) return;
         setState(() => _activeRentals = activeRentals);
       });
+      widget.onActiveRentalsLoaded?.call(_activeRentals.isNotEmpty);
 
       final upcomingResult = await _getUserUpcomingRentalsUseCase();
       upcomingResult.fold((error) {}, (upcomingRentals) {
+        if (!mounted) return;
         setState(() => _upcomingRentals = upcomingRentals);
       });
 
       final historyResult = await _getUserRentalHistoryUseCase();
       historyResult.fold((error) {}, (rentalHistory) {
+        if (!mounted) return;
         _rentalHistory = rentalHistory;
       });
 
-      _penaltyRentals = _rentalHistory.where((booking) => booking.penalty != 0).toList();
-      _rentalHistory = _rentalHistory.where((booking) => booking.penalty == 0).toList();
+      _penaltyRentals = _rentalHistory
+          .where((booking) => booking.bookingStatus! == RentalStatus.penalty.displayText)
+          .toList();
+      _rentalHistory = _rentalHistory
+          .where((booking) =>
+              booking.bookingStatus! == RentalStatus.completed.displayText ||
+              booking.bookingStatus! == RentalStatus.cancelled.displayText)
+          .toList();
 
       if (_activeRentals.isEmpty &&
           _upcomingRentals.isEmpty &&
@@ -66,7 +81,7 @@ class _BookingsPageState extends State<BookingsPage> {
         _nothingToShow = true;
       }
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 

@@ -46,35 +46,46 @@ class VehicleListHistoryController extends ChangeNotifier {
 
   Future<void> _loadVehicles() async {
     _setLoading(true);
-    final result = await _getFullRentalHistoryUseCase();
 
+    final result = await _getFullRentalHistoryUseCase();
     if (_disposed) return;
+
     result.fold(
-      (error) {
-        _errorMessage = error;
-      },
+      (error) => _errorMessage = error,
       (vehicleList) {
+        vehicleList.sort((a, b) => a.startDate!.day.compareTo(b.startDate!.day));
         _bookings = vehicleList;
-        print(_bookings);
         _errorMessage = null;
         _applyFilters();
       },
     );
 
+    if (_disposed) return;
+
     final futures = _bookings.map((booking) async {
+      if (_disposed) return null;
+
       final idResult = await _getUserIdByEmailUseCase(email: booking.customerEmail!);
+      if (_disposed) return null;
+
       return await idResult.fold(
         (error) async => null,
         (userId) async {
+          if (_disposed) return null;
+
           final picResult = await _downloadUserProfilePictureUseCase(userId: userId as int);
-          return picResult.fold((error) => null, (success) => success);
+          return picResult.fold((error) => null, (bytes) => bytes);
         },
       );
     }).toList();
 
     final images = await Future.wait(futures);
+    if (_disposed) return;
+
     _setLoading(false);
-    _customerImage.addAll(images);
+    if (!_disposed) {
+      _customerImage.addAll(images);
+    }
   }
 
   void _applyFilters() {

@@ -22,7 +22,7 @@ class _ContactPageState extends State<ContactPage> {
   Widget build(BuildContext context) {
     List<Widget> infoSection = [
       const ContactRow(svgAsset: AppVectors.mapPin, label: "Ul. Przykładowa 12, 00-123 Łódź"),
-      const ContactRow(svgAsset: AppVectors.phone, label: "+48 123 456 789  "),
+      const ContactRow(svgAsset: AppVectors.phone, label: "+48 123 456 789"),
       const ContactRow(svgAsset: AppVectors.mail, label: "carrentlodz@gmail.com"),
       const ContactRow(svgAsset: AppVectors.clock, label: "Mon-Fri, 9:00 AM – 5:00 PM"),
     ];

@@ -8,19 +8,18 @@ import 'package:vrooom/domain/entities/booking.dart';
 
 import '../../configs/assets/app_vectors.dart';
 import '../../configs/theme/app_spacing.dart';
+import '../../enums/rental_status.dart';
 
 class BookingCarTile extends StatelessWidget {
   final Booking booking;
   final VoidCallback? onTap;
 
-  const BookingCarTile({
-    super.key,
-    required this.booking,
-    this.onTap
-  });
+  const BookingCarTile({super.key, required this.booking, this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final status = RentalStatus.fromString(booking.bookingStatus!);
+
     return AnimatedButtonWrapper(
       onTap: onTap,
       child: CustomContainer(
@@ -33,7 +32,7 @@ class BookingCarTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.0),
                 child: Image.network(
                   booking.vehicleImage as String,
-                  height: 140.0,
+                  height: 160.0,
                   width: 100.0,
                   fit: BoxFit.cover,
                 ),
@@ -91,20 +90,39 @@ class BookingCarTile extends StatelessWidget {
                         const Spacer(),
                       ],
                     ),
-
+                    const Spacer(),
+                    if (booking.penalty != 0) ...[
+                      Text(
+                        "\$${booking.penalty!.toStringAsFixed(2)}",
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                     const Spacer(),
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        if (booking.penalty != 0)
-                          Text(
-                            booking.penalty.toString(),
-                            style: const TextStyle(
-                              color: AppColors.primary,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600,
+                        Container(
+                          decoration: BoxDecoration(
+                              color: status.color, borderRadius: BorderRadius.circular(10.0)),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0,
+                              vertical: 3.0,
+                            ),
+                            child: Text(
+                              status.displayText,
+                              style: const TextStyle(
+                                fontSize: 12.0,
+                                letterSpacing: -0.5,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
+                        ),
                         const Spacer(),
                         const AppSvg(asset: AppVectors.arrowRight, height: 20.0),
                       ],

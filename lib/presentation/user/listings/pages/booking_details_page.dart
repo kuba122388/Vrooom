@@ -63,6 +63,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
 
   bool haveRabatCode = false;
 
+  bool _isConfirmingBooking = false;
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -650,13 +651,22 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
             const SizedBox(height: AppSpacing.md),
 
             PrimaryButton(
-              text: "Confirm booking",
-              onPressed: () {
+              text: _isConfirmingBooking ? "Processing..." : "Confirm booking",
+              onPressed: () async {
+                if (_isConfirmingBooking) return;
+
+                setState(() {
+                  _isConfirmingBooking = true;
+                });
+
                 if (selectedPayment == PaymentMethod.stripe) {
-                  _openStripeCheckout();
+                  await _openStripeCheckout();
                 } else {
-                  _handleCreditCardPayment();
+                  await _handleCreditCardPayment();
                 }
+                setState(() {
+                  if (mounted) _isConfirmingBooking = false;
+                });
               },
             ),
           ],
@@ -719,7 +729,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     return (_endDate!.difference(_startDate!).inDays + 1);
   }
 
-  void _openStripeCheckout() async {
+  Future<void> _openStripeCheckout() async {
     if (_selectedInsurance == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -816,7 +826,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     }
   }
 
-  void _handleCreditCardPayment() async {
+  Future<void> _handleCreditCardPayment() async {
     if (_selectedInsurance == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -844,7 +854,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     }
 
     if (_formKey.currentState!.validate()) {
-      await _createBookingUseCase(
+      final result = await _createBookingUseCase(
         BookingRequest(
           startDate: _startDate!,
           endDate: _endDate!,
@@ -856,10 +866,29 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           userId: _userId,
         ),
       );
-      Navigator.pushNamed(context, AppRoutes.paymentSuccess);
+      result.fold(
+        (error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "Unexpected error occured: $error}",
+                style: const TextStyle(color: Colors.white),
+              ),
+              backgroundColor: AppColors.primary,
+            ),
+          );
+        },
+        (result) => Navigator.pushNamed(context, AppRoutes.paymentSuccess),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please correct the errors above.")),
+        const SnackBar(
+          content: Text(
+            "Please correct the errors above.",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: AppColors.primary,
+        ),
       );
     }
   }

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -14,6 +13,7 @@ import '../../../../core/configs/di/service_locator.dart';
 import '../../../../domain/entities/role.dart';
 import '../../../../domain/usecases/auth/facebook_login_usecase.dart';
 import '../../../../domain/usecases/auth/login_usecase.dart';
+import '../../../core/configs/assets/app_vectors.dart';
 import '../widgets/divider_with_text.dart';
 import '../../../../core/common/widgets/custom_text_field.dart';
 import '../../../../core/configs/routes/app_routes.dart';
@@ -56,7 +56,6 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> handleFacebookSignIn() async {
     setState(() => _isLoading = true);
     try {
-
       final LoginResult result = await FacebookAuth.instance.login(
         permissions: ['email', 'public_profile'],
       );
@@ -68,13 +67,13 @@ class _LoginPageState extends State<LoginPage> {
         final useCaseResult = await _facebookLoginUseCase.call(token: token);
 
         useCaseResult.fold(
-              (error) {
+          (error) {
             if (!mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(error)),
             );
           },
-              (user) {
+          (user) {
             if (!mounted) return;
             if (user.email.isEmpty || user.phoneNumber.isEmpty || user.city.isEmpty) {
               if (user.role == Role.admin) {
@@ -83,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                   context,
                   AppRoutes.loginEditDetails,
                   arguments: AppRoutes.carManagement,
-                    (route) => false,
+                  (route) => false,
                 );
               } else {
                 if (!mounted) return;
@@ -91,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                   context,
                   AppRoutes.loginEditDetails,
                   arguments: AppRoutes.main,
-                      (route) => false,
+                  (route) => false,
                 );
               }
             } else {
@@ -100,14 +99,14 @@ class _LoginPageState extends State<LoginPage> {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   AppRoutes.carManagement,
-                      (route) => false,
+                  (route) => false,
                 );
               } else {
                 if (!mounted) return;
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   AppRoutes.main,
-                      (route) => false,
+                  (route) => false,
                 );
               }
             }
@@ -126,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
         SnackBar(content: Text('Error logging in with Facebook: ${error.toString()}')),
       );
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -149,57 +148,57 @@ class _LoginPageState extends State<LoginPage> {
         return;
       }
 
-      final result  = await _googleLoginUseCase.call(token: idToken);
+      final result = await _googleLoginUseCase.call(token: idToken);
 
       result.fold(
-            (error) {
+        (error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(error)),
           );
         },
-            (user) {
+        (user) {
+          if (!mounted) return;
+          if (user.email.isEmpty || user.phoneNumber.isEmpty || user.city.isEmpty) {
+            if (user.role == Role.admin) {
               if (!mounted) return;
-              if (user.email.isEmpty || user.phoneNumber.isEmpty || user.city.isEmpty) {
-                if (user.role == Role.admin) {
-                  if (!mounted) return;
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRoutes.loginEditDetails,
-                    arguments: AppRoutes.carManagement,
-                        (route) => false,
-                  );
-                } else {
-                  if (!mounted) return;
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRoutes.loginEditDetails,
-                    arguments: AppRoutes.main,
-                        (route) => false,
-                  );
-                }
-              } else {
-                if (user.role == Role.admin) {
-                  if (!mounted) return;
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRoutes.carManagement,
-                        (route) => false,
-                  );
-                } else {
-                  if (!mounted) return;
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRoutes.main,
-                        (route) => false,
-                  );
-                }
-              }
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.loginEditDetails,
+                arguments: AppRoutes.carManagement,
+                (route) => false,
+              );
+            } else {
+              if (!mounted) return;
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.loginEditDetails,
+                arguments: AppRoutes.main,
+                (route) => false,
+              );
+            }
+          } else {
+            if (user.role == Role.admin) {
+              if (!mounted) return;
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.carManagement,
+                (route) => false,
+              );
+            } else {
+              if (!mounted) return;
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.main,
+                (route) => false,
+              );
+            }
+          }
         },
       );
     } catch (error) {
       print('Error logging google user in: $error');
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -211,34 +210,33 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-
-      setState(() => _isLoading = false);
+      if (!mounted) return;
 
       result.fold(
-            (error) {
+        (error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(error)),
           );
         },
-            (user) {
+        (user) {
           if (user.role == Role.admin) {
             Navigator.pushNamedAndRemoveUntil(
               context,
               AppRoutes.carManagement,
-                  (route) => false,
+              (route) => false,
             );
           } else {
             Navigator.pushNamedAndRemoveUntil(
               context,
               AppRoutes.main,
-                  (route) => false,
+              (route) => false,
             );
           }
         },
       );
-    } catch (e) {}
-    finally {
-      setState(() => _isLoading = false);
+    } catch (e) {
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -313,9 +311,9 @@ class _LoginPageState extends State<LoginPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SocialButton(text: "Facebook",onTap: handleFacebookSignIn),
+            SocialButton(text: "Facebook", icon: AppVectors.facebook, onTap: handleFacebookSignIn),
             const SizedBox(width: AppSpacing.md),
-            SocialButton(text: "Google", onTap: handleGoogleSignIn),
+            SocialButton(text: "Google", icon: AppVectors.google, onTap: handleGoogleSignIn),
           ],
         ),
         const SizedBox(height: AppSpacing.md),

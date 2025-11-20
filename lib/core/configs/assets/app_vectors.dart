@@ -64,4 +64,7 @@ class AppVectors {
   static const logout = '${basePath}log-out$format';
   static const odometer = '${basePath}odometer$format';
   static const carDoorsLeft = '${basePath}car-door-left$format';
+
+  static const google = '${basePath}google$format';
+  static const facebook = '${basePath}facebook$format';
 }

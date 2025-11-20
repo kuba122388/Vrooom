@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
-import 'package:vrooom/core/common/widgets/primary_button.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 import 'package:vrooom/presentation/admin/widgets/admin_app_bar.dart';
@@ -105,14 +103,19 @@ class _CarManagementView extends StatelessWidget {
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 10.0),
-        child: FloatingActionButton.extended(onPressed:  (){
+        child: FloatingActionButton.extended(
+          onPressed: () {
             Navigator.of(context).pushNamed(AppRoutes.addNewCar);
           },
-          backgroundColor: AppColors.primary,label: const Text("Add New Car",style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color:Colors.white,
-        ),),
+          backgroundColor: AppColors.primary,
+          label: const Text(
+            "Add New Car",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

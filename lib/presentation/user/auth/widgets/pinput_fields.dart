@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
-import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/configs/theme/app_colors.dart';
 import 'package:vrooom/core/configs/theme/app_spacing.dart';
 
@@ -9,7 +8,6 @@ class PinputFields extends StatefulWidget {
   final TextEditingController controller;
 
   const PinputFields({super.key, required this.controller});
-
 
   @override
   State<PinputFields> createState() => _PinputFieldsState();
@@ -69,9 +67,7 @@ class _PinputFieldsState extends State<PinputFields> {
                   defaultPinTheme: defaultPinTheme,
                   separatorBuilder: (index) => const SizedBox(width: 8),
                   hapticFeedbackType: HapticFeedbackType.lightImpact,
-                  onCompleted: (pin) {
-                  
-                  },
+                  onCompleted: (pin) {},
                   onChanged: (value) {
                     debugPrint('onChanged: $value');
                   },

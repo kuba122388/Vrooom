@@ -46,37 +46,35 @@ class _UserRentalHistoryPageState extends State<UserRentalHistoryPage> {
 
     try {
       final activeResult = await _getUserActiveRentalsByIdUseCase(userId: widget.user.customerID);
-      activeResult.fold(
-              (error) {},
-              (activeRentals) {
-            setState(() => _activeRentals = activeRentals);
-          }
-      );
+      if (!mounted) return;
+      activeResult.fold((error) {}, (activeRentals) {
+        setState(() => _activeRentals = activeRentals);
+      });
 
-      final upcomingResult = await _getUserUpcomingRentalsByIdUseCase(userId: widget.user.customerID);
-      upcomingResult.fold(
-              (error) {},
-              (upcomingRentals) {
-            setState(() => _upcomingRentals = upcomingRentals);
-          }
-      );
+      final upcomingResult =
+          await _getUserUpcomingRentalsByIdUseCase(userId: widget.user.customerID);
+      if (!mounted) return;
+      upcomingResult.fold((error) {}, (upcomingRentals) {
+        setState(() => _upcomingRentals = upcomingRentals);
+      });
 
       final historyResult = await _getUserRentalHistoryByIdUseCase(userId: widget.user.customerID);
-      historyResult.fold(
-              (error) {},
-              (rentalHistory) {
-            _rentalHistory = rentalHistory;
-          }
-      );
+      if (!mounted) return;
+      historyResult.fold((error) {}, (rentalHistory) {
+        _rentalHistory = rentalHistory;
+      });
 
       _penaltyRentals = _rentalHistory.where((booking) => booking.penalty != 0).toList();
       _rentalHistory = _rentalHistory.where((booking) => booking.penalty == 0).toList();
 
-      if (_activeRentals.isEmpty && _upcomingRentals.isEmpty && _rentalHistory.isEmpty && _penaltyRentals.isEmpty) {
+      if (_activeRentals.isEmpty &&
+          _upcomingRentals.isEmpty &&
+          _rentalHistory.isEmpty &&
+          _penaltyRentals.isEmpty) {
         _nothingToShow = true;
       }
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -109,53 +107,76 @@ class _UserRentalHistoryPageState extends State<UserRentalHistoryPage> {
     }
 
     return Scaffold(
-      appBar: CustomAppBar(title: "${widget.user.name} ${widget.user.surname}"),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (_penaltyRentals.isNotEmpty) ...[
-                const TitleWidget(title: "Penalty Section:"),
-                ..._penaltyRentals.map((item) => Column(
-                  children: [
-                    BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: {'booking' : item, 'title' : '${item.customerName} ${item.customerSurname}'})),
-                    const SizedBox(height: AppSpacing.md),
-                  ],
-                )),
+        appBar: CustomAppBar(title: "${widget.user.name} ${widget.user.surname}"),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (_penaltyRentals.isNotEmpty) ...[
+                  const TitleWidget(title: "Penalty Section:"),
+                  ..._penaltyRentals.map((item) => Column(
+                        children: [
+                          BookingCarTile(
+                              booking: item,
+                              onTap: () => Navigator.pushNamed(
+                                      context, AppRoutes.userBookingDetails, arguments: {
+                                    'booking': item,
+                                    'title': '${item.customerName} ${item.customerSurname}'
+                                  })),
+                          const SizedBox(height: AppSpacing.md),
+                        ],
+                      )),
+                ],
+                if (_activeRentals.isNotEmpty) ...[
+                  const TitleWidget(title: "Active Rentals:"),
+                  ..._activeRentals.map((item) => Column(
+                        children: [
+                          BookingCarTile(
+                              booking: item,
+                              onTap: () => Navigator.pushNamed(
+                                      context, AppRoutes.userBookingDetails, arguments: {
+                                    'booking': item,
+                                    'title': '${item.customerName} ${item.customerSurname}'
+                                  })),
+                          const SizedBox(height: AppSpacing.md),
+                        ],
+                      )),
+                ],
+                if (_upcomingRentals.isNotEmpty) ...[
+                  const TitleWidget(title: "Upcoming Rentals:"),
+                  ..._upcomingRentals.map((item) => Column(
+                        children: [
+                          BookingCarTile(
+                              booking: item,
+                              onTap: () => Navigator.pushNamed(
+                                      context, AppRoutes.userBookingDetails, arguments: {
+                                    'booking': item,
+                                    'title': '${item.customerName} ${item.customerSurname}'
+                                  })),
+                          const SizedBox(height: AppSpacing.md),
+                        ],
+                      )),
+                ],
+                if (_rentalHistory.isNotEmpty) ...[
+                  const TitleWidget(title: "Rentals History:"),
+                  ..._rentalHistory.map((item) => Column(
+                        children: [
+                          BookingCarTile(
+                              booking: item,
+                              onTap: () => Navigator.pushNamed(
+                                      context, AppRoutes.userBookingDetails, arguments: {
+                                    'booking': item,
+                                    'title': '${item.customerName} ${item.customerSurname}'
+                                  })),
+                          const SizedBox(height: AppSpacing.md),
+                        ],
+                      )),
+                ],
               ],
-              if (_activeRentals.isNotEmpty) ...[
-                const TitleWidget(title: "Active Rentals:"),
-                ..._activeRentals.map((item) => Column(
-                  children: [
-                    BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: {'booking' : item, 'title' : '${item.customerName} ${item.customerSurname}'})),
-                    const SizedBox(height: AppSpacing.md),
-                  ],
-                )),
-              ],
-              if (_upcomingRentals.isNotEmpty) ...[
-                const TitleWidget(title: "Upcoming Rentals:"),
-                ..._upcomingRentals.map((item) => Column(
-                  children: [
-                    BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: {'booking' : item, 'title' : '${item.customerName} ${item.customerSurname}'})),
-                    const SizedBox(height: AppSpacing.md),
-                  ],
-                )),
-              ],
-              if (_rentalHistory.isNotEmpty) ...[
-                const TitleWidget(title: "Rentals History:"),
-                ..._rentalHistory.map((item) => Column(
-                  children: [
-                    BookingCarTile(booking: item, onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails, arguments: {'booking' : item, 'title' : '${item.customerName} ${item.customerSurname}'})),
-                    const SizedBox(height: AppSpacing.md),
-                  ],
-                )),
-              ],
-            ],
+            ),
           ),
-        ),
-      )
-    );
+        ));
   }
 }

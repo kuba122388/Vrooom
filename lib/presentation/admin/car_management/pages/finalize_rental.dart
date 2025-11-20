@@ -43,10 +43,23 @@ class _FinalizeRentalPageState extends State<FinalizeRentalPage> {
     _loadVehicle();
   }
 
+  @override
+  void dispose() {
+    _startMileageController.dispose();
+    _endMileageController.dispose();
+    _damageDescriptionController.dispose();
+    _additionalCommentsController.dispose();
+    _penaltyAmountController.dispose();
+    _penaltyDescriptionController.dispose();
+
+    super.dispose();
+  }
+
   Future<void> _loadVehicle() async {
     setState(() => _loading = true);
 
     final result = await _getVehicleByIdUseCase(widget.booking.vehicleID!);
+    if (!mounted) return;
 
     result.fold(
       (error) {

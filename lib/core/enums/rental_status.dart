@@ -24,7 +24,7 @@ enum RentalStatus {
       case RentalStatus.active:
         return AppColors.container.claret;
       case RentalStatus.completed:
-        return AppColors.container.neutral800;
+        return AppColors.container.neutral700;
       case RentalStatus.finished:
         return AppColors.container.danger500;
       case RentalStatus.inProgress:

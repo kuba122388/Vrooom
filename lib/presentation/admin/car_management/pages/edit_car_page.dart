@@ -59,7 +59,16 @@ class _EditCarPageState extends State<EditCarPage> {
   List<String> seatsOptions = ['2', '4', '5', '6', '7', '8', '9', '10', '12', '16'];
   List<String> transmissionOptions = ['Automatic', 'Manual', 'Semi-automatic'];
   bool availableForRent = true;
-  List<String> bodyTypes = ['Hatchback', 'Sedan', 'SUV', 'Coupe', 'Minivan', 'Truck', 'Wagon', 'Convertible'];
+  List<String> bodyTypes = [
+    'Hatchback',
+    'Sedan',
+    'SUV',
+    'Coupe',
+    'Minivan',
+    'Truck',
+    'Wagon',
+    'Convertible'
+  ];
   List<String> driveTypes = ['Front-wheel drive', 'Rear-wheel drive', 'All-wheel drive (4x4)'];
 
   List<String> equipmentList = [
@@ -97,12 +106,12 @@ class _EditCarPageState extends State<EditCarPage> {
   List<String> _selectedEquipment = [];
 
   @override
-  initState(){
+  initState() {
     super.initState();
     setState(() {
       _isLoading = true;
     });
-    _fetchRentalLocations().then( (_) => _setDefaultValues()).then( (_) {
+    _fetchRentalLocations().then((_) => _setDefaultValues()).then((_) {
       setState(() {
         _isLoading = false;
       });
@@ -112,8 +121,7 @@ class _EditCarPageState extends State<EditCarPage> {
   Future<void> _fetchRentalLocations() async {
     final result = await _getRentalLocationsUseCase();
 
-    result.fold((error){
-    }, (locations){
+    result.fold((error) {}, (locations) {
       setState(() {
         rentalLocations = locations;
       });
@@ -170,7 +178,11 @@ class _EditCarPageState extends State<EditCarPage> {
   Future<void> _editVehicle() async {
     final isFormValid = _formKey.currentState!.validate();
 
-    if (!isFormValid || _selectedBodyType == null || _selectedFuelType == null || _selectedTransmission == null || _selectedSeats == null) {
+    if (!isFormValid ||
+        _selectedBodyType == null ||
+        _selectedFuelType == null ||
+        _selectedTransmission == null ||
+        _selectedSeats == null) {
       setState(() {
         _errorMessage = "Please fill in all required fields and select all options.";
         _isLoading = false;
@@ -195,13 +207,12 @@ class _EditCarPageState extends State<EditCarPage> {
       final productionYear = int.tryParse(_productionYearController.text) ?? 0;
       final mileage = int.tryParse(_mileageController.text) ?? 0;
 
-      List<Equipment> equipment =  [];
-      for(String name in _selectedEquipment){
+      List<Equipment> equipment = [];
+      for (String name in _selectedEquipment) {
         equipment.add(Equipment(equipmentID: 0, equipmentName: name));
       }
 
-      final Vehicle newVehicle = Vehicle(
-          widget.vehicle.vehicleID,
+      final Vehicle newVehicle = Vehicle(widget.vehicle.vehicleID,
           make: _makeController.text,
           model: _modelController.text,
           type: _selectedBodyType!,
@@ -219,28 +230,27 @@ class _EditCarPageState extends State<EditCarPage> {
           description: _descriptionController.text,
           mileage: mileage,
           vehicleImage: widget.vehicle.vehicleImage,
-          availabilityStatus: availableForRent ? 'Available' : 'Not Available',
+          availabilityStatus: availableForRent ? 'Available' : 'Unavailable',
           wheelSize: wheelSize,
           equipmentList: equipment,
-          vehicleLocation: _selectedCarLocation!
-      );
+          vehicleLocation: _selectedCarLocation!);
 
-      final result = await _updateVehicleUseCase (
+      final result = await _updateVehicleUseCase(
         vehicle: newVehicle,
         imageFile: _selectedImage,
       );
 
       result.fold(
-            (error) {
+        (error) {
           setState(() {
             _errorMessage = "An error occurred: $error";
             _isLoading = false;
           });
         },
-            (addedVehicle) {
-            setState(() {
-              _isLoading = false;
-            });
+        (addedVehicle) {
+          setState(() {
+            _isLoading = false;
+          });
           Navigator.of(context).pushReplacementNamed(AppRoutes.carManagement);
         },
       );
@@ -264,10 +274,11 @@ class _EditCarPageState extends State<EditCarPage> {
     _consumptionController.dispose();
     _wheelSizeController.dispose();
     _numberOfDoorsController.dispose();
+    _productionYearController.dispose();
+    _mileageController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -280,7 +291,7 @@ class _EditCarPageState extends State<EditCarPage> {
 
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop,result) {
+      onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
           Navigator.of(context).pop(false);
         }
@@ -310,7 +321,6 @@ class _EditCarPageState extends State<EditCarPage> {
                           style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                         ),
                       ),
-
                     CustomDropdownMenu(
                       items: rentalLocations,
                       label: "Car Location",
@@ -322,10 +332,10 @@ class _EditCarPageState extends State<EditCarPage> {
                     const Text(
                       "Basic Car Information",
                       textAlign: TextAlign.left,
-                      style: TextStyle(color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
-
                     CustomTextField(
                       controller: _makeController,
                       hintText: 'e.g., Toyota',
@@ -357,14 +367,13 @@ class _EditCarPageState extends State<EditCarPage> {
                       initialValue: _selectedBodyType,
                       onSelected: (newValue) => setState(() => _selectedBodyType = newValue),
                     ),
-
                     const SizedBox(height: AppSpacing.lg),
                     const Text(
                       "Detailed Specifications",
-                      style: TextStyle(color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: AppSpacing.lg),
-
                     CustomTextField(
                       controller: _engineCapacityController,
                       hintText: 'e.g., 2.0',
@@ -372,7 +381,6 @@ class _EditCarPageState extends State<EditCarPage> {
                       keyboardType: TextInputType.number,
                       validator: (value) => _validateNumber(value, allowDecimal: true),
                     ),
-
                     CustomTextField(
                       controller: _horsePowerController,
                       hintText: 'e.g., 188',
@@ -432,7 +440,6 @@ class _EditCarPageState extends State<EditCarPage> {
                       initialValue: _selectedDriveType,
                       onSelected: (newValue) => setState(() => _selectedDriveType = newValue),
                     ),
-
                     CustomTextField(
                       controller: _descriptionController,
                       hintText: 'Provide a detailed description of the car...',
@@ -440,12 +447,11 @@ class _EditCarPageState extends State<EditCarPage> {
                       maxLines: 4,
                       validator: _validateRequired,
                     ),
-
                     const SizedBox(height: AppSpacing.lg),
-
                     const Text(
                       "Equipment List",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18),
+                      style:
+                          TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Wrap(
@@ -476,10 +482,10 @@ class _EditCarPageState extends State<EditCarPage> {
                       }).toList(),
                     ),
                     const SizedBox(height: AppSpacing.lg),
-
                     const Text(
                       "Car Images",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18),
+                      style:
+                          TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     GestureDetector(
@@ -500,66 +506,59 @@ class _EditCarPageState extends State<EditCarPage> {
                         borderType: BorderType.RRect,
                         radius: const Radius.circular(12),
                         child: Container(
-                          height: 200,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: AppColors.container.neutral800,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: _selectedImage != null
-                              ? Image.file(
-                              _selectedImage!,
-                              fit: BoxFit.cover,
-                            )
-                            : Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                Image.network(
-                                  _defaultImage,
-                                  fit: BoxFit.cover,
-                                ),
-
-                                Opacity(
-                                  opacity: 0.7,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.black,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                ),
-
-                                const Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      AppSvg(asset: AppVectors.upload, height: 40, width: 40),
-                                      SizedBox(height: AppSpacing.md),
-                                      Text(
-                                        "Upload a car image",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
+                            height: 200,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppColors.container.neutral800,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: _selectedImage != null
+                                    ? Image.file(
+                                        _selectedImage!,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Stack(fit: StackFit.expand, children: [
+                                        Image.network(
+                                          _defaultImage,
+                                          fit: BoxFit.cover,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ]
-                            )
-                          )
-                        ),
+                                        Opacity(
+                                          opacity: 0.7,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.black,
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                        ),
+                                        const Center(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              AppSvg(
+                                                  asset: AppVectors.upload, height: 40, width: 40),
+                                              SizedBox(height: AppSpacing.md),
+                                              Text(
+                                                "Upload a car image",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ]))),
                       ),
                     ),
-
                     const SizedBox(height: AppSpacing.lg),
-
                     const Text(
                       "Pricing & Availability",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18),
+                      style:
+                          TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18),
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     CustomTextField(
@@ -607,21 +606,17 @@ class _EditCarPageState extends State<EditCarPage> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text(
-                            "Cancel",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20.0,
-                              letterSpacing: -0.5
-                            )
-                          ),
+                          child: const Text("Cancel",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20.0,
+                                  letterSpacing: -0.5)),
                         ),
                         const Spacer(),
                         PrimaryButton(
