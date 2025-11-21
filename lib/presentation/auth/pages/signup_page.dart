@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/common/utils/card_input_formatters.dart';
 import 'package:vrooom/core/common/widgets/custom_app_bar.dart';
 import 'package:vrooom/core/common/widgets/custom_text_field.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
@@ -68,7 +69,7 @@ class _SignupPageState extends State<SignupPage> {
     final errors = AuthApiService.validatePassword(_passwordController.text);
 
     if (errors.isNotEmpty) {
-      return errors.join("'n");
+      return errors.join("\n");
     }
 
     if (_passwordController.text != _confirmPasswordController.text) {
@@ -90,10 +91,10 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future<void> _handleRegister() async {
-    if(_isLoading){
+    if (_isLoading) {
       return;
     }
-    setState(() => _isLoading = true);
+    if (mounted) setState(() => _isLoading = true);
     final validationError = _validateInputs();
     if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -102,6 +103,8 @@ class _SignupPageState extends State<SignupPage> {
           backgroundColor: Colors.red,
         ),
       );
+      if (mounted) setState(() => _isLoading = false);
+
       return;
     }
 
@@ -129,7 +132,7 @@ class _SignupPageState extends State<SignupPage> {
         Navigator.pushNamedAndRemoveUntil(
           context,
           AppRoutes.verifyEmail,
-              (newPage) => false,
+          (newPage) => false,
           arguments: _emailController.text.trim(),
         );
       },
@@ -151,9 +154,14 @@ class _SignupPageState extends State<SignupPage> {
                   hintText: "John",
                   label: "First name",
                   controller: _firstNameController,
+                  textCapitalization: TextCapitalization.words,
                 ),
                 CustomTextField(
-                    hintText: "Doe", label: "Last name", controller: _lastNameController),
+                  hintText: "Doe",
+                  label: "Last name",
+                  controller: _lastNameController,
+                  textCapitalization: TextCapitalization.words,
+                ),
                 CustomTextField(
                     hintText: "john.doe@example.com", label: "Email", controller: _emailController),
                 CustomTextField(
@@ -171,14 +179,28 @@ class _SignupPageState extends State<SignupPage> {
                 CustomTextField(
                     hintText: "+1 (555) 123-4567",
                     label: "Phone",
+                    keyboardType: TextInputType.phone,
                     controller: _phoneNumberController),
                 CustomTextField(
-                    hintText: "ul. 3 maja",
-                    label: "Street Address",
-                    controller: _streetAddressController),
-                CustomTextField(hintText: "Gdansk", label: "City", controller: _cityController),
+                  hintText: "ul. 3 maja",
+                  label: "Street Address",
+                  controller: _streetAddressController,
+                  textCapitalization: TextCapitalization.words,
+                ),
                 CustomTextField(
-                    hintText: "98-200", label: "Postal Code", controller: _postalCodeController),
+                  hintText: "Gdansk",
+                  label: "City",
+                  controller: _cityController,
+                  textCapitalization: TextCapitalization.words,
+                ),
+                CustomTextField(
+                    keyboardType: TextInputType.number,
+                    hintText: "98-200",
+                    label: "Postal Code",
+                    inputFormatters: [
+                      PostalCodeFormatter(),
+                    ],
+                    controller: _postalCodeController),
                 const SizedBox(height: AppSpacing.sm),
                 PrimaryButton(
                   text: _isLoading == false ? "Sign up" : "Signing up...",
