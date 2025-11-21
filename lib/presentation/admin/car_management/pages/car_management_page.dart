@@ -56,10 +56,16 @@ class _CarManagementView extends StatelessWidget {
         title: "Manage cars",
       ),
       drawer: const AdminDrawer(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-          child: Column(
+      body: LoadingWidget(
+        isLoading: controller.isLoading,
+        errorMessage: controller.errorMessage,
+        refreshFunction: controller.refreshBookings,
+        futureResultObj: controller.filteredVehicles,
+        emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
+            ? "No vehicles match your filters."
+            : "No vehicles data found.",
+        staticBuilder: () {
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SearchFilterModuleManagement(
@@ -87,19 +93,10 @@ class _CarManagementView extends StatelessWidget {
                     ),
                   ),
                 ),
-              LoadingWidget(
-                isLoading: controller.isLoading,
-                errorMessage: controller.errorMessage,
-                futureResultObj: controller.filteredVehicles,
-                emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
-                    ? "No vehicles match your filters."
-                    : "No vehicles data found.",
-                futureBuilder: () => _buildVehicles(context, controller),
-              ),
-              const SizedBox(height: 80),
             ],
-          ),
-        ),
+          );
+        },
+        futureBuilder: () => _buildVehicles(context, controller),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 10.0),
@@ -123,29 +120,32 @@ class _CarManagementView extends StatelessWidget {
   }
 
   Widget _buildVehicles(BuildContext context, VehicleListManagementController controller) {
-    return Column(
-      children: controller.filteredVehicles.map((vehicle) {
-        return Column(
-          children: [
-            CarInventoryEntry(
-              carImage: vehicle.vehicleImage,
-              carName: "${vehicle.make} ${vehicle.model}",
-              carStatus: CarStatus.fromString(vehicle.availabilityStatus),
-              fuel: vehicle.fuelType,
-              mileage: vehicle.mileage,
-              seats: vehicle.numberOfSeats,
-              transmission: vehicle.gearShift,
-              price: vehicle.pricePerDay,
-              onTap: () => Navigator.pushNamed(
-                context,
-                AppRoutes.carManagementDetail,
-                arguments: vehicle,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+      child: Column(
+        children: controller.filteredVehicles.map((vehicle) {
+          return Column(
+            children: [
+              CarInventoryEntry(
+                carImage: vehicle.vehicleImage,
+                carName: "${vehicle.make} ${vehicle.model}",
+                carStatus: CarStatus.fromString(vehicle.availabilityStatus),
+                fuel: vehicle.fuelType,
+                mileage: vehicle.mileage,
+                seats: vehicle.numberOfSeats,
+                transmission: vehicle.gearShift,
+                price: vehicle.pricePerDay,
+                onTap: () => Navigator.pushNamed(
+                  context,
+                  AppRoutes.carManagementDetail,
+                  arguments: vehicle,
+                ),
               ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-          ],
-        );
-      }).toList(),
+              const SizedBox(height: AppSpacing.md),
+            ],
+          );
+        }).toList(),
+      ),
     );
   }
 }

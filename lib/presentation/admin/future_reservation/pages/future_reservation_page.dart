@@ -52,10 +52,16 @@ class _FutureReservationView extends StatelessWidget {
     return Scaffold(
       appBar: const AdminAppBar(title: "Future Reservations"),
       drawer: const AdminDrawer(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-          child: Column(
+      body: LoadingWidget(
+        isLoading: controller.isLoading,
+        errorMessage: controller.errorMessage,
+        refreshFunction: controller.refreshBookings,
+        emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
+            ? "No future entries match your filters."
+            : "No future reservation data found.",
+        futureResultObj: controller.filteredBookings,
+        staticBuilder: () {
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SearchFilterModuleFuture(
@@ -72,18 +78,21 @@ class _FutureReservationView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
-              LoadingWidget(
-                isLoading: controller.isLoading,
-                errorMessage: controller.errorMessage,
-                emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
-                    ? "No future entries match your filters."
-                    : "No future reservation data found.",
-                futureResultObj: controller.filteredBookings,
-                futureBuilder: () => _buildBookings(context, controller),
-              )
+              if (filterState.hasActiveFilters || controller.searchQuery.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                  child: Text(
+                    '${controller.filteredBookings.length} bookings found',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
             ],
-          ),
-        ),
+          );
+        },
+        futureBuilder: () => _buildBookings(context, controller),
       ),
     );
   }

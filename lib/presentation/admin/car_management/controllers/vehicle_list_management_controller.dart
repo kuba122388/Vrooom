@@ -31,6 +31,10 @@ class VehicleListManagementController extends ChangeNotifier {
 
   String get searchQuery => _searchQuery;
 
+  Future<void> refreshBookings() async {
+    await _loadVehicles();
+  }
+
   // Public methods
   void onSearchChanged(String query) {
     _searchQuery = query;

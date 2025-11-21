@@ -57,7 +57,7 @@ class VehicleListFutureController extends ChangeNotifier {
     result.fold(
       (error) => _errorMessage = error,
       (vehicleList) {
-        vehicleList.sort((a, b) => a.startDate!.day.compareTo(b.startDate!.day));
+        vehicleList.sort((a, b) => b.startDate!.day.compareTo(a.startDate!.day));
         _bookings = vehicleList;
         _errorMessage = null;
         _applyFilters();

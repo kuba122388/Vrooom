@@ -54,7 +54,9 @@ class _ProfilePageState extends State<ProfilePage> {
     if (!mounted) return;
 
     userResult.fold(
-      (error) {},
+      (error) {
+        return;
+      },
       (user) {
         setState(() {
           _user = user;

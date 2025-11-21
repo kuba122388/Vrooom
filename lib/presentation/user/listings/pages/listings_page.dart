@@ -17,15 +17,19 @@ class ListingsPage extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (_) => FilterState(
+            create: (_) =>
+                FilterState(
                   getRentalLocationsUseCase: sl(),
                   getVehicleEquipmentUseCase: sl(),
                 )),
         ChangeNotifierProxyProvider<FilterState, VehicleListController>(
-          create: (context) => VehicleListController(
-            filterState: context.read<FilterState>(),
-          ),
-          update: (_, filterState, previous) => previous!..filterState.loadFilterOptions(),
+          create: (context) =>
+              VehicleListController(
+                filterState: context.read<FilterState>(),
+              ),
+          update: (_, filterState, previous) =>
+          previous!
+            ..filterState.loadFilterOptions(),
         ),
       ],
       child: const _ListingsView(),
@@ -43,47 +47,46 @@ class _ListingsView extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-          child: Column(
-            children: [
-              SearchFilterModule(
-                onSearchChanged: controller.onSearchChanged,
-                filterState: filterState,
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              if (filterState.hasActiveFilters || controller.searchQuery.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                  child: Text(
-                    '${controller.filteredVehicles.length} vehicles found',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              LoadingWidget(
-                isLoading: controller.isLoading,
-                errorMessage: controller.errorMessage,
-                futureResultObj: controller.filteredVehicles,
-                emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
-                    ? "No vehicles match your filters."
-                    : "No vehicles data found.",
-                futureBuilder: () =>
-                    _buildVehicles(context, controller, filterState.selectedDateRange),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-            ],
-          ),
-        ),
+      child: LoadingWidget(
+        staticBuilder: () => _buildStaticModules(context, controller, filterState),
+        isLoading: controller.isLoading,
+        errorMessage: controller.errorMessage,
+        refreshFunction: controller.refresh,
+        futureResultObj: controller.filteredVehicles,
+        emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
+            ? "No vehicles match your filters."
+            : "No vehicles data found.",
+        futureBuilder: () => _buildVehicles(context, controller, filterState.selectedDateRange),
       ),
     );
   }
 
-  Widget _buildVehicles(
-      BuildContext context, VehicleListController controller, DateTimeRange? dateTimeRange) {
+  Widget _buildStaticModules(BuildContext context, VehicleListController controller,
+      FilterState filterState) {
+    return Column(
+      children: [
+        SearchFilterModule(
+          onSearchChanged: controller.onSearchChanged,
+          filterState: filterState,
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        if (filterState.hasActiveFilters || controller.searchQuery.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.md),
+            child: Text(
+              '${controller.filteredVehicles.length} vehicles found',
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildVehicles(BuildContext context, VehicleListController controller,
+      DateTimeRange? dateTimeRange) {
     return Column(
       children: controller.filteredVehicles.map((vehicle) {
         return Column(
@@ -98,7 +101,10 @@ class _ListingsView extends StatelessWidget {
                 Navigator.pushNamed(
                   context,
                   AppRoutes.carDetails,
-                  arguments: {"vehicleId": vehicle.vehicleID, "dateTimeRange": dateTimeRange},
+                  arguments: {
+                    "vehicleId": vehicle.vehicleID,
+                    "dateTimeRange": dateTimeRange,
+                  },
                 );
               },
             ),

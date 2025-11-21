@@ -141,8 +141,10 @@ class _FinalizeRentalPageState extends State<FinalizeRentalPage> {
       body: LoadingWidget(
         isLoading: _loading,
         errorMessage: _error,
+        refreshFunction: _loadVehicle,
         futureResultObj: _vehicle,
         emptyResultMsg: "Vehicle not found.",
+        shouldHavePadding: false,
         futureBuilder: _buildScreen,
       ),
     );
