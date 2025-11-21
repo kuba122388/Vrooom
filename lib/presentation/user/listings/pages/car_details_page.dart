@@ -69,9 +69,11 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       body: LoadingWidget(
         isLoading: _isLoading,
         emptyResultMsg: "No Vehicle data found.",
+        refreshFunction: _loadVehicle,
         errorMessage: _errorMessage,
         futureResultObj: _vehicle,
         futureBuilder: _buildVehicleDetails,
+        shouldHavePadding: false,
       ),
     );
   }
@@ -115,158 +117,155 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
           value: "${vehicle.averageConsumption} L/100km"),
     ];
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              Image.network(
-                vehicle.vehicleImage,
-                width: double.infinity,
-                height: 220.0,
-                fit: BoxFit.cover,
+    return Column(
+      children: [
+        Stack(
+          children: [
+            Image.network(
+              vehicle.vehicleImage,
+              width: double.infinity,
+              height: 220.0,
+              fit: BoxFit.cover,
+            ),
+            const DarkGradientOverlay(height: 220.0),
+            Positioned(
+              bottom: 20,
+              left: 20,
+              right: 20,
+              child: Text(
+                "${vehicle.make} ${vehicle.model}",
+                style: const TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: 28.0,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.5,
+                ),
               ),
-              const DarkGradientOverlay(height: 220.0),
-              Positioned(
-                bottom: 20,
-                left: 20,
-                right: 20,
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
+          child: Column(
+            children: [
+              InfoSectionCard(
+                title: "${vehicle.make} ${vehicle.model}",
                 child: Text(
-                  "${vehicle.make} ${vehicle.model}",
-                  style: const TextStyle(
+                  vehicle.description,
+                  style: TextStyle(
                     fontFamily: 'Roboto',
-                    fontSize: 28.0,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -0.5,
+                    fontSize: 14.0,
+                    color: AppColors.text.neutral400,
                   ),
                 ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              InfoSectionCard(
+                  title: "Location",
+                  child: CarSpecRow(
+                      iconPath: AppVectors.mapPin, label: vehicle.vehicleLocation, value: "")),
+              const SizedBox(height: AppSpacing.md),
+              InfoSectionCard(
+                title: "General",
+                child: Column(
+                  children: generalInfo.map((spec) {
+                    return CarSpecRow(
+                      iconPath: spec.iconPath,
+                      label: spec.label,
+                      value: spec.value,
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              InfoSectionCard(
+                title: "Performance",
+                child: Column(
+                  children: performanceInfo.map((spec) {
+                    return CarSpecRow(
+                      iconPath: spec.iconPath,
+                      label: spec.label,
+                      value: spec.value,
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              InfoSectionCard(
+                title: "Economy",
+                child: Column(
+                  children: economyInfo.map((spec) {
+                    return CarSpecRow(
+                      iconPath: spec.iconPath,
+                      label: spec.label,
+                      value: spec.value,
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              InfoSectionCard(
+                title: "Features",
+                child: Wrap(
+                  spacing: AppSpacing.xxs,
+                  runSpacing: AppSpacing.xs,
+                  children: vehicle.equipmentList.map((entry) {
+                    return CarFeatureContainer(
+                        iconPath: AppVectors.snowflake, label: entry.equipmentName);
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              InfoSectionCard(
+                title: "Pricing",
+                child: Column(
+                  children: [
+                    InfoRow(
+                      label: "Deposit",
+                      value: "\$${vehicle.deposit.toStringAsFixed(2)}",
+                    ),
+                    const SizedBox(
+                      height: AppSpacing.xxs,
+                    ),
+                    InfoRow(
+                      label: "Daily Rate",
+                      value: "\$${vehicle.pricePerDay.toStringAsFixed(2)} /day",
+                    ),
+                    const SizedBox(
+                      height: AppSpacing.xxs,
+                    ),
+                    if (widget.dateTimeRange != null)
+                      InfoRow(
+                        label: "Rental days",
+                        value: days.toString(),
+                      ),
+                    const SizedBox(
+                      height: AppSpacing.xxs,
+                    ),
+                    const Divider(),
+                    InfoRow(
+                      label: "Estimated Total",
+                      value: "\$${_calculatePrice(days)}",
+                      fontSize: 20.0,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              PrimaryButton(
+                text: "Rent Now",
+                onPressed: () => Navigator.pushNamed(context, AppRoutes.bookingDetails, arguments: {
+                  "dateTimeRange": widget.dateTimeRange,
+                  "location": vehicle.vehicleLocation,
+                  "deposit": vehicle.deposit,
+                  "dailyRate": vehicle.pricePerDay,
+                  "vehicleId": vehicle.vehicleID,
+                }),
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
-            child: Column(
-              children: [
-                InfoSectionCard(
-                  title: "${vehicle.make} ${vehicle.model}",
-                  child: Text(
-                    vehicle.description,
-                    style: TextStyle(
-                      fontFamily: 'Roboto',
-                      fontSize: 14.0,
-                      color: AppColors.text.neutral400,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                InfoSectionCard(
-                    title: "Location",
-                    child: CarSpecRow(
-                        iconPath: AppVectors.mapPin, label: vehicle.vehicleLocation, value: "")),
-                const SizedBox(height: AppSpacing.md),
-                InfoSectionCard(
-                  title: "General",
-                  child: Column(
-                    children: generalInfo.map((spec) {
-                      return CarSpecRow(
-                        iconPath: spec.iconPath,
-                        label: spec.label,
-                        value: spec.value,
-                      );
-                    }).toList(),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                InfoSectionCard(
-                  title: "Performance",
-                  child: Column(
-                    children: performanceInfo.map((spec) {
-                      return CarSpecRow(
-                        iconPath: spec.iconPath,
-                        label: spec.label,
-                        value: spec.value,
-                      );
-                    }).toList(),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                InfoSectionCard(
-                  title: "Economy",
-                  child: Column(
-                    children: economyInfo.map((spec) {
-                      return CarSpecRow(
-                        iconPath: spec.iconPath,
-                        label: spec.label,
-                        value: spec.value,
-                      );
-                    }).toList(),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                InfoSectionCard(
-                  title: "Features",
-                  child: Wrap(
-                    spacing: AppSpacing.xxs,
-                    runSpacing: AppSpacing.xs,
-                    children: vehicle.equipmentList.map((entry) {
-                      return CarFeatureContainer(
-                          iconPath: AppVectors.snowflake, label: entry.equipmentName);
-                    }).toList(),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                InfoSectionCard(
-                  title: "Pricing",
-                  child: Column(
-                    children: [
-                      InfoRow(
-                        label: "Deposit",
-                        value: "\$${vehicle.deposit.toStringAsFixed(2)}",
-                      ),
-                      const SizedBox(
-                        height: AppSpacing.xxs,
-                      ),
-                      InfoRow(
-                        label: "Daily Rate",
-                        value: "\$${vehicle.pricePerDay.toStringAsFixed(2)} /day",
-                      ),
-                      const SizedBox(
-                        height: AppSpacing.xxs,
-                      ),
-                      if (widget.dateTimeRange != null)
-                        InfoRow(
-                          label: "Rental days",
-                          value: days.toString(),
-                        ),
-                      const SizedBox(
-                        height: AppSpacing.xxs,
-                      ),
-                      const Divider(),
-                      InfoRow(
-                        label: "Estimated Total",
-                        value: "\$${_calculatePrice(days)}",
-                        fontSize: 20.0,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                PrimaryButton(
-                  text: "Rent Now",
-                  onPressed: () =>
-                      Navigator.pushNamed(context, AppRoutes.bookingDetails, arguments: {
-                    "dateTimeRange": widget.dateTimeRange,
-                    "location": vehicle.vehicleLocation,
-                    "deposit": vehicle.deposit,
-                    "dailyRate": vehicle.pricePerDay,
-                    "vehicleId": vehicle.vehicleID,
-                  }),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

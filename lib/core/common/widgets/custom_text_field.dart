@@ -16,19 +16,22 @@ class CustomTextField extends StatelessWidget {
   final int maxLines;
   final String? Function(String?)? validator;
   final List<TextInputFormatter>? inputFormatters;
+  final TextCapitalization? textCapitalization;
 
-  const CustomTextField(
-      {super.key,
-      this.label,
-      required this.hintText,
-      this.isPassword = false,
-      this.controller,
-      this.keyboardType,
-      this.leadingIcon,
-      this.fillColor,
-      this.maxLines = 1,
-      this.validator,
-      this.inputFormatters});
+  const CustomTextField({
+    super.key,
+    this.label,
+    required this.hintText,
+    this.isPassword = false,
+    this.controller,
+    this.keyboardType,
+    this.leadingIcon,
+    this.fillColor,
+    this.maxLines = 1,
+    this.validator,
+    this.inputFormatters,
+    this.textCapitalization,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +52,7 @@ class CustomTextField extends StatelessWidget {
           inputFormatters: inputFormatters,
           maxLines: maxLines,
           validator: validator,
+          textCapitalization: textCapitalization ?? TextCapitalization.none,
           decoration: InputDecoration(
             hintText: hintText,
             prefixIconConstraints: const BoxConstraints(

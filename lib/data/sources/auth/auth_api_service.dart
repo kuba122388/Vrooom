@@ -142,26 +142,26 @@ class AuthApiService {
     }
   }
 
-  Future<String>resetPassword(String email)async {
-    try{
-    final response = await _dio.post(
-      '/api/auth/forgot-password',
-      data: {'email': email},
-    );
+  Future<String> resetPassword(String email) async {
+    try {
+      final response = await _dio.post(
+        '/api/auth/forgot-password',
+        data: {'email': email},
+      );
 
-    if (response.statusCode == 200) {
-      return response.toString();
-    } else {
-      throw Exception("Verification failed");
+      if (response.statusCode == 200) {
+        return response.toString();
+      } else {
+        throw Exception("Verification failed");
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 400) {
+        throw Exception(e.response?.data['message'] ?? 'Invalid code');
+      }
+      throw Exception("Network error ${e.message}");
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
     }
-  } on DioException catch (e) {
-  if (e.response?.statusCode == 400) {
-  throw Exception(e.response?.data['message'] ?? 'Invalid code');
-  }
-  throw Exception("Network error ${e.message}");
-  } catch (e) {
-  throw Exception('Unexpected error: $e');
-  }
   }
 
   Future<void> changePassword(PasswordRequestModel request) async {
@@ -188,24 +188,23 @@ class AuthApiService {
     List<String> errors = [];
 
     if (password.length < 8) {
-      errors.add("Hasło musi mieć co najmniej 8 znaków");
+      errors.add("- The password must be at least 8 characters long");
     }
     if (!password.contains(RegExp(r'[A-Z]'))) {
-      errors.add("Hasło musi zawierać przynajmniej jedną wielką literę");
+      errors.add("- The password must contain at least one uppercase letter");
     }
     if (!password.contains(RegExp(r'[a-z]'))) {
-      errors.add("Hasło musi zawierać przynajmniej jedną małą literę");
+      errors.add("- The password must contain at least one lowercase letter");
     }
     if (!password.contains(RegExp(r'\d'))) {
-      errors.add("Hasło musi zawierać przynajmniej jedną cyfrę");
+      errors.add("- The password must contain at least one digit");
     }
-    if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-      errors.add("Hasło musi zawierać przynajmniej jeden znak specjalny");
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?\":{}|<>]'))) {
+      errors.add("- The password must contain at least one special character");
     }
 
     return errors;
   }
-
 
   Future<String> resendVerificationCode(String email) async {
     try {
@@ -228,5 +227,4 @@ class AuthApiService {
       throw Exception('Unexpected error: $e');
     }
   }
-
 }

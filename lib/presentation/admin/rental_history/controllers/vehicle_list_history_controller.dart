@@ -44,6 +44,11 @@ class VehicleListHistoryController extends ChangeNotifier {
     _applyFilters();
   }
 
+  Future<void> refreshBookings() async {
+    _customerImage.clear();
+    await _loadVehicles();
+  }
+
   Future<void> _loadVehicles() async {
     _setLoading(true);
 
@@ -95,7 +100,7 @@ class VehicleListHistoryController extends ChangeNotifier {
         final fullCustomerName = "${booking.customerName} ${booking.customerSurname}".toLowerCase();
         final customerPhone = booking.customerPhoneNumber ?? "";
         final emailAddress = booking.customerEmail ?? "";
-        final vehicle = "${booking.vehicleMake} ${booking.vehicleModel}";
+        final vehicle = "${booking.vehicleMake} ${booking.vehicleModel}".toLowerCase();
 
         if (!fullCustomerName.contains(searchLower) &&
             !customerPhone.contains(searchLower) &&

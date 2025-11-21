@@ -220,9 +220,11 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       body: LoadingWidget(
         isLoading: _isLoading,
         errorMessage: _errorMessage,
+        refreshFunction: loadData,
         emptyResultMsg: "Unexpected error occured. Try again later.",
         futureResultObj: _insuranceOptions,
         futureBuilder: _buildBookingScreen,
+        shouldHavePadding: false,
       ),
     );
   }

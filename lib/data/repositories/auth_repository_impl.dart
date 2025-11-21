@@ -7,7 +7,6 @@ import 'package:vrooom/data/sources/auth/auth_storage.dart';
 import 'package:vrooom/domain/entities/user.dart';
 import 'package:vrooom/domain/repositories/auth_repository.dart';
 
-
 class AuthRepositoryImpl implements AuthRepository {
   final AuthApiService authApiService;
   final AuthStorage tokenStorage;
@@ -23,7 +22,8 @@ class AuthRepositoryImpl implements AuthRepository {
       final request = LoginRequestModel(email: email, password: password);
       final response = await authApiService.login(request);
 
-      await tokenStorage.saveLoginData(response.jwt, response.user.customerID, response.user.role.toString());
+      await tokenStorage.saveLoginData(
+          response.jwt, response.user.customerID, response.user.role.toString());
       return Right(response.user);
     } catch (e) {
       return Left(e.toString());
@@ -31,11 +31,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<String, User>> googleLogin({required String token}) async{
+  Future<Either<String, User>> googleLogin({required String token}) async {
     try {
       final response = await authApiService.googleLogin(token);
 
-      await tokenStorage.saveLoginData(response.jwt, response.user.customerID, response.user.role.toString());
+      await tokenStorage.saveLoginData(
+          response.jwt, response.user.customerID, response.user.role.toString());
       return Right(response.user);
     } catch (e) {
       return Left(e.toString());
@@ -43,11 +44,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<String, User>> facebookLogin({required String token}) async{
+  Future<Either<String, User>> facebookLogin({required String token}) async {
     try {
       final response = await authApiService.facebookLogin(token);
 
-      await tokenStorage.saveLoginData(response.jwt, response.user.customerID, response.user.role.toString());
+      await tokenStorage.saveLoginData(
+          response.jwt, response.user.customerID, response.user.role.toString());
       return Right(response.user);
     } catch (e) {
       return Left(e.toString());
@@ -55,10 +57,8 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<String, void>> changePassword({
-    required String oldPassword,
-    required String newPassword
-  }) async {
+  Future<Either<String, void>> changePassword(
+      {required String oldPassword, required String newPassword}) async {
     try {
       final request = PasswordRequestModel(oldPassword: oldPassword, newPassword: newPassword);
       await authApiService.changePassword(request);
@@ -81,11 +81,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<String,User>> verifyEmail({required String code})async {
+  Future<Either<String, User>> verifyEmail({required String code}) async {
     try {
       final response = await authApiService.verifyEmail(code);
 
-      tokenStorage.saveLoginData(response.jwt, response.user.customerID,response.user.role.toString());
+      tokenStorage.saveLoginData(
+          response.jwt, response.user.customerID, response.user.role.toString());
       return Right(response.user);
     } catch (e) {
       return Left(e.toString());
@@ -95,7 +96,6 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<String, void>> logout() async {
     try {
-      await authApiService.logout();
       await tokenStorage.clear();
       return const Right(null);
     } catch (e) {

@@ -7,6 +7,7 @@ import 'package:vrooom/presentation/user/listings/pages/listings_page.dart';
 import '../../../../core/common/widgets/app_svg.dart';
 import '../../../../core/common/widgets/custom_app_bar.dart';
 import '../../../../core/configs/assets/app_vectors.dart';
+import '../../../../core/configs/theme/app_colors.dart';
 import '../../profile/pages/profile_page.dart';
 
 class MainNavigationPage extends StatefulWidget {
@@ -71,7 +72,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
               onPressed: () async {
                 await _makePhoneCall("+48 123 456 789");
               },
-              backgroundColor: Colors.blue,
+              backgroundColor: AppColors.container.progress200,
               child: const AppSvg(asset: AppVectors.phone),
             )
           : null,

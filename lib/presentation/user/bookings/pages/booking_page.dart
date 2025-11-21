@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/common/widgets/loading_widget.dart';
 import 'package:vrooom/core/common/widgets/title_widget.dart';
 import 'package:vrooom/core/configs/routes/app_routes.dart';
 import 'package:vrooom/core/enums/rental_status.dart';
@@ -8,7 +9,6 @@ import 'package:vrooom/domain/usecases/user/get_user_rental_history_usecase.dart
 import 'package:vrooom/domain/usecases/user/get_user_upcoming_rentals_usecase.dart';
 
 import '../../../../core/configs/di/service_locator.dart';
-import '../../../../core/configs/theme/app_colors.dart';
 import '../../../../core/configs/theme/app_spacing.dart';
 import '../../../../core/common/widgets/booking_car_tile.dart';
 
@@ -32,7 +32,7 @@ class _BookingsPageState extends State<BookingsPage> {
   List<Booking> _rentalHistory = [];
 
   bool _isLoading = false;
-  bool _nothingToShow = false;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -41,26 +41,52 @@ class _BookingsPageState extends State<BookingsPage> {
   }
 
   Future<void> _load() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
 
     try {
       final activeResult = await _getUserActiveRentalsUseCase();
       if (!mounted) return;
 
-      activeResult.fold((error) {}, (activeRentals) {
+      activeResult.fold((error) {
+        if (mounted) {
+          setState(() {
+            _errorMessage = error;
+            _isLoading = false;
+            return;
+          });
+        }
+      }, (activeRentals) {
         if (!mounted) return;
         setState(() => _activeRentals = activeRentals);
       });
       widget.onActiveRentalsLoaded?.call(_activeRentals.isNotEmpty);
 
       final upcomingResult = await _getUserUpcomingRentalsUseCase();
-      upcomingResult.fold((error) {}, (upcomingRentals) {
+      upcomingResult.fold((error) {
+        if (mounted) {
+          setState(() {
+            _errorMessage = error;
+            _isLoading = false;
+            return;
+          });
+        }
+      }, (upcomingRentals) {
         if (!mounted) return;
         setState(() => _upcomingRentals = upcomingRentals);
       });
 
       final historyResult = await _getUserRentalHistoryUseCase();
-      historyResult.fold((error) {}, (rentalHistory) {
+      historyResult.fold((error) {
+        if (mounted) {
+          setState(() {
+            _errorMessage = error;
+            _isLoading = false;
+          });
+        }
+      }, (rentalHistory) {
         if (!mounted) return;
         _rentalHistory = rentalHistory;
       });
@@ -73,13 +99,6 @@ class _BookingsPageState extends State<BookingsPage> {
               booking.bookingStatus! == RentalStatus.completed.displayText ||
               booking.bookingStatus! == RentalStatus.cancelled.displayText)
           .toList();
-
-      if (_activeRentals.isEmpty &&
-          _upcomingRentals.isEmpty &&
-          _rentalHistory.isEmpty &&
-          _penaltyRentals.isEmpty) {
-        _nothingToShow = true;
-      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -87,106 +106,92 @@ class _BookingsPageState extends State<BookingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppColors.primary),
-      );
-    }
+    return LoadingWidget(
+      isLoading: _isLoading,
+      emptyResultMsg: "You don't have rental history",
+      errorMessage: _errorMessage,
+      refreshFunction: _load,
+      futureResultObj: _rentalHistory,
+      futureBuilder: _buildBookingPage,
+    );
+  }
 
-    if (_nothingToShow) {
-      return Center(
-        child: Text(
-          "You don't have rental history",
-          style: TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 20.0,
-            fontWeight: FontWeight.w600,
-            color: AppColors.text.neutral200,
+  Widget _buildBookingPage() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (_penaltyRentals.isNotEmpty) ...[
+          const TitleWidget(title: "Penalty Section:"),
+          ..._penaltyRentals.map(
+            (item) => Column(
+              children: [
+                BookingCarTile(
+                  booking: item,
+                  onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails,
+                      arguments: {'booking': item, 'title': 'Booking details'}).then(
+                    (value) {
+                      if (value == 'refresh') {
+                        _load();
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+              ],
+            ),
           ),
-        ),
-      );
-    }
-
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (_penaltyRentals.isNotEmpty) ...[
-              const TitleWidget(title: "Penalty Section:"),
-              ..._penaltyRentals.map(
-                (item) => Column(
-                  children: [
-                    BookingCarTile(
+        ],
+        if (_activeRentals.isNotEmpty) ...[
+          const TitleWidget(title: "Active Rentals:"),
+          ..._activeRentals.map((item) => Column(
+                children: [
+                  BookingCarTile(
+                    booking: item,
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails,
+                        arguments: {'booking': item, 'title': 'Booking details'}).then(
+                      (value) {
+                        if (value == 'refresh') {
+                          _load();
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                ],
+              )),
+        ],
+        if (_upcomingRentals.isNotEmpty) ...[
+          const TitleWidget(title: "Upcoming Rentals:"),
+          ..._upcomingRentals.map((item) => Column(
+                children: [
+                  BookingCarTile(
+                    booking: item,
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails,
+                        arguments: {'booking': item, 'title': 'Booking details'}).then(
+                      (value) {
+                        if (value == 'refresh') {
+                          _load();
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                ],
+              )),
+        ],
+        if (_rentalHistory.isNotEmpty) ...[
+          const TitleWidget(title: "Rentals History:"),
+          ..._rentalHistory.map((item) => Column(
+                children: [
+                  BookingCarTile(
                       booking: item,
                       onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails,
-                          arguments: {'booking': item, 'title': 'Booking details'}).then(
-                        (value) {
-                          if (value == 'refresh') {
-                            _load();
-                          }
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                  ],
-                ),
-              ),
-            ],
-            if (_activeRentals.isNotEmpty) ...[
-              const TitleWidget(title: "Active Rentals:"),
-              ..._activeRentals.map((item) => Column(
-                    children: [
-                      BookingCarTile(
-                        booking: item,
-                        onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails,
-                            arguments: {'booking': item, 'title': 'Booking details'}).then(
-                          (value) {
-                            if (value == 'refresh') {
-                              _load();
-                            }
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                    ],
-                  )),
-            ],
-            if (_upcomingRentals.isNotEmpty) ...[
-              const TitleWidget(title: "Upcoming Rentals:"),
-              ..._upcomingRentals.map((item) => Column(
-                    children: [
-                      BookingCarTile(
-                        booking: item,
-                        onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails,
-                            arguments: {'booking': item, 'title': 'Booking details'}).then(
-                          (value) {
-                            if (value == 'refresh') {
-                              _load();
-                            }
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                    ],
-                  )),
-            ],
-            if (_rentalHistory.isNotEmpty) ...[
-              const TitleWidget(title: "Rentals History:"),
-              ..._rentalHistory.map((item) => Column(
-                    children: [
-                      BookingCarTile(
-                          booking: item,
-                          onTap: () => Navigator.pushNamed(context, AppRoutes.userBookingDetails,
-                              arguments: {'booking': item, 'title': 'Booking details'})),
-                      const SizedBox(height: AppSpacing.md),
-                    ],
-                  )),
-            ],
-          ],
-        ),
-      ),
+                          arguments: {'booking': item, 'title': 'Booking details'})),
+                  const SizedBox(height: AppSpacing.md),
+                ],
+              )),
+        ],
+      ],
     );
   }
 }

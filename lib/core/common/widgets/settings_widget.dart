@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vrooom/core/common/utils/card_input_formatters.dart';
 import 'package:vrooom/core/common/widgets/primary_button.dart';
 import 'package:vrooom/data/sources/auth/auth_api_service.dart';
 import 'package:vrooom/domain/entities/user.dart';
@@ -271,12 +272,14 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               label: "Name",
               leadingIcon: const AppSvg(asset: AppVectors.person),
               controller: _nameController,
+              textCapitalization: TextCapitalization.words,
             ),
             CustomTextField(
               hintText: _user!.surname,
               label: "Surname",
               leadingIcon: const AppSvg(asset: AppVectors.person),
               controller: _surnameController,
+              textCapitalization: TextCapitalization.words,
             ),
             CustomTextField(
               hintText: _user!.email,
@@ -289,30 +292,37 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               label: "Phone Number",
               leadingIcon: const AppSvg(asset: AppVectors.phone),
               controller: _phoneNumberController,
+              keyboardType: TextInputType.phone,
             ),
             CustomTextField(
               hintText: _user!.streetAddress,
               label: "Street Address",
               leadingIcon: const AppSvg(asset: AppVectors.mapPin),
               controller: _streetAddressController,
+              textCapitalization: TextCapitalization.words,
             ),
             CustomTextField(
               hintText: _user!.city,
               label: "City",
               leadingIcon: const AppSvg(asset: AppVectors.mapPin),
               controller: _cityController,
+              textCapitalization: TextCapitalization.words,
             ),
             CustomTextField(
               hintText: _user!.postalCode,
               label: "Postal Code",
               leadingIcon: const AppSvg(asset: AppVectors.mapPin),
               controller: _postalCodeController,
+              inputFormatters: [
+                PostalCodeFormatter(),
+              ],
             ),
             CustomTextField(
               hintText: _user!.country,
               label: "Country",
               leadingIcon: const AppSvg(asset: AppVectors.mapPin),
               controller: _countryCodeController,
+              textCapitalization: TextCapitalization.words,
             ),
             if (widget.route == null) ...[
               const SizedBox(height: AppSpacing.md),

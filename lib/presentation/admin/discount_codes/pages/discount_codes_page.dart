@@ -105,10 +105,14 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-        child: Column(
-          children: [
+      body: LoadingWidget(
+        isLoading: _isLoading,
+        errorMessage: _errorMessage,
+        refreshFunction: _loadDiscountCodes,
+        futureResultObj: _displayedCodesList,
+        emptyResultMsg: _activeCode ? "No active codes found." : "No expired codes found.",
+        staticBuilder: () {
+          return Column(children: [
             Row(
               children: [
                 Expanded(
@@ -165,23 +169,16 @@ class _DiscountCodesPageState extends State<DiscountCodesPage> {
               ],
             ),
             const SizedBox(height: AppSpacing.sm),
-            Expanded(
-              child: LoadingWidget(
-                isLoading: _isLoading,
-                errorMessage: _errorMessage,
-                futureResultObj: _displayedCodesList,
-                emptyResultMsg: _activeCode ? "No active codes found." : "No expired codes found.",
-                futureBuilder: _buildCodesList,
-              ),
-            ),
-          ],
-        ),
+          ]);
+        },
+        futureBuilder: _buildCodesList,
       ),
     );
   }
 
   Widget _buildCodesList() {
     return ListView.separated(
+      shrinkWrap: true,
       padding: const EdgeInsets.only(bottom: 80.0),
       itemCount: _displayedCodesList.length,
       separatorBuilder: (context, index) => const SizedBox(height: AppSpacing.sm),

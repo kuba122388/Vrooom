@@ -41,27 +41,39 @@ class _UserBookingDetailsState extends State<UserBookingDetails> {
 
     List<InfoRow> data = [
       InfoRow(
-          title: "Pickup Location",
-          icon: AppVectors.mapPin,
-          text: widget.booking.pickupAddress?.split(", ").last as String),
+        title: "Pickup Location",
+        icon: AppVectors.mapPin,
+        text: widget.booking.pickupAddress?.split(", ").join(",\n") as String,
+        textAlign: TextAlign.right,
+        iconSize: 16.0,
+      ),
       InfoRow(
-          title: "Drop-off Location",
-          icon: AppVectors.mapPin,
-          text: widget.booking.dropOffAddress?.split(", ").last as String),
+        title: "Drop-off Location",
+        icon: AppVectors.mapPin,
+        text: widget.booking.dropOffAddress?.split(", ").join(",\n") as String,
+        textAlign: TextAlign.right,
+        iconSize: 16.0,
+      ),
       InfoRow(
-          title: "Pickup Date",
-          icon: AppVectors.calendar,
-          text: DateFormat('dd-MM-yyyy').format(widget.booking.startDate as DateTime)),
+        title: "Pickup Date",
+        icon: AppVectors.calendar,
+        text: DateFormat('dd-MM-yyyy').format(widget.booking.startDate as DateTime),
+        iconSize: 16.0,
+      ),
       InfoRow(
-          title: "Planned Drop-off Date",
-          icon: AppVectors.calendar,
-          text: DateFormat('dd-MM-yyyy').format(widget.booking.endDate as DateTime)),
+        title: "Planned Drop-off Date",
+        icon: AppVectors.calendar,
+        text: DateFormat('dd-MM-yyyy').format(widget.booking.endDate as DateTime),
+        iconSize: 16.0,
+      ),
       if (widget.booking.actualReturnDate != null) ...{
         InfoRow(
-            title: "Real Drop-off Date",
-            icon: AppVectors.calendar,
-            text: DateFormat('dd-MM-yyyy').format(widget.booking.actualReturnDate as DateTime),
-            color: AppColors.primary),
+          title: "Real Drop-off Date",
+          icon: AppVectors.calendar,
+          text: DateFormat('dd-MM-yyyy').format(widget.booking.actualReturnDate as DateTime),
+          color: AppColors.primary,
+          iconSize: 16.0,
+        ),
       }
     ];
 

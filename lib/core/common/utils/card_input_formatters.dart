@@ -69,3 +69,27 @@ class CvvInputFormatter extends TextInputFormatter {
     return newValue;
   }
 }
+
+class PostalCodeFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    String text = newValue.text.replaceAll('-', '');
+
+    if (text.length > 5) return oldValue;
+
+    String formatted;
+    if (text.length > 2) {
+      formatted = '${text.substring(0, 2)}-${text.substring(2)}';
+    } else {
+      formatted = text;
+    }
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+}

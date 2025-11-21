@@ -39,6 +39,10 @@ class VehicleListController extends ChangeNotifier {
     _applyFilters();
   }
 
+  Future<void> refresh() async {
+    _loadVehicles();
+  }
+
   Future<void> _loadVehicles() async {
     _setLoading(true);
     final result = await _getAllVehiclesUseCase();

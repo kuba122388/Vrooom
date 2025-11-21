@@ -57,10 +57,16 @@ class _ActiveRentalsView extends StatelessWidget {
         title: "Active Rentals",
       ),
       drawer: const AdminDrawer(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-          child: Column(
+      body: LoadingWidget(
+        isLoading: controller.isLoading,
+        errorMessage: controller.errorMessage,
+        refreshFunction: controller.refreshBookings,
+        futureResultObj: controller.filteredBookings,
+        emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
+            ? "No history entries match your filters."
+            : "No history data found.",
+        staticBuilder: () {
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SearchFilterModuleActive(
@@ -81,25 +87,17 @@ class _ActiveRentalsView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.md),
                   child: Text(
-                    '${controller.filteredBookings.length} vehicles found',
+                    '${controller.filteredBookings.length} bookings found',
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
-              LoadingWidget(
-                isLoading: controller.isLoading,
-                errorMessage: controller.errorMessage,
-                futureResultObj: controller.filteredBookings,
-                emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
-                    ? "No history entries match your filters."
-                    : "No history data found.",
-                futureBuilder: () => _buildBookings(context, controller),
-              ),
             ],
-          ),
-        ),
+          );
+        },
+        futureBuilder: () => _buildBookings(context, controller),
       ),
     );
   }

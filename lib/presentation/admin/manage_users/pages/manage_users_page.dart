@@ -71,10 +71,14 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
     return Scaffold(
       appBar: const AdminAppBar(title: "Manage Users"),
       drawer: const AdminDrawer(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-          child: Column(
+      body: LoadingWidget(
+        isLoading: _isLoading,
+        errorMessage: _errorMessage,
+        refreshFunction: _loadUsers,
+        futureResultObj: _filteredUsersList,
+        emptyResultMsg: "No Users data found.",
+        staticBuilder: () {
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SearchUserModule(onSearchChanged: _onSearchChanged),
@@ -88,16 +92,10 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
-              LoadingWidget(
-                isLoading: _isLoading,
-                errorMessage: _errorMessage,
-                futureResultObj: _filteredUsersList,
-                emptyResultMsg: "No Users data found.",
-                futureBuilder: _buildUsersDetails,
-              )
             ],
-          ),
-        ),
+          );
+        },
+        futureBuilder: _buildUsersDetails,
       ),
     );
   }

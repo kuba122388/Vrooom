@@ -45,29 +45,17 @@ class DiscountCodeEntry extends StatelessWidget {
               children: [
                 TableRow(
                   children: [
-                    Text(
-                      "CODE:",
-                      style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
-                    ),
-                    Text(
-                      discountCode.code ?? "",
-                      style: const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
                       child: Text(
-                        "Discount:",
+                        "CODE:",
                         style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
                       child: Text(
-                        discountCode.value?.toString() ?? "0.0",
+                        discountCode.code ?? "",
                         style: const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
                       ),
                     ),
@@ -75,13 +63,39 @@ class DiscountCodeEntry extends StatelessWidget {
                 ),
                 TableRow(
                   children: [
-                    Text(
-                      "Type:",
-                      style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
+                      child: Text(
+                        "Discount:",
+                        style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
+                      ),
                     ),
-                    Text(
-                      type,
-                      style: const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
+                      child: Text(
+                        discountCode.percentage == true
+                            ? "${discountCode.value?.toStringAsFixed(2)}%"
+                            : "\$${discountCode.value?.toStringAsFixed(2)}",
+                        style: const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ],
+                ),
+                TableRow(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
+                      child: Text(
+                        "Type:",
+                        style: TextStyle(letterSpacing: -0.5, color: AppColors.text.neutral400),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
+                      child: Text(
+                        type,
+                        style: const TextStyle(letterSpacing: -0.5, fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ],
                 ),

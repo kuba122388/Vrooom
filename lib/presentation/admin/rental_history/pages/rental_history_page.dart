@@ -57,46 +57,47 @@ class _RentalHistoryView extends StatelessWidget {
         title: "Rental History",
       ),
       drawer: const AdminDrawer(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            SearchFilterModuleAdmin(
-              onSearchChanged: controller.onSearchChanged,
-              filterState: filterState,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            const Text(
-              "Rental History",
-              style: TextStyle(
-                fontSize: 22.0,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -0.5,
+      body: LoadingWidget(
+        isLoading: controller.isLoading,
+        errorMessage: controller.errorMessage,
+        refreshFunction: controller.refreshBookings,
+        futureResultObj: controller.filteredBookings,
+        emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
+            ? "No history entries match your filters."
+            : "No history data found.",
+        staticBuilder: () {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SearchFilterModuleAdmin(
+                onSearchChanged: controller.onSearchChanged,
+                filterState: filterState,
               ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            if (filterState.hasActiveFilters || controller.searchQuery.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                child: Text(
-                  '${controller.filteredBookings.length} vehicles found',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
+              const SizedBox(height: AppSpacing.sm),
+              const Text(
+                "Rental History",
+                style: TextStyle(
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.5,
                 ),
               ),
-            LoadingWidget(
-              isLoading: controller.isLoading,
-              errorMessage: controller.errorMessage,
-              futureResultObj: controller.filteredBookings,
-              emptyResultMsg: filterState.hasActiveFilters || controller.searchQuery.isNotEmpty
-                  ? "No history entries match your filters."
-                  : "No history data found.",
-              futureBuilder: () => _buildBookings(context, controller),
-            ),
-          ]),
-        ),
+              const SizedBox(height: AppSpacing.xs),
+              if (filterState.hasActiveFilters || controller.searchQuery.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                  child: Text(
+                    '${controller.filteredBookings.length} bookings found',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+        futureBuilder: () => _buildBookings(context, controller),
       ),
     );
   }
