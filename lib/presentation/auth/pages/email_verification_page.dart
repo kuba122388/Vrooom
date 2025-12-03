@@ -128,7 +128,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
         } else {
           Navigator.pushNamedAndRemoveUntil(
             context,
-            AppRoutes.main,
+            AppRoutes.verifyEmailSuccess,
             (route) => false,
           );
         }

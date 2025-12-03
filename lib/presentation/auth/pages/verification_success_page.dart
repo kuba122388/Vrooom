@@ -14,6 +14,7 @@ class VerificationSuccessPage extends StatelessWidget {
     return Scaffold(
       appBar: const CustomAppBar(
         title: "Email Verified",
+        showBackButton: false,
       ),
       body: Center(
         child: Padding(
