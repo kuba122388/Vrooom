@@ -40,6 +40,13 @@ class _BookingsPageState extends State<BookingsPage> {
     _load();
   }
 
+  List<Booking> get _allRentals => [
+        ..._activeRentals,
+        ..._penaltyRentals,
+        ..._upcomingRentals,
+        ..._rentalHistory,
+      ];
+
   Future<void> _load() async {
     setState(() {
       _isLoading = true;
@@ -97,7 +104,8 @@ class _BookingsPageState extends State<BookingsPage> {
       _rentalHistory = _rentalHistory
           .where((booking) =>
               booking.bookingStatus! == RentalStatus.completed.displayText ||
-              booking.bookingStatus! == RentalStatus.cancelled.displayText)
+              booking.bookingStatus! == RentalStatus.cancelled.displayText ||
+              booking.bookingStatus! == RentalStatus.finished.displayText)
           .toList();
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -111,7 +119,7 @@ class _BookingsPageState extends State<BookingsPage> {
       emptyResultMsg: "You don't have rental history",
       errorMessage: _errorMessage,
       refreshFunction: _load,
-      futureResultObj: _rentalHistory,
+      futureResultObj: _allRentals,
       futureBuilder: _buildBookingPage,
     );
   }

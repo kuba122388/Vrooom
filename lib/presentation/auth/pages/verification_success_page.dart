@@ -38,7 +38,8 @@ class VerificationSuccessPage extends StatelessWidget {
               const SizedBox(height: AppSpacing.xl),
               PrimaryButton(
                 text: "Continue",
-                onPressed: () => Navigator.pushNamed(context, AppRoutes.main),
+                onPressed: () =>
+                    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.main, (route) => false),
               ),
             ],
           ),

@@ -147,7 +147,11 @@ class _ActiveRentalsView extends StatelessWidget {
                           arguments: {
                             'booking': item,
                             'title': '${item.customerName} ${item.customerSurname}'
-                          }),
+                          }).then((value) {
+                        if (value == 'refresh') {
+                          controller.refreshBookings();
+                        }
+                      }),
                   booking: item,
                   customerPicture: controller.customerImage[index]),
             ],
