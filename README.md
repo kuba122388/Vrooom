@@ -12,16 +12,15 @@ development standards, emphasizing **scalability** and **team collaboration**.
 
 ## 🛠️ Technology Stack & Methodology
 
-| Category                  | Technologies/Methodologies                                                                       |
-|:--------------------------|:-------------------------------------------------------------------------------------------------|
-| **Front-End (Mobile)**    | **Flutter** (Dart), UI/UX Design                                                                 |
-| **Architecture**          | **Clean Architecture** (Modular Development, Separation of Concerns)                             |
-| **State Management**      | [Insert used State Management, e.g., Provider, Riverpod]                                         |
-| **Back-End API**          | **Spring Boot** (Java)                                                                           |
-| **Databases**             | **MySQL** (Primary data), Dedicated external services for images (e.g., Firebase Storage)        |
-| **Version Control**       | **Git / GitHub**                                                                                 |
-| **Methodology**           | **Agile / Scrum** (Task management facilitated via **Trello**)                                   |
-| **External Integrations** | **Stripe** (Payment Gateway), **Google Maps** (Navigation/Location), **Firebase** (Social Login) |
+| Category                  | Technologies/Methodologies                                           |
+|:--------------------------|:---------------------------------------------------------------------|
+| **Front-End (Mobile)**    | **Flutter** (Dart), UI/UX Design                                     |
+| **Architecture**          | **Clean Architecture** (Modular Development, Separation of Concerns) |
+| **Back-End API**          | **Spring Boot** (Java)                                               |
+| **Databases**             | **MySQL**                                                            |
+| **Version Control**       | **Git / GitHub**                                                     |
+| **Methodology**           | **Agile / Scrum** (Task management facilitated via **Trello**)       |
+| **External Integrations** | **Stripe** (Payment Gateway), **Google Maps** (Navigation/Location)  |
 
 ---
 
@@ -70,7 +69,7 @@ testing:
 
 - **Separation of Concerns:** Clear boundaries between the Presentation (UI), Domain (Business
   Logic), and Data (Repository/API) layers.
-- **Testing:** Logic is decoupled from the framework, allowing for focused unit testing.
+- **Testing:** Logic is decoupled from the framework.
 
 ---
 
